@@ -1,3 +1,4 @@
+import Sidebar from "./Sidebar"
 function App() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0f0f11' }}>
@@ -8,9 +9,7 @@ function App() {
 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 
-        <div style={{ width: '250px', background: '#0c0c0e', borderRight: '1px solid #1a1a1d' }}>
-          <p style={{ color: '#555', padding: '16px', fontSize: '12px' }}>BINDER</p>
-        </div>
+        <Sidebar />
 
         <div style={{ flex: 1, background: '#0f0f11' }}>
           <p style={{ color: '#fff', padding: '16px' }}>Editor</p>
