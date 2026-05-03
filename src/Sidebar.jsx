@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 function Sidebar() {
   const [manuscriptOpen, setManuscriptOpen] = useState(true)
+  const [selectedDoc, setSelectedDoc] = useState('Chapter 1')
 
   return (
     <div style={{ width: '250px', background: '#0c0c0e', borderRight: '1px solid #1a1a1d', height: '100%' }}>
@@ -18,10 +19,14 @@ function Sidebar() {
 
         {manuscriptOpen && (
           <div>
-            <div style={{ color: '#aaa', fontSize: '13px', padding: '6px 8px', paddingLeft: '28px', cursor: 'pointer' }}>
+            <div
+              onClick={() => setSelectedDoc('Chapter 1')}
+              style={{ color: selectedDoc === 'Chapter 1' ? '#fff' : '#aaa', fontSize: '13px', padding: '6px 8px', paddingLeft: '28px', cursor: 'pointer', background: selectedDoc === 'Chapter 1' ? '#1a1a2e' : 'transparent', borderRadius: '4px' }}>
               📄 Chapter 1
             </div>
-            <div style={{ color: '#aaa', fontSize: '13px', padding: '6px 8px', paddingLeft: '28px', cursor: 'pointer' }}>
+            <div
+              onClick={() => setSelectedDoc('Chapter 2')}
+              style={{ color: selectedDoc === 'Chapter 2' ? '#fff' : '#aaa', fontSize: '13px', padding: '6px 8px', paddingLeft: '28px', cursor: 'pointer', background: selectedDoc === 'Chapter 2' ? '#1a1a2e' : 'transparent', borderRadius: '4px' }}>
               📄 Chapter 2
             </div>
           </div>
