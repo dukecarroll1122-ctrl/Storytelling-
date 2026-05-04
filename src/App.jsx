@@ -1,3 +1,4 @@
+import Inspector from './Inspector'
 import Sidebar from "./Sidebar"
 import Editor from './Editor'
 
@@ -15,9 +16,7 @@ function App() {
 
         <Editor />
 
-        <div style={{ width: '260px', background: '#0c0c0e', borderLeft: '1px solid #1a1a1d' }}>
-          <p style={{ color: '#555', padding: '16px', fontSize: '12px' }}>INSPECTOR</p>
-        </div>
+        <Inspector />
 
       </div>
 
