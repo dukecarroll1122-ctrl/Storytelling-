@@ -1,4 +1,6 @@
 import Sidebar from "./Sidebar"
+import Editor from './Editor'
+
 function App() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0f0f11' }}>
@@ -11,9 +13,7 @@ function App() {
 
         <Sidebar />
 
-        <div style={{ flex: 1, background: '#0f0f11' }}>
-          <p style={{ color: '#fff', padding: '16px' }}>Editor</p>
-        </div>
+        <Editor />
 
         <div style={{ width: '260px', background: '#0c0c0e', borderLeft: '1px solid #1a1a1d' }}>
           <p style={{ color: '#555', padding: '16px', fontSize: '12px' }}>INSPECTOR</p>
