@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react'
 
 function Editor({ selectedDoc }) {
-  const [content, setContent] = useState('')
+  const [content, setContent] = useState(() => {
+    return localStorage.getItem(selectedDoc) || ''
+  })
   const [title, setTitle] = useState(selectedDoc)
 
   const wordCount = content.trim().split(/\s+/).filter(Boolean).length
 
   useEffect(() => {
     setTitle(selectedDoc)
+    const saved = localStorage.getItem(selectedDoc)
+    setContent(saved || '')
   }, [selectedDoc])
 
   return (
@@ -24,7 +28,10 @@ function Editor({ selectedDoc }) {
       <div style={{ flex: 1, padding: '32px 48px', overflow: 'auto' }}>
         <textarea
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => {
+            setContent(e.target.value)
+            localStorage.setItem(selectedDoc, e.target.value)
+          }}
           placeholder="Start writing..."
           style={{ width: '100%', height: '100%', background: 'transparent', border: 'none', outline: 'none', color: '#d4d0c8', fontSize: '16px', fontFamily: 'Georgia', lineHeight: '1.8', resize: 'none' }}
         />
