@@ -22,7 +22,13 @@ function App() {
         <Inspector />
 
       </div>
-
+      <div style={{ height: '28px', background: '#0a0a0c', borderTop: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '16px' }}>
+  <span style={{ color: '#444', fontSize: '11px' }}>{selectedDoc}</span>
+  <span style={{ color: '#333', fontSize: '11px' }}>•</span>
+  <span style={{ color: '#444', fontSize: '11px' }}>Storytelling</span>
+  <div style={{ flex: 1 }} />
+  <span style={{ color: '#52b788', fontSize: '11px' }}>● Saved</span>
+</div>
     </div>
   )
 }
