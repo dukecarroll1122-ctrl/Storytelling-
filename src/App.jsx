@@ -1,8 +1,11 @@
+import { useState } from 'react'
 import Inspector from './Inspector'
 import Sidebar from "./Sidebar"
 import Editor from './Editor'
 
 function App() {
+  const [selectedDoc, setSelectedDoc] = useState('Chapter 1')
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0f0f11' }}>
 
@@ -12,9 +15,9 @@ function App() {
 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 
-        <Sidebar />
+        <Sidebar selectedDoc={selectedDoc} setSelectedDoc={setSelectedDoc} />
 
-        <Editor />
+        <Editor selectedDoc={selectedDoc} />
 
         <Inspector />
 

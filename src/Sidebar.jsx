@@ -1,9 +1,7 @@
 import { useState } from 'react'
 
-function Sidebar() {
+function Sidebar({ selectedDoc, setSelectedDoc }) {
   const [manuscriptOpen, setManuscriptOpen] = useState(true)
-  const [selectedDoc, setSelectedDoc] = useState('Chapter 1')
-
   return (
     <div style={{ width: '250px', background: '#0c0c0e', borderRight: '1px solid #1a1a1d', height: '100%' }}>
 

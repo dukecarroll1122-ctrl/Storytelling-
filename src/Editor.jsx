@@ -1,10 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-function Editor() {
+function Editor({ selectedDoc }) {
   const [content, setContent] = useState('')
-  const [title, setTitle] = useState('Chapter 1')
+  const [title, setTitle] = useState(selectedDoc)
 
   const wordCount = content.trim().split(/\s+/).filter(Boolean).length
+
+  useEffect(() => {
+    setTitle(selectedDoc)
+  }, [selectedDoc])
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#0f0f11' }}>
