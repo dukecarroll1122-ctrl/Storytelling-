@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import Inspector from './Inspector'
-import Sidebar from "./Sidebar"
+import Sidebar from './Sidebar'
 import Editor from './Editor'
 
 function App() {
   const [selectedDoc, setSelectedDoc] = useState('Chapter 1')
+  const [documents, setDocuments] = useState(['Chapter 1', 'Chapter 2'])
+  const [research, setResearch] = useState(['World Bible'])
+  const [characters, setCharacters] = useState(['Character 1'])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0f0f11' }}>
@@ -15,20 +18,40 @@ function App() {
 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 
-        <Sidebar selectedDoc={selectedDoc} setSelectedDoc={setSelectedDoc} />
+        <Sidebar
+          selectedDoc={selectedDoc}
+          setSelectedDoc={setSelectedDoc}
+          documents={documents}
+          setDocuments={setDocuments}
+          research={research}
+          setResearch={setResearch}
+          characters={characters}
+          setCharacters={setCharacters}
+        />
 
-        <Editor selectedDoc={selectedDoc} />
+        <Editor
+          selectedDoc={selectedDoc}
+          setSelectedDoc={setSelectedDoc}
+          documents={documents}
+          setDocuments={setDocuments}
+          research={research}
+          setResearch={setResearch}
+          characters={characters}
+          setCharacters={setCharacters}
+        />
 
         <Inspector />
 
       </div>
+
       <div style={{ height: '28px', background: '#0a0a0c', borderTop: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '16px' }}>
-  <span style={{ color: '#444', fontSize: '11px' }}>{selectedDoc}</span>
-  <span style={{ color: '#333', fontSize: '11px' }}>•</span>
-  <span style={{ color: '#444', fontSize: '11px' }}>Storytelling</span>
-  <div style={{ flex: 1 }} />
-  <span style={{ color: '#52b788', fontSize: '11px' }}>● Saved</span>
-</div>
+        <span style={{ color: '#444', fontSize: '11px' }}>{selectedDoc}</span>
+        <span style={{ color: '#333', fontSize: '11px' }}>•</span>
+        <span style={{ color: '#444', fontSize: '11px' }}>Storytelling</span>
+        <div style={{ flex: 1 }} />
+        <span style={{ color: '#52b788', fontSize: '11px' }}>● Saved</span>
+      </div>
+
     </div>
   )
 }

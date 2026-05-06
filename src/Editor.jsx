@@ -39,7 +39,7 @@ const editorStyles = `
   }
 `
 
-function Editor({ selectedDoc }) {
+function Editor({ selectedDoc, setSelectedDoc, documents, setDocuments, research, setResearch, characters, setCharacters }) {
   const [title, setTitle] = useState(selectedDoc)
   const [wordCount, setWordCount] = useState(0)
 
@@ -55,7 +55,7 @@ function Editor({ selectedDoc }) {
   })
 
   useEffect(() => {
-    setTitle(selectedDoc)
+    setTitle(selectedDoc.startsWith('Untitled') ? 'Untitled' : selectedDoc)
     if (editor) {
       const saved = localStorage.getItem(selectedDoc) || ''
       editor.commands.setContent(saved)
@@ -64,6 +64,23 @@ function Editor({ selectedDoc }) {
       setWordCount(count)
     }
   }, [selectedDoc, editor])
+
+  const handleTitleChange = (e) => {
+    const newTitle = e.target.value
+    setTitle(newTitle)
+    const allLists = [
+      { list: documents, setList: setDocuments },
+      { list: research, setList: setResearch },
+      { list: characters, setList: setCharacters },
+    ]
+    allLists.forEach(({ list, setList }) => {
+      if (list.includes(selectedDoc)) {
+        const updated = list.map(d => d === selectedDoc ? newTitle : d)
+        setList(updated)
+        setSelectedDoc(newTitle)
+      }
+    })
+  }
 
   const handleBold = (e) => {
     e.preventDefault()
@@ -93,7 +110,7 @@ function Editor({ selectedDoc }) {
         <div style={{ padding: '24px 48px 0', borderBottom: '1px solid #1a1a1d' }}>
           <input
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={handleTitleChange}
             style={{ background: 'transparent', border: 'none', outline: 'none', color: '#ffffff', fontSize: '22px', fontFamily: 'Georgia', width: '100%', marginBottom: '12px' }}
           />
         </div>
