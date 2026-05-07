@@ -1,23 +1,42 @@
 import { useState } from 'react'
 
-function Sidebar({ selectedDoc, setSelectedDoc, documents, setDocuments, research, setResearch, characters, setCharacters }) {
-  const [manuscriptOpen, setManuscriptOpen] = useState(true)
+const PROJECT_STRUCTURES = {
+  novel: {
+    folders: ['Manuscript', 'Research', 'Characters'],
+    defaultDoc: 'Untitled Chapter',
+  },
+  comic: {
+    folders: ['Issue 1', 'Research', 'Characters'],
+    defaultDoc: 'Untitled Page',
+  },
+  tv: {
+    folders: ['Season 1', 'Research', 'Characters'],
+    defaultDoc: 'Untitled Episode',
+  },
+  movie: {
+    folders: ['Act 1', 'Research', 'Characters'],
+    defaultDoc: 'Untitled Scene',
+  },
+  game: {
+    folders: ['Chapter 1', 'Research', 'Characters'],
+    defaultDoc: 'Untitled Quest',
+  },
+}
+
+function Sidebar({ selectedDoc, setSelectedDoc, documents, setDocuments, research, setResearch, characters, setCharacters, projectType, accentColor }) {
+  const [mainOpen, setMainOpen] = useState(true)
   const [researchOpen, setResearchOpen] = useState(false)
   const [charactersOpen, setCharactersOpen] = useState(false)
 
-  const addDocument = (list, setList) => {
-    const newDoc = 'Untitled'
-    const timestamp = Date.now()
-    const uniqueName = `${newDoc} ${timestamp}`
-    setList([...list, uniqueName])
-    setSelectedDoc(uniqueName)
-  }
+  const structure = PROJECT_STRUCTURES[projectType] || PROJECT_STRUCTURES.novel
+  const mainFolderName = structure.folders[0]
+  const defaultDoc = structure.defaultDoc
 
-  const renameDocument = (list, setList, oldName, newName) => {
-    if (!newName || newName === oldName) return
-    const updated = list.map(d => d === oldName ? newName : d)
-    setList(updated)
-    if (selectedDoc === oldName) setSelectedDoc(newName)
+  const addDocument = (list, setList) => {
+    const timestamp = Date.now()
+    const newDoc = `${defaultDoc}-${timestamp}`
+    setList([...list, newDoc])
+    setSelectedDoc(newDoc)
   }
 
   const deleteDocument = (list, setList, doc) => {
@@ -34,13 +53,14 @@ function Sidebar({ selectedDoc, setSelectedDoc, documents, setDocuments, researc
           display: 'flex',
           alignItems: 'center',
           padding: '4px 8px 4px 28px',
-          background: selectedDoc === doc ? '#1a1a2e' : 'transparent',
+          background: selectedDoc === doc ? accentColor + '22' : 'transparent',
           borderRadius: '4px',
+          borderLeft: selectedDoc === doc ? `2px solid ${accentColor}` : '2px solid transparent',
         }}>
         <div
           onClick={() => setSelectedDoc(doc)}
           style={{ flex: 1, color: selectedDoc === doc ? '#fff' : '#aaa', fontSize: '13px', cursor: 'pointer' }}>
-          📄 {doc.startsWith('Untitled') ? 'Untitled' : doc}
+          📄 {doc.includes('-') ? defaultDoc.replace('Untitled ', '') : doc}
         </div>
         <span
           onClick={() => deleteDocument(list, setList, doc)}
@@ -61,12 +81,12 @@ function Sidebar({ selectedDoc, setSelectedDoc, documents, setDocuments, researc
       <div style={{ padding: '6px', flex: 1, overflow: 'auto' }}>
 
         <div style={{ display: 'flex', alignItems: 'center', padding: '4px 8px' }}>
-          <div onClick={() => setManuscriptOpen(!manuscriptOpen)} style={{ color: '#ccc', fontSize: '13px', flex: 1, cursor: 'pointer' }}>
-            {manuscriptOpen ? '📂' : '📁'} Manuscript
+          <div onClick={() => setMainOpen(!mainOpen)} style={{ color: '#ccc', fontSize: '13px', flex: 1, cursor: 'pointer' }}>
+            {mainOpen ? '📂' : '📁'} {mainFolderName}
           </div>
           <span onClick={() => addDocument(documents, setDocuments)} style={{ color: '#555', fontSize: '16px', cursor: 'pointer' }}>+</span>
         </div>
-        {manuscriptOpen && renderDocs(documents, setDocuments)}
+        {mainOpen && renderDocs(documents, setDocuments)}
 
         <div style={{ display: 'flex', alignItems: 'center', padding: '4px 8px', marginTop: '4px' }}>
           <div onClick={() => setResearchOpen(!researchOpen)} style={{ color: '#ccc', fontSize: '13px', flex: 1, cursor: 'pointer' }}>
