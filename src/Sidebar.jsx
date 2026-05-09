@@ -1,109 +1,194 @@
 import { useState } from 'react'
 
-const PROJECT_STRUCTURES = {
-  novel: {
-    folders: ['Manuscript', 'Research', 'Characters'],
-    defaultDoc: 'Untitled Chapter',
-  },
-  comic: {
-    folders: ['Issue 1', 'Research', 'Characters'],
-    defaultDoc: 'Untitled Page',
-  },
-  tv: {
-    folders: ['Season 1', 'Research', 'Characters'],
-    defaultDoc: 'Untitled Episode',
-  },
-  movie: {
-    folders: ['Act 1', 'Research', 'Characters'],
-    defaultDoc: 'Untitled Scene',
-  },
-  game: {
-    folders: ['Chapter 1', 'Research', 'Characters'],
-    defaultDoc: 'Untitled Quest',
-  },
+const DEFAULT_STRUCTURES = {
+  novel: [
+    { id: 'act1', name: 'Act 1', open: true, docs: ['Untitled Chapter'] },
+    { id: 'research', name: 'Research', open: false, docs: [] },
+    { id: 'characters', name: 'Characters', open: false, docs: [] },
+  ],
+  comic: [
+    { id: 'issue1', name: 'Issue 1', open: true, docs: ['Untitled Page'] },
+    { id: 'research', name: 'Research', open: false, docs: [] },
+    { id: 'characters', name: 'Characters', open: false, docs: [] },
+  ],
+  tv: [
+    { id: 'season1', name: 'Season 1', open: true, docs: ['Untitled Episode'] },
+    { id: 'research', name: 'Research', open: false, docs: [] },
+    { id: 'characters', name: 'Characters', open: false, docs: [] },
+  ],
+  movie: [
+    { id: 'act1', name: 'Act 1', open: true, docs: ['Untitled Scene'] },
+    { id: 'research', name: 'Research', open: false, docs: [] },
+    { id: 'characters', name: 'Characters', open: false, docs: [] },
+  ],
+  game: [
+    { id: 'chapter1', name: 'Chapter 1', open: true, docs: ['Untitled Quest'] },
+    { id: 'research', name: 'Research', open: false, docs: [] },
+    { id: 'characters', name: 'Characters', open: false, docs: [] },
+  ],
 }
 
-function Sidebar({ selectedDoc, setSelectedDoc, documents, setDocuments, research, setResearch, characters, setCharacters, projectType, accentColor }) {
-  const [mainOpen, setMainOpen] = useState(true)
-  const [researchOpen, setResearchOpen] = useState(false)
-  const [charactersOpen, setCharactersOpen] = useState(false)
+function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor }) {
+  const [folders, setFolders] = useState(DEFAULT_STRUCTURES[projectType] || DEFAULT_STRUCTURES.novel)
+  const [editingItem, setEditingItem] = useState(null)
 
-  const structure = PROJECT_STRUCTURES[projectType] || PROJECT_STRUCTURES.novel
-  const mainFolderName = structure.folders[0]
-  const defaultDoc = structure.defaultDoc
-
-  const addDocument = (list, setList) => {
-    const timestamp = Date.now()
-    const newDoc = `${defaultDoc}-${timestamp}`
-    setList([...list, newDoc])
-    setSelectedDoc(newDoc)
-  }
-
-  const deleteDocument = (list, setList, doc) => {
-    const updated = list.filter(d => d !== doc)
-    setList(updated)
-    if (selectedDoc === doc) setSelectedDoc(updated[0] || '')
-  }
-
-  const renderDocs = (list, setList) => (
-    list.map((doc) => (
-      <div
-        key={doc}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          padding: '4px 8px 4px 28px',
-          background: selectedDoc === doc ? accentColor + '22' : 'transparent',
-          borderRadius: '4px',
-          borderLeft: selectedDoc === doc ? `2px solid ${accentColor}` : '2px solid transparent',
-        }}>
-        <div
-          onClick={() => setSelectedDoc(doc)}
-          style={{ flex: 1, color: selectedDoc === doc ? '#fff' : '#aaa', fontSize: '13px', cursor: 'pointer' }}>
-          📄 {doc.includes('-') ? defaultDoc.replace('Untitled ', '') : doc}
-        </div>
-        <span
-          onClick={() => deleteDocument(list, setList, doc)}
-          style={{ color: '#444', fontSize: '16px', cursor: 'pointer', paddingLeft: '4px' }}>
-          ×
-        </span>
-      </div>
+  const toggleFolder = (folderId) => {
+    setFolders(folders.map(f =>
+      f.id === folderId ? { ...f, open: !f.open } : f
     ))
-  )
+  }
+
+  const addFolder = () => {
+    const newFolder = {
+      id: `folder-${Date.now()}`,
+      name: 'Untitled Folder',
+      open: true,
+      docs: [],
+    }
+    setFolders([...folders, newFolder])
+    setEditingItem(newFolder.id)
+  }
+
+  const renameFolder = (folderId, newName) => {
+    setFolders(folders.map(f =>
+      f.id === folderId ? { ...f, name: newName } : f
+    ))
+  }
+
+  const deleteFolder = (folderId) => {
+    setFolders(folders.filter(f => f.id !== folderId))
+  }
+
+  const addDoc = (folderId) => {
+    const newDoc = `Untitled-${Date.now()}`
+    setFolders(folders.map(f =>
+      f.id === folderId ? { ...f, docs: [...f.docs, newDoc] } : f
+    ))
+    setSelectedDoc(newDoc)
+    setEditingItem(newDoc)
+  }
+
+  const renameDoc = (folderId, oldDoc, newName) => {
+    const finalName = newName.trim() || 'Untitled'
+    setFolders(folders.map(f =>
+      f.id === folderId
+        ? { ...f, docs: f.docs.map(d => d === oldDoc ? finalName : d) }
+        : f
+    ))
+    if (selectedDoc === oldDoc) setSelectedDoc(finalName)
+  }
+
+  const deleteDoc = (folderId, doc) => {
+    setFolders(folders.map(f =>
+      f.id === folderId ? { ...f, docs: f.docs.filter(d => d !== doc) } : f
+    ))
+    if (selectedDoc === doc) setSelectedDoc('')
+  }
+
+  const getDocName = (doc) => {
+    if (doc.startsWith('Untitled-') && !isNaN(doc.split('-').pop())) {
+      return 'Untitled'
+    }
+    return doc
+  }
 
   return (
     <div style={{ width: '250px', background: '#0c0c0e', borderRight: '1px solid #1a1a1d', height: '100%', display: 'flex', flexDirection: 'column' }}>
 
-      <div style={{ padding: '10px 16px', borderBottom: '1px solid #1a1a1d' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', borderBottom: '1px solid #1a1a1d' }}>
         <p style={{ color: '#555', fontSize: '11px', letterSpacing: '0.1em' }}>BINDER</p>
+        <button
+          onClick={addFolder}
+          style={{ background: 'none', border: 'none', color: '#555', fontSize: '18px', cursor: 'pointer' }}>
+          +
+        </button>
       </div>
 
       <div style={{ padding: '6px', flex: 1, overflow: 'auto' }}>
+        {folders.map(folder => (
+          <div key={folder.id}>
 
-        <div style={{ display: 'flex', alignItems: 'center', padding: '4px 8px' }}>
-          <div onClick={() => setMainOpen(!mainOpen)} style={{ color: '#ccc', fontSize: '13px', flex: 1, cursor: 'pointer' }}>
-            {mainOpen ? '📂' : '📁'} {mainFolderName}
+            <div
+              style={{ display: 'flex', alignItems: 'center', padding: '4px 8px', borderRadius: '4px' }}
+              onMouseEnter={e => e.currentTarget.style.background = '#141416'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+
+              <div onClick={() => toggleFolder(folder.id)} style={{ cursor: 'pointer', marginRight: '6px', color: '#666', fontSize: '12px' }}>
+                {folder.open ? '▼' : '▶'}
+              </div>
+
+              {editingItem === folder.id ? (
+                <input
+                  autoFocus
+                  defaultValue={folder.name}
+                  onBlur={(e) => {
+                    renameFolder(folder.id, e.target.value || folder.name)
+                    setEditingItem(null)
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      renameFolder(folder.id, e.target.value || folder.name)
+                      setEditingItem(null)
+                    }
+                  }}
+                  style={{ flex: 1, background: '#1a1a1d', border: 'none', outline: 'none', color: '#fff', fontSize: '13px', borderRadius: '3px', padding: '2px 6px' }}
+                />
+              ) : (
+                <div
+                  onDoubleClick={() => setEditingItem(folder.id)}
+                  onClick={() => toggleFolder(folder.id)}
+                  style={{ flex: 1, color: '#ccc', fontSize: '13px', cursor: 'pointer' }}>
+                  📁 {folder.name}
+                </div>
+              )}
+
+              <span onClick={() => addDoc(folder.id)} style={{ color: '#555', fontSize: '16px', cursor: 'pointer', padding: '0 4px' }}>+</span>
+              <span onClick={() => deleteFolder(folder.id)} style={{ color: '#444', fontSize: '16px', cursor: 'pointer' }}>×</span>
+            </div>
+
+            {folder.open && folder.docs.map(doc => (
+              <div
+                key={doc}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '4px 8px 4px 32px',
+                  background: selectedDoc === doc ? accentColor + '22' : 'transparent',
+                  borderRadius: '4px',
+                  borderLeft: selectedDoc === doc ? `2px solid ${accentColor}` : '2px solid transparent',
+                }}>
+
+                {editingItem === doc ? (
+                  <input
+                    autoFocus
+                    defaultValue={getDocName(doc)}
+                    onBlur={(e) => {
+                      renameDoc(folder.id, doc, e.target.value)
+                      setEditingItem(null)
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        renameDoc(folder.id, doc, e.target.value)
+                        setEditingItem(null)
+                      }
+                    }}
+                    style={{ flex: 1, background: '#1a1a1d', border: 'none', outline: 'none', color: '#fff', fontSize: '13px', borderRadius: '3px', padding: '2px 6px' }}
+                  />
+                ) : (
+                  <div
+                    onClick={() => setSelectedDoc(doc)}
+                    onDoubleClick={() => setEditingItem(doc)}
+                    style={{ flex: 1, color: selectedDoc === doc ? '#fff' : '#aaa', fontSize: '13px', cursor: 'pointer' }}>
+                    📄 {getDocName(doc)}
+                  </div>
+                )}
+
+                <span onClick={() => deleteDoc(folder.id, doc)} style={{ color: '#444', fontSize: '16px', cursor: 'pointer' }}>×</span>
+              </div>
+            ))}
+
           </div>
-          <span onClick={() => addDocument(documents, setDocuments)} style={{ color: '#555', fontSize: '16px', cursor: 'pointer' }}>+</span>
-        </div>
-        {mainOpen && renderDocs(documents, setDocuments)}
-
-        <div style={{ display: 'flex', alignItems: 'center', padding: '4px 8px', marginTop: '4px' }}>
-          <div onClick={() => setResearchOpen(!researchOpen)} style={{ color: '#ccc', fontSize: '13px', flex: 1, cursor: 'pointer' }}>
-            {researchOpen ? '📂' : '📁'} Research
-          </div>
-          <span onClick={() => addDocument(research, setResearch)} style={{ color: '#555', fontSize: '16px', cursor: 'pointer' }}>+</span>
-        </div>
-        {researchOpen && renderDocs(research, setResearch)}
-
-        <div style={{ display: 'flex', alignItems: 'center', padding: '4px 8px', marginTop: '4px' }}>
-          <div onClick={() => setCharactersOpen(!charactersOpen)} style={{ color: '#ccc', fontSize: '13px', flex: 1, cursor: 'pointer' }}>
-            {charactersOpen ? '📂' : '📁'} Characters
-          </div>
-          <span onClick={() => addDocument(characters, setCharacters)} style={{ color: '#555', fontSize: '16px', cursor: 'pointer' }}>+</span>
-        </div>
-        {charactersOpen && renderDocs(characters, setCharacters)}
-
+        ))}
       </div>
 
     </div>
