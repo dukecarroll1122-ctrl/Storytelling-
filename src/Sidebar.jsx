@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const DEFAULT_STRUCTURES = {
   novel: [
@@ -28,9 +28,13 @@ const DEFAULT_STRUCTURES = {
   ],
 }
 
-function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor }) {
-  const [folders, setFolders] = useState(DEFAULT_STRUCTURES[projectType] || DEFAULT_STRUCTURES.novel)
+function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor, folders, setFolders }) {
   const [editingItem, setEditingItem] = useState(null)
+  const [editingValue, setEditingValue] = useState('')
+
+  useEffect(() => {
+    setFolders(DEFAULT_STRUCTURES[projectType] || DEFAULT_STRUCTURES.novel)
+  }, [projectType])
 
   const toggleFolder = (folderId) => {
     setFolders(folders.map(f =>
@@ -47,16 +51,7 @@ function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor }) {
     }
     setFolders([...folders, newFolder])
     setEditingItem(newFolder.id)
-  }
-
-  const renameFolder = (folderId, newName) => {
-    setFolders(folders.map(f =>
-      f.id === folderId ? { ...f, name: newName } : f
-    ))
-  }
-
-  const deleteFolder = (folderId) => {
-    setFolders(folders.filter(f => f.id !== folderId))
+    setEditingValue('Untitled Folder')
   }
 
   const addDoc = (folderId) => {
@@ -66,16 +61,11 @@ function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor }) {
     ))
     setSelectedDoc(newDoc)
     setEditingItem(newDoc)
+    setEditingValue('Untitled')
   }
 
-  const renameDoc = (folderId, oldDoc, newName) => {
-    const finalName = newName.trim() || 'Untitled'
-    setFolders(folders.map(f =>
-      f.id === folderId
-        ? { ...f, docs: f.docs.map(d => d === oldDoc ? finalName : d) }
-        : f
-    ))
-    if (selectedDoc === oldDoc) setSelectedDoc(finalName)
+  const deleteFolder = (folderId) => {
+    setFolders(folders.filter(f => f.id !== folderId))
   }
 
   const deleteDoc = (folderId, doc) => {
@@ -85,6 +75,24 @@ function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor }) {
     if (selectedDoc === doc) setSelectedDoc('')
   }
 
+  const saveEdit = (type, folderId, oldValue) => {
+    const finalName = editingValue.trim() || 'Untitled'
+    if (type === 'folder') {
+      setFolders(folders.map(f =>
+        f.id === folderId ? { ...f, name: finalName } : f
+      ))
+    } else {
+      setFolders(folders.map(f =>
+        f.id === folderId
+          ? { ...f, docs: f.docs.map(d => d === oldValue ? finalName : d) }
+          : f
+      ))
+      if (selectedDoc === oldValue) setSelectedDoc(finalName)
+    }
+    setEditingItem(null)
+    setEditingValue('')
+  }
+
   const getDocName = (doc) => {
     if (doc.startsWith('Untitled-') && !isNaN(doc.split('-').pop())) {
       return 'Untitled'
@@ -92,16 +100,17 @@ function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor }) {
     return doc
   }
 
+  const startEditing = (id, currentName) => {
+    setEditingItem(id)
+    setEditingValue(currentName)
+  }
+
   return (
     <div style={{ width: '250px', background: '#0c0c0e', borderRight: '1px solid #1a1a1d', height: '100%', display: 'flex', flexDirection: 'column' }}>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', borderBottom: '1px solid #1a1a1d' }}>
         <p style={{ color: '#555', fontSize: '11px', letterSpacing: '0.1em' }}>BINDER</p>
-        <button
-          onClick={addFolder}
-          style={{ background: 'none', border: 'none', color: '#555', fontSize: '18px', cursor: 'pointer' }}>
-          +
-        </button>
+        <button onClick={addFolder} style={{ background: 'none', border: 'none', color: '#555', fontSize: '18px', cursor: 'pointer' }}>+</button>
       </div>
 
       <div style={{ padding: '6px', flex: 1, overflow: 'auto' }}>
@@ -120,23 +129,19 @@ function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor }) {
               {editingItem === folder.id ? (
                 <input
                   autoFocus
-                  defaultValue={folder.name}
-                  onBlur={(e) => {
-                    renameFolder(folder.id, e.target.value || folder.name)
-                    setEditingItem(null)
-                  }}
+                  value={editingValue}
+                  onChange={(e) => setEditingValue(e.target.value)}
+                  onBlur={() => saveEdit('folder', folder.id, folder.name)}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      renameFolder(folder.id, e.target.value || folder.name)
-                      setEditingItem(null)
-                    }
+                    if (e.key === 'Enter') saveEdit('folder', folder.id, folder.name)
+                    if (e.key === 'Escape') setEditingItem(null)
                   }}
                   style={{ flex: 1, background: '#1a1a1d', border: 'none', outline: 'none', color: '#fff', fontSize: '13px', borderRadius: '3px', padding: '2px 6px' }}
                 />
               ) : (
                 <div
-                  onDoubleClick={() => setEditingItem(folder.id)}
                   onClick={() => toggleFolder(folder.id)}
+                  onDoubleClick={() => startEditing(folder.id, folder.name)}
                   style={{ flex: 1, color: '#ccc', fontSize: '13px', cursor: 'pointer' }}>
                   📁 {folder.name}
                 </div>
@@ -161,23 +166,19 @@ function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor }) {
                 {editingItem === doc ? (
                   <input
                     autoFocus
-                    defaultValue={getDocName(doc)}
-                    onBlur={(e) => {
-                      renameDoc(folder.id, doc, e.target.value)
-                      setEditingItem(null)
-                    }}
+                    value={editingValue}
+                    onChange={(e) => setEditingValue(e.target.value)}
+                    onBlur={() => saveEdit('doc', folder.id, doc)}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        renameDoc(folder.id, doc, e.target.value)
-                        setEditingItem(null)
-                      }
+                      if (e.key === 'Enter') saveEdit('doc', folder.id, doc)
+                      if (e.key === 'Escape') setEditingItem(null)
                     }}
                     style={{ flex: 1, background: '#1a1a1d', border: 'none', outline: 'none', color: '#fff', fontSize: '13px', borderRadius: '3px', padding: '2px 6px' }}
                   />
                 ) : (
                   <div
                     onClick={() => setSelectedDoc(doc)}
-                    onDoubleClick={() => setEditingItem(doc)}
+                    onDoubleClick={() => startEditing(doc, getDocName(doc))}
                     style={{ flex: 1, color: selectedDoc === doc ? '#fff' : '#aaa', fontSize: '13px', cursor: 'pointer' }}>
                     📄 {getDocName(doc)}
                   </div>

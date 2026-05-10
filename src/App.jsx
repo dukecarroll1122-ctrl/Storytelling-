@@ -2,13 +2,13 @@ import { useState } from 'react'
 import Inspector from './Inspector'
 import Sidebar from './Sidebar'
 import Editor from './Editor'
+import Corkboard from './Corkboard'
 
 function App() {
-  const [selectedDoc, setSelectedDoc] = useState('Chapter 1')
+  const [selectedDoc, setSelectedDoc] = useState('Untitled Chapter')
   const [projectType, setProjectType] = useState('novel')
-  const [documents, setDocuments] = useState(['Chapter 1', 'Chapter 2'])
-  const [research, setResearch] = useState(['World Bible'])
-  const [characters, setCharacters] = useState(['Character 1'])
+  const [view, setView] = useState('editor')
+  const [folders, setFolders] = useState([])
 
   const projectTypes = [
     { id: 'novel', icon: '📖', label: 'Novel', color: '#e8a87c' },
@@ -45,6 +45,19 @@ function App() {
           </button>
         ))}
 
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: '4px', background: '#1a1a1d', borderRadius: '6px', padding: '2px' }}>
+          <button
+            onClick={() => setView('editor')}
+            style={{ background: view === 'editor' ? '#252528' : 'transparent', border: 'none', color: view === 'editor' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 10px', fontSize: '11px', cursor: 'pointer', fontFamily: 'inherit' }}>
+            Editor
+          </button>
+          <button
+            onClick={() => setView('corkboard')}
+            style={{ background: view === 'corkboard' ? '#252528' : 'transparent', border: 'none', color: view === 'corkboard' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 10px', fontSize: '11px', cursor: 'pointer', fontFamily: 'inherit' }}>
+            Corkboard
+          </button>
+        </div>
+
       </div>
 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
@@ -53,26 +66,27 @@ function App() {
           key={projectType}
           selectedDoc={selectedDoc}
           setSelectedDoc={setSelectedDoc}
-          documents={documents}
-          setDocuments={setDocuments}
-          research={research}
-          setResearch={setResearch}
-          characters={characters}
-          setCharacters={setCharacters}
           projectType={projectType}
           accentColor={currentType.color}
+          folders={folders}
+          setFolders={setFolders}
         />
 
-        <Editor
-          selectedDoc={selectedDoc}
-          setSelectedDoc={setSelectedDoc}
-          documents={documents}
-          setDocuments={setDocuments}
-          research={research}
-          setResearch={setResearch}
-          characters={characters}
-          setCharacters={setCharacters}
-        />
+        {view === 'editor' && (
+          <Editor
+            selectedDoc={selectedDoc}
+            setSelectedDoc={setSelectedDoc}
+          />
+        )}
+
+        {view === 'corkboard' && (
+          <Corkboard
+            selectedDoc={selectedDoc}
+            setSelectedDoc={setSelectedDoc}
+            accentColor={currentType.color}
+            folders={folders}
+          />
+        )}
 
         <Inspector />
 
@@ -82,8 +96,8 @@ function App() {
         <span style={{ color: currentType.color, fontSize: '11px' }}>{currentType.icon} {currentType.label}</span>
         <span style={{ color: '#333', fontSize: '11px' }}>•</span>
         <span style={{ color: '#444', fontSize: '11px' }}>
-  {selectedDoc.includes('-') && !isNaN(selectedDoc.split('-').pop()) ? 'Untitled' : selectedDoc}
-</span>
+          {selectedDoc.includes('-') && !isNaN(selectedDoc.split('-').pop()) ? 'Untitled' : selectedDoc}
+        </span>
         <div style={{ flex: 1 }} />
         <span style={{ color: '#52b788', fontSize: '11px' }}>● Saved</span>
       </div>
