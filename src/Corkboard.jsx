@@ -1,8 +1,8 @@
 function Corkboard({ selectedDoc, setSelectedDoc, accentColor, folders }) {
   const allDocs = folders.flatMap(folder =>
     folder.docs.map(doc => ({
-      name: doc.startsWith('Untitled-') && !isNaN(doc.split('-').pop()) ? 'Untitled' : doc,
-      rawName: doc,
+      id: doc.id,
+      name: doc.name,
       folder: folder.name,
     }))
   )
@@ -29,13 +29,13 @@ function Corkboard({ selectedDoc, setSelectedDoc, accentColor, folders }) {
 
         {allDocs.map((card, i) => (
           <div
-            key={card.rawName}
-            onClick={() => setSelectedDoc(card.rawName)}
+            key={card.id}
+            onClick={() => setSelectedDoc(card.id)}
             style={{
               width: '200px',
               minHeight: '160px',
               background: '#1c1915',
-              border: selectedDoc === card.rawName ? `1px solid ${accentColor}` : '1px solid #2a2520',
+              border: selectedDoc === card.id ? `1px solid ${accentColor}` : '1px solid #2a2520',
               borderTop: `3px solid ${accentColor}`,
               borderRadius: '4px',
               padding: '16px',

@@ -3,12 +3,16 @@ import Inspector from './Inspector'
 import Sidebar from './Sidebar'
 import Editor from './Editor'
 import Corkboard from './Corkboard'
+import Outline from './Outline'
+import Home from './Home'
 
 function App() {
-  const [selectedDoc, setSelectedDoc] = useState('Untitled Chapter')
+  const [screen, setScreen] = useState('home')
+  const [selectedDoc, setSelectedDoc] = useState('')
   const [projectType, setProjectType] = useState('novel')
   const [view, setView] = useState('editor')
   const [folders, setFolders] = useState([])
+  const [statuses, setStatuses] = useState({})
 
   const projectTypes = [
     { id: 'novel', icon: '📖', label: 'Novel', color: '#e8a87c' },
@@ -20,17 +24,39 @@ function App() {
 
   const currentType = projectTypes.find(p => p.id === projectType)
 
+  const handleSelectProject = (type) => {
+    setProjectType(type)
+    setFolders([])
+    setStatuses({})
+    setSelectedDoc('')
+    setView('editor')
+    setScreen('editor')
+  }
+
+  if (screen === 'home') {
+    return <Home onSelectProject={handleSelectProject} />
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0f0f11' }}>
 
       <div style={{ height: '48px', background: '#0c0c0e', borderBottom: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '8px' }}>
 
-        <p style={{ color: '#ffffff', fontSize: '14px', fontFamily: 'Georgia', marginRight: '16px' }}>Storytelling</p>
+        <p
+          onClick={() => setScreen('home')}
+          style={{ color: '#ffffff', fontSize: '14px', fontFamily: 'Georgia', marginRight: '16px', cursor: 'pointer' }}>
+          Storytelling
+        </p>
 
         {projectTypes.map(pt => (
           <button
             key={pt.id}
-            onClick={() => setProjectType(pt.id)}
+            onClick={() => {
+              setProjectType(pt.id)
+              setFolders([])
+              setStatuses({})
+              setSelectedDoc('')
+            }}
             style={{
               background: projectType === pt.id ? pt.color + '22' : 'transparent',
               border: projectType === pt.id ? `1px solid ${pt.color}55` : '1px solid transparent',
@@ -55,6 +81,11 @@ function App() {
             onClick={() => setView('corkboard')}
             style={{ background: view === 'corkboard' ? '#252528' : 'transparent', border: 'none', color: view === 'corkboard' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 10px', fontSize: '11px', cursor: 'pointer', fontFamily: 'inherit' }}>
             Corkboard
+          </button>
+          <button
+            onClick={() => setView('outline')}
+            style={{ background: view === 'outline' ? '#252528' : 'transparent', border: 'none', color: view === 'outline' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 10px', fontSize: '11px', cursor: 'pointer', fontFamily: 'inherit' }}>
+            Outline
           </button>
         </div>
 
@@ -88,6 +119,17 @@ function App() {
           />
         )}
 
+        {view === 'outline' && (
+          <Outline
+            selectedDoc={selectedDoc}
+            setSelectedDoc={setSelectedDoc}
+            accentColor={currentType.color}
+            folders={folders}
+            statuses={statuses}
+            setStatuses={setStatuses}
+          />
+        )}
+
         <Inspector />
 
       </div>
@@ -95,9 +137,7 @@ function App() {
       <div style={{ height: '28px', background: '#0a0a0c', borderTop: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '16px' }}>
         <span style={{ color: currentType.color, fontSize: '11px' }}>{currentType.icon} {currentType.label}</span>
         <span style={{ color: '#333', fontSize: '11px' }}>•</span>
-        <span style={{ color: '#444', fontSize: '11px' }}>
-          {selectedDoc.includes('-') && !isNaN(selectedDoc.split('-').pop()) ? 'Untitled' : selectedDoc}
-        </span>
+        <span style={{ color: '#444', fontSize: '11px' }}>{selectedDoc}</span>
         <div style={{ flex: 1 }} />
         <span style={{ color: '#52b788', fontSize: '11px' }}>● Saved</span>
       </div>

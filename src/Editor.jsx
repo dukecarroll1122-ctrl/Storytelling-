@@ -55,15 +55,15 @@ function Editor({ selectedDoc, setSelectedDoc, documents, setDocuments, research
   })
 
   useEffect(() => {
-    setTitle(selectedDoc.startsWith('Untitled') ? 'Untitled' : selectedDoc)
-    if (editor) {
-      const saved = localStorage.getItem(selectedDoc) || ''
-      editor.commands.setContent(saved)
-      const text = editor.state.doc.textContent.trim()
-      const count = text === '' ? 0 : text.split(/\s+/).length
-      setWordCount(count)
-    }
-  }, [selectedDoc, editor])
+  setTitle(selectedDoc)
+  if (editor) {
+    const saved = localStorage.getItem(selectedDoc) || ''
+    editor.commands.setContent(saved)
+    const text = editor.state.doc.textContent.trim()
+    const count = text === '' ? 0 : text.split(/\s+/).length
+    setWordCount(count)
+  }
+}, [selectedDoc, editor])
 
   const handleTitleChange = (e) => {
     const newTitle = e.target.value
