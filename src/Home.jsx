@@ -1,4 +1,9 @@
+import { useState } from 'react'
+
 function Home({ onSelectProject }) {
+  const [selectedType, setSelectedType] = useState(null)
+  const [projectName, setProjectName] = useState('')
+
   const projectTypes = [
     { id: 'novel', icon: '📖', label: 'Novel', description: 'Chapters, acts and scenes', color: '#e8a87c' },
     { id: 'comic', icon: '💥', label: 'Comic', description: 'Issues, pages and panels', color: '#f4a261' },
@@ -6,6 +11,13 @@ function Home({ onSelectProject }) {
     { id: 'movie', icon: '🎬', label: 'Movie', description: 'Acts, sequences and scenes', color: '#c77dff' },
     { id: 'game', icon: '🎮', label: 'Game', description: 'Chapters, quests and dialogue', color: '#52b788' },
   ]
+
+  const currentType = projectTypes.find(p => p.id === selectedType)
+
+  const handleStart = () => {
+    const name = projectName.trim() || `My ${currentType.label}`
+    onSelectProject(selectedType, name)
+  }
 
   return (
     <div style={{ height: '100vh', background: '#0f0f11', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
@@ -15,42 +27,82 @@ function Home({ onSelectProject }) {
           Storytelling
         </h1>
         <p style={{ color: '#555', fontSize: '14px' }}>
-          What are you working on?
+          {selectedType ? `Name your ${currentType.label.toLowerCase()}` : 'What are you working on?'}
         </p>
       </div>
 
-      <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center', maxWidth: '700px' }}>
-        {projectTypes.map(pt => (
-          <div
-            key={pt.id}
-            onClick={() => onSelectProject(pt.id)}
+      {!selectedType ? (
+        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center', maxWidth: '700px' }}>
+          {projectTypes.map(pt => (
+            <div
+              key={pt.id}
+              onClick={() => setSelectedType(pt.id)}
+              style={{
+                width: '180px',
+                padding: '24px 16px',
+                background: '#0c0c0e',
+                border: '1px solid #1a1a1d',
+                borderTop: `3px solid ${pt.color}`,
+                borderRadius: '8px',
+                cursor: 'pointer',
+                textAlign: 'center',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = '#141416'
+                e.currentTarget.style.transform = 'translateY(-4px)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = '#0c0c0e'
+                e.currentTarget.style.transform = 'translateY(0)'
+              }}>
+              <div style={{ fontSize: '32px', marginBottom: '12px' }}>{pt.icon}</div>
+              <div style={{ color: pt.color, fontSize: '14px', fontWeight: 'bold', marginBottom: '6px' }}>{pt.label}</div>
+              <div style={{ color: '#555', fontSize: '11px', lineHeight: '1.5' }}>{pt.description}</div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>{currentType.icon}</div>
+          <input
+            autoFocus
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleStart()
+              if (e.key === 'Escape') setSelectedType(null)
+            }}
+            placeholder={`My ${currentType.label}`}
             style={{
-              width: '180px',
-              padding: '24px 16px',
               background: '#0c0c0e',
-              border: `1px solid #1a1a1d`,
-              borderTop: `3px solid ${pt.color}`,
+              border: `1px solid ${currentType.color}55`,
               borderRadius: '8px',
-              cursor: 'pointer',
+              color: '#ffffff',
+              fontSize: '22px',
+              fontFamily: 'Georgia',
+              padding: '12px 24px',
+              outline: 'none',
               textAlign: 'center',
-              transition: 'all 0.2s',
+              width: '320px',
+              marginBottom: '24px',
+              display: 'block',
             }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = '#141416'
-              e.currentTarget.style.borderColor = pt.color
-              e.currentTarget.style.transform = 'translateY(-4px)'
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = '#0c0c0e'
-              e.currentTarget.style.borderColor = '#1a1a1d'
-              e.currentTarget.style.transform = 'translateY(0)'
-            }}>
-            <div style={{ fontSize: '32px', marginBottom: '12px' }}>{pt.icon}</div>
-            <div style={{ color: pt.color, fontSize: '14px', fontWeight: 'bold', marginBottom: '6px' }}>{pt.label}</div>
-            <div style={{ color: '#555', fontSize: '11px', lineHeight: '1.5' }}>{pt.description}</div>
+          />
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+            <button
+              onClick={() => setSelectedType(null)}
+              style={{ background: 'transparent', border: '1px solid #2a2a2e', color: '#555', borderRadius: '6px', padding: '10px 24px', cursor: 'pointer', fontSize: '13px' }}>
+              Back
+            </button>
+            <button
+              onClick={handleStart}
+              style={{ background: currentType.color + '22', border: `1px solid ${currentType.color}55`, color: currentType.color, borderRadius: '6px', padding: '10px 24px', cursor: 'pointer', fontSize: '13px' }}>
+              Start Writing →
+            </button>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
 
     </div>
   )

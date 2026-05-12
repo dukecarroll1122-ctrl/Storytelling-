@@ -10,6 +10,7 @@ function App() {
   const [screen, setScreen] = useState('home')
   const [selectedDoc, setSelectedDoc] = useState('')
   const [projectType, setProjectType] = useState('novel')
+  const [projectName, setProjectName] = useState('My Project')
   const [view, setView] = useState('editor')
   const [folders, setFolders] = useState([])
   const [statuses, setStatuses] = useState({})
@@ -24,8 +25,17 @@ function App() {
 
   const currentType = projectTypes.find(p => p.id === projectType)
 
-  const handleSelectProject = (type) => {
+  const getDocName = () => {
+    for (const folder of folders) {
+      const doc = folder.docs.find(d => d.id === selectedDoc)
+      if (doc) return doc.name
+    }
+    return ''
+  }
+
+  const handleSelectProject = (type, name) => {
     setProjectType(type)
+    setProjectName(name)
     setFolders([])
     setStatuses({})
     setSelectedDoc('')
@@ -45,7 +55,7 @@ function App() {
         <p
           onClick={() => setScreen('home')}
           style={{ color: '#ffffff', fontSize: '14px', fontFamily: 'Georgia', marginRight: '16px', cursor: 'pointer' }}>
-          Storytelling
+          {projectName}
         </p>
 
         {projectTypes.map(pt => (
@@ -107,6 +117,9 @@ function App() {
           <Editor
             selectedDoc={selectedDoc}
             setSelectedDoc={setSelectedDoc}
+            docName={getDocName()}
+            folders={folders}
+            setFolders={setFolders}
           />
         )}
 
@@ -137,7 +150,7 @@ function App() {
       <div style={{ height: '28px', background: '#0a0a0c', borderTop: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '16px' }}>
         <span style={{ color: currentType.color, fontSize: '11px' }}>{currentType.icon} {currentType.label}</span>
         <span style={{ color: '#333', fontSize: '11px' }}>•</span>
-        <span style={{ color: '#444', fontSize: '11px' }}>{selectedDoc}</span>
+        <span style={{ color: '#444', fontSize: '11px' }}>{projectName}</span>
         <div style={{ flex: 1 }} />
         <span style={{ color: '#52b788', fontSize: '11px' }}>● Saved</span>
       </div>

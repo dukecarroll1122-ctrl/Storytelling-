@@ -39,8 +39,8 @@ const editorStyles = `
   }
 `
 
-function Editor({ selectedDoc, setSelectedDoc, documents, setDocuments, research, setResearch, characters, setCharacters }) {
-  const [title, setTitle] = useState(selectedDoc)
+function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders }) {
+  const [title, setTitle] = useState(docName || '')
   const [wordCount, setWordCount] = useState(0)
 
   const editor = useEditor({
@@ -55,31 +55,27 @@ function Editor({ selectedDoc, setSelectedDoc, documents, setDocuments, research
   })
 
   useEffect(() => {
-  setTitle(selectedDoc)
-  if (editor) {
-    const saved = localStorage.getItem(selectedDoc) || ''
-    editor.commands.setContent(saved)
-    const text = editor.state.doc.textContent.trim()
-    const count = text === '' ? 0 : text.split(/\s+/).length
-    setWordCount(count)
-  }
-}, [selectedDoc, editor])
+    setTitle(docName || '')
+    if (editor) {
+      const saved = localStorage.getItem(selectedDoc) || ''
+      editor.commands.setContent(saved)
+      const text = editor.state.doc.textContent.trim()
+      const count = text === '' ? 0 : text.split(/\s+/).length
+      setWordCount(count)
+    }
+  }, [selectedDoc, editor, docName])
 
   const handleTitleChange = (e) => {
     const newTitle = e.target.value
     setTitle(newTitle)
-    const allLists = [
-      { list: documents, setList: setDocuments },
-      { list: research, setList: setResearch },
-      { list: characters, setList: setCharacters },
-    ]
-    allLists.forEach(({ list, setList }) => {
-      if (list.includes(selectedDoc)) {
-        const updated = list.map(d => d === selectedDoc ? newTitle : d)
-        setList(updated)
-        setSelectedDoc(newTitle)
-      }
-    })
+    if (setFolders && folders) {
+      setFolders(folders.map(f => ({
+        ...f,
+        docs: f.docs.map(d =>
+          d.id === selectedDoc ? { ...d, name: newTitle } : d
+        )
+      })))
+    }
   }
 
   const handleBold = (e) => {
@@ -111,6 +107,7 @@ function Editor({ selectedDoc, setSelectedDoc, documents, setDocuments, research
           <input
             value={title}
             onChange={handleTitleChange}
+            placeholder="Untitled"
             style={{ background: 'transparent', border: 'none', outline: 'none', color: '#ffffff', fontSize: '22px', fontFamily: 'Georgia', width: '100%', marginBottom: '12px' }}
           />
         </div>
