@@ -33,9 +33,10 @@ function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor, folder
   const [editingValue, setEditingValue] = useState('')
 
   useEffect(() => {
+  if (folders.length === 0) {
     setFolders(DEFAULT_STRUCTURES[projectType] || DEFAULT_STRUCTURES.novel)
-    setSelectedDoc('')
-  }, [projectType])
+  }
+}, [projectType])
 
   const toggleFolder = (folderId) => {
     setFolders(folders.map(f =>

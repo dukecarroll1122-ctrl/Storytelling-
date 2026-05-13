@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Inspector from './Inspector'
 import Sidebar from './Sidebar'
 import Editor from './Editor'
@@ -11,6 +11,7 @@ function App() {
   const [selectedDoc, setSelectedDoc] = useState('')
   const [projectType, setProjectType] = useState('novel')
   const [projectName, setProjectName] = useState('My Project')
+  const [projectId, setProjectId] = useState(null)
   const [view, setView] = useState('editor')
   const [folders, setFolders] = useState([])
   const [statuses, setStatuses] = useState({})
@@ -33,11 +34,36 @@ function App() {
     return ''
   }
 
-  const handleSelectProject = (type, name) => {
-    setProjectType(type)
-    setProjectName(name)
-    setFolders([])
-    setStatuses({})
+  useEffect(() => {
+  if (!projectId) return
+  const projects = JSON.parse(localStorage.getItem('projects') || '[]')
+  const updated = projects.filter(p => p.id !== projectId)
+  updated.unshift({
+    id: projectId,
+    name: projectName,
+    type: projectType,
+    folders: folders,
+    statuses: statuses,
+    lastEdited: new Date().toLocaleDateString(),
+  })
+  localStorage.setItem('projects', JSON.stringify(updated))
+}, [folders, statuses, projectName, projectId])
+
+  const handleSelectProject = (type, name, existingProject) => {
+    if (existingProject) {
+      setProjectId(existingProject.id)
+      setProjectType(existingProject.type)
+      setProjectName(existingProject.name)
+      setFolders(existingProject.folders || [])
+      setStatuses(existingProject.statuses || {})
+    } else {
+      const newId = `project-${Date.now()}`
+      setProjectId(newId)
+      setProjectType(type)
+      setProjectName(name)
+      setFolders([])
+      setStatuses({})
+    }
     setSelectedDoc('')
     setView('editor')
     setScreen('editor')
@@ -104,7 +130,7 @@ function App() {
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 
         <Sidebar
-          key={projectType}
+          key={projectId}
           selectedDoc={selectedDoc}
           setSelectedDoc={setSelectedDoc}
           projectType={projectType}
