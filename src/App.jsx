@@ -74,30 +74,30 @@ function App() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0f0f11' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0f0f11', fontFamily: 'Inter, -apple-system, sans-serif' }}>
 
       <div style={{ height: '48px', background: '#0c0c0e', borderBottom: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '8px' }}>
 
         <p
           onClick={() => setScreen('home')}
-          style={{ color: '#ffffff', fontSize: '14px', fontFamily: 'Georgia', cursor: 'pointer' }}>
+          style={{ color: '#ffffff', fontSize: '13px', fontFamily: 'Inter, sans-serif', fontWeight: '500', cursor: 'pointer', letterSpacing: '0.01em' }}>
           {currentType.icon} {projectName}
         </p>
 
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: '4px', background: '#1a1a1d', borderRadius: '6px', padding: '2px' }}>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: '2px', background: '#141416', borderRadius: '6px', padding: '2px' }}>
           <button
             onClick={() => setView('editor')}
-            style={{ background: view === 'editor' ? '#252528' : 'transparent', border: 'none', color: view === 'editor' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 10px', fontSize: '11px', cursor: 'pointer', fontFamily: 'inherit' }}>
+            style={{ background: view === 'editor' ? '#1e1e22' : 'transparent', border: 'none', color: view === 'editor' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
             Editor
           </button>
           <button
             onClick={() => setView('corkboard')}
-            style={{ background: view === 'corkboard' ? '#252528' : 'transparent', border: 'none', color: view === 'corkboard' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 10px', fontSize: '11px', cursor: 'pointer', fontFamily: 'inherit' }}>
+            style={{ background: view === 'corkboard' ? '#1e1e22' : 'transparent', border: 'none', color: view === 'corkboard' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
             Corkboard
           </button>
           <button
             onClick={() => setView('outline')}
-            style={{ background: view === 'outline' ? '#252528' : 'transparent', border: 'none', color: view === 'outline' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 10px', fontSize: '11px', cursor: 'pointer', fontFamily: 'inherit' }}>
+            style={{ background: view === 'outline' ? '#1e1e22' : 'transparent', border: 'none', color: view === 'outline' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
             Outline
           </button>
         </div>
@@ -151,8 +151,8 @@ function App() {
       </div>
 
       <div style={{ height: '28px', background: '#0a0a0c', borderTop: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '16px' }}>
-        <span style={{ color: currentType.color, fontSize: '11px' }}>{currentType.icon} {currentType.label}</span>
-        <span style={{ color: '#333', fontSize: '11px' }}>•</span>
+        <span style={{ color: currentType.color, fontSize: '11px', fontWeight: '500' }}>{currentType.icon} {currentType.label}</span>
+        <span style={{ color: '#2a2a2e', fontSize: '11px' }}>•</span>
         <span style={{ color: '#444', fontSize: '11px' }}>{projectName}</span>
         <div style={{ flex: 1 }} />
         <span style={{ color: '#52b788', fontSize: '11px' }}>● Saved</span>
