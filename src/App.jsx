@@ -35,19 +35,19 @@ function App() {
   }
 
   useEffect(() => {
-  if (!projectId) return
-  const projects = JSON.parse(localStorage.getItem('projects') || '[]')
-  const updated = projects.filter(p => p.id !== projectId)
-  updated.unshift({
-    id: projectId,
-    name: projectName,
-    type: projectType,
-    folders: folders,
-    statuses: statuses,
-    lastEdited: new Date().toLocaleDateString(),
-  })
-  localStorage.setItem('projects', JSON.stringify(updated))
-}, [folders, statuses, projectName, projectId])
+    if (!projectId) return
+    const projects = JSON.parse(localStorage.getItem('projects') || '[]')
+    const updated = projects.filter(p => p.id !== projectId)
+    updated.unshift({
+      id: projectId,
+      name: projectName,
+      type: projectType,
+      folders: folders,
+      statuses: statuses,
+      lastEdited: new Date().toLocaleDateString(),
+    })
+    localStorage.setItem('projects', JSON.stringify(updated))
+  }, [folders, statuses, projectName, projectId])
 
   const handleSelectProject = (type, name, existingProject) => {
     if (existingProject) {
@@ -80,32 +80,9 @@ function App() {
 
         <p
           onClick={() => setScreen('home')}
-          style={{ color: '#ffffff', fontSize: '14px', fontFamily: 'Georgia', marginRight: '16px', cursor: 'pointer' }}>
-          {projectName}
+          style={{ color: '#ffffff', fontSize: '14px', fontFamily: 'Georgia', cursor: 'pointer' }}>
+          {currentType.icon} {projectName}
         </p>
-
-        {projectTypes.map(pt => (
-          <button
-            key={pt.id}
-            onClick={() => {
-              setProjectType(pt.id)
-              setFolders([])
-              setStatuses({})
-              setSelectedDoc('')
-            }}
-            style={{
-              background: projectType === pt.id ? pt.color + '22' : 'transparent',
-              border: projectType === pt.id ? `1px solid ${pt.color}55` : '1px solid transparent',
-              color: projectType === pt.id ? pt.color : '#555',
-              borderRadius: '4px',
-              padding: '3px 8px',
-              fontSize: '11px',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}>
-            {pt.icon} {pt.label}
-          </button>
-        ))}
 
         <div style={{ marginLeft: 'auto', display: 'flex', gap: '4px', background: '#1a1a1d', borderRadius: '6px', padding: '2px' }}>
           <button
