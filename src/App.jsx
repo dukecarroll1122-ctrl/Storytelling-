@@ -15,6 +15,7 @@ function App() {
   const [view, setView] = useState('editor')
   const [folders, setFolders] = useState([])
   const [statuses, setStatuses] = useState({})
+  const [docData, setDocData] = useState({})
 
   const projectTypes = [
     { id: 'novel', icon: '📖', label: 'Novel', color: '#e8a87c' },
@@ -44,10 +45,11 @@ function App() {
       type: projectType,
       folders: folders,
       statuses: statuses,
+      docData: docData,
       lastEdited: new Date().toLocaleDateString(),
     })
     localStorage.setItem('projects', JSON.stringify(updated))
-  }, [folders, statuses, projectName, projectId])
+  }, [folders, statuses, projectName, projectId, docData])
 
   const handleSelectProject = (type, name, existingProject) => {
     if (existingProject) {
@@ -56,6 +58,7 @@ function App() {
       setProjectName(existingProject.name)
       setFolders(existingProject.folders || [])
       setStatuses(existingProject.statuses || {})
+      setDocData(existingProject.docData || {})
     } else {
       const newId = `project-${Date.now()}`
       setProjectId(newId)
@@ -63,6 +66,7 @@ function App() {
       setProjectName(name)
       setFolders([])
       setStatuses({})
+      setDocData({})
     }
     setSelectedDoc('')
     setView('editor')
@@ -123,6 +127,8 @@ function App() {
             docName={getDocName()}
             folders={folders}
             setFolders={setFolders}
+            docData={docData}
+            setDocData={setDocData}
           />
         )}
 
@@ -132,6 +138,7 @@ function App() {
             setSelectedDoc={setSelectedDoc}
             accentColor={currentType.color}
             folders={folders}
+            docData={docData}
           />
         )}
 
@@ -146,7 +153,11 @@ function App() {
           />
         )}
 
-        <Inspector />
+        <Inspector
+          selectedDoc={selectedDoc}
+          docData={docData}
+          setDocData={setDocData}
+        />
 
       </div>
 
