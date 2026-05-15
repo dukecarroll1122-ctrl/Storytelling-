@@ -39,7 +39,7 @@ const editorStyles = `
   }
 `
 
-function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders }) {
+function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, docData, setDocData }) {
   const [title, setTitle] = useState(docName || '')
   const [wordCount, setWordCount] = useState(0)
 
@@ -51,6 +51,15 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders }) {
       const text = editor.state.doc.textContent.trim()
       const count = text === '' ? 0 : text.split(/\s+/).length
       setWordCount(count)
+      if (selectedDoc && setDocData) {
+        setDocData(prev => ({
+          ...prev,
+          [selectedDoc]: {
+            ...prev[selectedDoc],
+            wordCount: count,
+          }
+        }))
+      }
     },
   })
 
@@ -108,7 +117,7 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders }) {
             value={title}
             onChange={handleTitleChange}
             placeholder="Untitled"
-            style={{ background: 'transparent', border: 'none', outline: 'none', color: '#ffffff', fontSize: '22px', fontFamily: 'Georgia', width: '100%', marginBottom: '12px' }}
+            style={{ background: 'transparent', border: 'none', outline: 'none', color: '#ffffff', fontSize: '22px', fontFamily: 'Georgia, serif', width: '100%', marginBottom: '12px' }}
           />
         </div>
 

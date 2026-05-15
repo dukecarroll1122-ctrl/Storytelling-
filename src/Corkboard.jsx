@@ -5,6 +5,7 @@ function Corkboard({ selectedDoc, setSelectedDoc, accentColor, folders, docData 
       name: doc.name,
       folder: folder.name,
       synopsis: docData[doc.id]?.synopsis || '',
+      wordCount: docData[doc.id]?.wordCount || 0,
     }))
   )
 
@@ -31,9 +32,7 @@ function Corkboard({ selectedDoc, setSelectedDoc, accentColor, folders, docData 
         {allDocs.map((card, i) => (
           <div
             key={card.id}
-            onClick={() => {
-              setSelectedDoc(card.id)
-            }}
+            onClick={() => setSelectedDoc(card.id)}
             style={{
               width: '200px',
               minHeight: '180px',
@@ -46,6 +45,8 @@ function Corkboard({ selectedDoc, setSelectedDoc, accentColor, folders, docData 
               boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
               transform: `rotate(${(i % 3 - 1) * 0.8}deg)`,
               transition: 'transform 0.2s, box-shadow 0.2s',
+              display: 'flex',
+              flexDirection: 'column',
             }}
             onMouseEnter={e => {
               e.currentTarget.style.transform = 'rotate(0deg) scale(1.02)'
@@ -64,8 +65,12 @@ function Corkboard({ selectedDoc, setSelectedDoc, accentColor, folders, docData 
               {card.name}
             </div>
 
-            <div style={{ fontSize: '12px', color: card.synopsis ? '#888' : '#444', fontFamily: 'Georgia, serif', lineHeight: '1.6', fontStyle: card.synopsis ? 'normal' : 'italic' }}>
-              {card.synopsis || 'No synopsis yet — add one in the Inspector.'}
+            <div style={{ fontSize: '12px', color: card.synopsis ? '#888' : '#444', fontFamily: 'Georgia, serif', lineHeight: '1.6', fontStyle: card.synopsis ? 'normal' : 'italic', flex: 1 }}>
+              {card.synopsis || 'No synopsis yet...'}
+            </div>
+
+            <div style={{ marginTop: '12px', paddingTop: '8px', borderTop: '1px solid #2a2520', fontSize: '11px', color: '#555', fontFamily: 'Inter, sans-serif' }}>
+              {card.wordCount > 0 ? `${card.wordCount} words` : 'No content yet'}
             </div>
 
           </div>
