@@ -150,6 +150,7 @@ function App() {
             folders={folders}
             statuses={statuses}
             setStatuses={setStatuses}
+            docData={docData}
           />
         )}
 
