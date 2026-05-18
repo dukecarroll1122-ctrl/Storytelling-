@@ -48,13 +48,14 @@ function Home({ onSelectProject }) {
 
   return (
     <div style={{
-      height: '100vh',
+      minHeight: '100vh',
       background: '#0f0f11',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '32px',
+      padding: '60px 32px 32px',
+      overflowY: 'auto',
       fontFamily: 'Inter, -apple-system, sans-serif',
     }}>
 
@@ -105,7 +106,7 @@ function Home({ onSelectProject }) {
                 onMouseEnter={e => {
                   e.currentTarget.style.background = '#141416'
                   e.currentTarget.style.transform = 'translateY(-3px)'
-                  e.currentTarget.style.boxShadow = `0 8px 24px rgba(0,0,0,0.4)`
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.4)'
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.background = '#0c0c0e'
@@ -113,10 +114,10 @@ function Home({ onSelectProject }) {
                   e.currentTarget.style.boxShadow = 'none'
                 }}>
                 <div style={{ fontSize: '28px', marginBottom: '10px' }}>{pt.icon}</div>
-                <div style={{ color: pt.color, fontSize: '12px', fontWeight: '600', marginBottom: '4px', letterSpacing: '0.02em' }}>
+                <div style={{ color: pt.color, fontSize: '12px', fontWeight: '600', marginBottom: '4px' }}>
                   {pt.label}
                 </div>
-                <div style={{ color: '#444', fontSize: '11px', lineHeight: '1.5', fontWeight: '400' }}>
+                <div style={{ color: '#444', fontSize: '11px', lineHeight: '1.5' }}>
                   {pt.description}
                 </div>
               </div>

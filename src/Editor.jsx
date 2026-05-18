@@ -39,15 +39,18 @@ const editorStyles = `
   }
 `
 
-function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, docData, setDocData }) {
+function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, docData, setDocData, projectId }) {
   const [title, setTitle] = useState(docName || '')
   const [wordCount, setWordCount] = useState(0)
+  
+  const storageKey = projectId && selectedDoc ? `${projectId}-${selectedDoc}` : selectedDoc
+  
 
   const editor = useEditor({
     extensions: [StarterKit],
-    content: localStorage.getItem(selectedDoc) || '',
+    content: localStorage.getItem(storageKey) || '',
     onUpdate: ({ editor }) => {
-      localStorage.setItem(selectedDoc, editor.getHTML())
+      localStorage.setItem(storageKey, editor.getHTML())
       const text = editor.state.doc.textContent.trim()
       const count = text === '' ? 0 : text.split(/\s+/).length
       setWordCount(count)
@@ -66,13 +69,13 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
   useEffect(() => {
     setTitle(docName || '')
     if (editor) {
-      const saved = localStorage.getItem(selectedDoc) || ''
+      const saved = localStorage.getItem(storageKey) || ''
       editor.commands.setContent(saved)
       const text = editor.state.doc.textContent.trim()
       const count = text === '' ? 0 : text.split(/\s+/).length
       setWordCount(count)
     }
-  }, [selectedDoc, editor, docName])
+  }, [selectedDoc, editor, docName, storageKey])
 
   const handleTitleChange = (e) => {
     const newTitle = e.target.value

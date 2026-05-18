@@ -1,42 +1,8 @@
-import { useEffect, useState } from 'react'
-
-const DEFAULT_STRUCTURES = {
-  novel: [
-    { id: 'act1', name: 'Act 1', open: true, docs: [{ id: 'doc-1', name: 'Untitled Chapter' }] },
-    { id: 'research', name: 'Research', open: false, docs: [] },
-    { id: 'characters', name: 'Characters', open: false, docs: [] },
-  ],
-  comic: [
-    { id: 'issue1', name: 'Issue 1', open: true, docs: [{ id: 'doc-1', name: 'Untitled Page' }] },
-    { id: 'research', name: 'Research', open: false, docs: [] },
-    { id: 'characters', name: 'Characters', open: false, docs: [] },
-  ],
-  tv: [
-    { id: 'season1', name: 'Season 1', open: true, docs: [{ id: 'doc-1', name: 'Untitled Episode' }] },
-    { id: 'research', name: 'Research', open: false, docs: [] },
-    { id: 'characters', name: 'Characters', open: false, docs: [] },
-  ],
-  movie: [
-    { id: 'act1', name: 'Act 1', open: true, docs: [{ id: 'doc-1', name: 'Untitled Scene' }] },
-    { id: 'research', name: 'Research', open: false, docs: [] },
-    { id: 'characters', name: 'Characters', open: false, docs: [] },
-  ],
-  game: [
-    { id: 'chapter1', name: 'Chapter 1', open: true, docs: [{ id: 'doc-1', name: 'Untitled Quest' }] },
-    { id: 'research', name: 'Research', open: false, docs: [] },
-    { id: 'characters', name: 'Characters', open: false, docs: [] },
-  ],
-}
+import { useState } from 'react'
 
 function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor, folders, setFolders }) {
   const [editingItem, setEditingItem] = useState(null)
   const [editingValue, setEditingValue] = useState('')
-
-  useEffect(() => {
-  if (folders.length === 0) {
-    setFolders(DEFAULT_STRUCTURES[projectType] || DEFAULT_STRUCTURES.novel)
-  }
-}, [projectType])
 
   const toggleFolder = (folderId) => {
     setFolders(folders.map(f =>

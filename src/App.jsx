@@ -6,6 +6,34 @@ import Corkboard from './Corkboard'
 import Outline from './Outline'
 import Home from './Home'
 
+const DEFAULT_STRUCTURES = {
+  novel: [
+    { id: 'act1', name: 'Act 1', open: true, docs: [{ id: 'doc-1', name: 'Untitled Chapter' }] },
+    { id: 'research', name: 'Research', open: false, docs: [] },
+    { id: 'characters', name: 'Characters', open: false, docs: [] },
+  ],
+  comic: [
+    { id: 'issue1', name: 'Issue 1', open: true, docs: [{ id: 'doc-1', name: 'Untitled Page' }] },
+    { id: 'research', name: 'Research', open: false, docs: [] },
+    { id: 'characters', name: 'Characters', open: false, docs: [] },
+  ],
+  tv: [
+    { id: 'season1', name: 'Season 1', open: true, docs: [{ id: 'doc-1', name: 'Untitled Episode' }] },
+    { id: 'research', name: 'Research', open: false, docs: [] },
+    { id: 'characters', name: 'Characters', open: false, docs: [] },
+  ],
+  movie: [
+    { id: 'act1', name: 'Act 1', open: true, docs: [{ id: 'doc-1', name: 'Untitled Scene' }] },
+    { id: 'research', name: 'Research', open: false, docs: [] },
+    { id: 'characters', name: 'Characters', open: false, docs: [] },
+  ],
+  game: [
+    { id: 'chapter1', name: 'Chapter 1', open: true, docs: [{ id: 'doc-1', name: 'Untitled Quest' }] },
+    { id: 'research', name: 'Research', open: false, docs: [] },
+    { id: 'characters', name: 'Characters', open: false, docs: [] },
+  ],
+}
+
 function App() {
   const [screen, setScreen] = useState('home')
   const [selectedDoc, setSelectedDoc] = useState('')
@@ -36,7 +64,7 @@ function App() {
   }
 
   useEffect(() => {
-    if (!projectId) return
+    if (!projectId || folders.length === 0) return
     const projects = JSON.parse(localStorage.getItem('projects') || '[]')
     const updated = projects.filter(p => p.id !== projectId)
     updated.unshift({
@@ -56,7 +84,7 @@ function App() {
       setProjectId(existingProject.id)
       setProjectType(existingProject.type)
       setProjectName(existingProject.name)
-      setFolders(existingProject.folders || [])
+      setFolders(existingProject.folders || DEFAULT_STRUCTURES[existingProject.type] || DEFAULT_STRUCTURES.novel)
       setStatuses(existingProject.statuses || {})
       setDocData(existingProject.docData || {})
     } else {
@@ -64,11 +92,15 @@ function App() {
       setProjectId(newId)
       setProjectType(type)
       setProjectName(name)
-      setFolders([])
+      setFolders(DEFAULT_STRUCTURES[type] || DEFAULT_STRUCTURES.novel)
       setStatuses({})
       setDocData({})
     }
-    setSelectedDoc('')
+    const loadedFolders = existingProject
+  ? (existingProject.folders || DEFAULT_STRUCTURES[existingProject.type] || DEFAULT_STRUCTURES.novel)
+  : (DEFAULT_STRUCTURES[type] || DEFAULT_STRUCTURES.novel)
+const firstDoc = loadedFolders[0]?.docs[0]
+setSelectedDoc(firstDoc ? firstDoc.id : '')
     setView('editor')
     setScreen('editor')
   }
@@ -129,6 +161,7 @@ function App() {
             setFolders={setFolders}
             docData={docData}
             setDocData={setDocData}
+            projectId={projectId}
           />
         )}
 
