@@ -44,6 +44,7 @@ function App() {
   const [folders, setFolders] = useState([])
   const [statuses, setStatuses] = useState({})
   const [docData, setDocData] = useState({})
+  const [distractionFree, setDistractionFree] = useState(false)
 
   const projectTypes = [
     { id: 'novel', icon: '📖', label: 'Novel', color: '#e8a87c' },
@@ -79,6 +80,16 @@ function App() {
     localStorage.setItem('projects', JSON.stringify(updated))
   }, [folders, statuses, projectName, projectId, docData])
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && distractionFree) {
+        setDistractionFree(false)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [distractionFree])
+
   const handleSelectProject = (type, name, existingProject) => {
     if (existingProject) {
       setProjectId(existingProject.id)
@@ -97,12 +108,13 @@ function App() {
       setDocData({})
     }
     const loadedFolders = existingProject
-  ? (existingProject.folders || DEFAULT_STRUCTURES[existingProject.type] || DEFAULT_STRUCTURES.novel)
-  : (DEFAULT_STRUCTURES[type] || DEFAULT_STRUCTURES.novel)
-const firstDoc = loadedFolders[0]?.docs[0]
-setSelectedDoc(firstDoc ? firstDoc.id : '')
+      ? (existingProject.folders || DEFAULT_STRUCTURES[existingProject.type] || DEFAULT_STRUCTURES.novel)
+      : (DEFAULT_STRUCTURES[type] || DEFAULT_STRUCTURES.novel)
+    const firstDoc = loadedFolders[0]?.docs[0]
+    setSelectedDoc(firstDoc ? firstDoc.id : '')
     setView('editor')
     setScreen('editor')
+    setDistractionFree(false)
   }
 
   if (screen === 'home') {
@@ -112,45 +124,54 @@ setSelectedDoc(firstDoc ? firstDoc.id : '')
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0f0f11', fontFamily: 'Inter, -apple-system, sans-serif' }}>
 
-      <div style={{ height: '48px', background: '#0c0c0e', borderBottom: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '8px' }}>
+      {!distractionFree && (
+        <div style={{ height: '48px', background: '#0c0c0e', borderBottom: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '8px' }}>
 
-        <p
-          onClick={() => setScreen('home')}
-          style={{ color: '#ffffff', fontSize: '13px', fontFamily: 'Inter, sans-serif', fontWeight: '500', cursor: 'pointer', letterSpacing: '0.01em' }}>
-          {currentType.icon} {projectName}
-        </p>
+          <p
+            onClick={() => setScreen('home')}
+            style={{ color: '#ffffff', fontSize: '13px', fontFamily: 'Inter, sans-serif', fontWeight: '500', cursor: 'pointer', letterSpacing: '0.01em' }}>
+            {currentType.icon} {projectName}
+          </p>
 
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: '2px', background: '#141416', borderRadius: '6px', padding: '2px' }}>
-          <button
-            onClick={() => setView('editor')}
-            style={{ background: view === 'editor' ? '#1e1e22' : 'transparent', border: 'none', color: view === 'editor' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
-            Editor
-          </button>
-          <button
-            onClick={() => setView('corkboard')}
-            style={{ background: view === 'corkboard' ? '#1e1e22' : 'transparent', border: 'none', color: view === 'corkboard' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
-            Corkboard
-          </button>
-          <button
-            onClick={() => setView('outline')}
-            style={{ background: view === 'outline' ? '#1e1e22' : 'transparent', border: 'none', color: view === 'outline' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
-            Outline
-          </button>
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: '2px', background: '#141416', borderRadius: '6px', padding: '2px' }}>
+            <button
+              onClick={() => setView('editor')}
+              style={{ background: view === 'editor' ? '#1e1e22' : 'transparent', border: 'none', color: view === 'editor' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
+              Editor
+            </button>
+            <button
+              onClick={() => setView('corkboard')}
+              style={{ background: view === 'corkboard' ? '#1e1e22' : 'transparent', border: 'none', color: view === 'corkboard' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
+              Corkboard
+            </button>
+            <button
+              onClick={() => setView('outline')}
+              style={{ background: view === 'outline' ? '#1e1e22' : 'transparent', border: 'none', color: view === 'outline' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
+              Outline
+            </button>
+            <button
+              onClick={() => setDistractionFree(true)}
+              style={{ background: 'transparent', border: 'none', color: '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
+              Focus
+            </button>
+          </div>
+
         </div>
-
-      </div>
+      )}
 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 
-        <Sidebar
-          key={projectId}
-          selectedDoc={selectedDoc}
-          setSelectedDoc={setSelectedDoc}
-          projectType={projectType}
-          accentColor={currentType.color}
-          folders={folders}
-          setFolders={setFolders}
-        />
+        {!distractionFree && (
+          <Sidebar
+            key={projectId}
+            selectedDoc={selectedDoc}
+            setSelectedDoc={setSelectedDoc}
+            projectType={projectType}
+            accentColor={currentType.color}
+            folders={folders}
+            setFolders={setFolders}
+          />
+        )}
 
         {view === 'editor' && (
           <Editor
@@ -162,6 +183,8 @@ setSelectedDoc(firstDoc ? firstDoc.id : '')
             docData={docData}
             setDocData={setDocData}
             projectId={projectId}
+            distractionFree={distractionFree}
+            setDistractionFree={setDistractionFree}
           />
         )}
 
@@ -187,21 +210,25 @@ setSelectedDoc(firstDoc ? firstDoc.id : '')
           />
         )}
 
-        <Inspector
-          selectedDoc={selectedDoc}
-          docData={docData}
-          setDocData={setDocData}
-        />
+        {!distractionFree && (
+          <Inspector
+            selectedDoc={selectedDoc}
+            docData={docData}
+            setDocData={setDocData}
+          />
+        )}
 
       </div>
 
-      <div style={{ height: '28px', background: '#0a0a0c', borderTop: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '16px' }}>
-        <span style={{ color: currentType.color, fontSize: '11px', fontWeight: '500' }}>{currentType.icon} {currentType.label}</span>
-        <span style={{ color: '#2a2a2e', fontSize: '11px' }}>•</span>
-        <span style={{ color: '#444', fontSize: '11px' }}>{projectName}</span>
-        <div style={{ flex: 1 }} />
-        <span style={{ color: '#52b788', fontSize: '11px' }}>● Saved</span>
-      </div>
+      {!distractionFree && (
+        <div style={{ height: '28px', background: '#0a0a0c', borderTop: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '16px' }}>
+          <span style={{ color: currentType.color, fontSize: '11px', fontWeight: '500' }}>{currentType.icon} {currentType.label}</span>
+          <span style={{ color: '#2a2a2e', fontSize: '11px' }}>•</span>
+          <span style={{ color: '#444', fontSize: '11px' }}>{projectName}</span>
+          <div style={{ flex: 1 }} />
+          <span style={{ color: '#52b788', fontSize: '11px' }}>● Saved</span>
+        </div>
+      )}
 
     </div>
   )
