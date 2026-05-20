@@ -5,6 +5,7 @@ import Editor from './Editor'
 import Corkboard from './Corkboard'
 import Outline from './Outline'
 import Home from './Home'
+import CharacterSheet from './CharacterSheet'
 
 const DEFAULT_STRUCTURES = {
   novel: [
@@ -62,6 +63,16 @@ function App() {
       if (doc) return doc.name
     }
     return ''
+  }
+
+  const isCharacterDoc = () => {
+    for (const folder of folders) {
+      if (folder.name === 'Characters') {
+        const doc = folder.docs.find(d => d.id === selectedDoc)
+        if (doc) return true
+      }
+    }
+    return false
   }
 
   useEffect(() => {
@@ -173,7 +184,7 @@ function App() {
           />
         )}
 
-        {view === 'editor' && (
+        {view === 'editor' && !isCharacterDoc() && (
           <Editor
             selectedDoc={selectedDoc}
             setSelectedDoc={setSelectedDoc}
@@ -185,6 +196,15 @@ function App() {
             projectId={projectId}
             distractionFree={distractionFree}
             setDistractionFree={setDistractionFree}
+          />
+        )}
+
+        {view === 'editor' && isCharacterDoc() && (
+          <CharacterSheet
+            selectedDoc={selectedDoc}
+            folders={folders}
+            docData={docData}
+            setDocData={setDocData}
           />
         )}
 
