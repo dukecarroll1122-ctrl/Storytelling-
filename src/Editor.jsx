@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import jsPDF from 'jspdf'
+import { Document, Paragraph, TextRun, HeadingLevel, Packer } from 'docx'
+import { saveAs } from 'file-saver'
 
 const editorStyles = `
   .ProseMirror {
@@ -62,9 +65,10 @@ const editorStyles = `
   }
 `
 
-function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, docData, setDocData, projectId }) {
+function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, docData, setDocData, projectId, distractionFree, setDistractionFree }) {
   const [title, setTitle] = useState(docName || '')
   const [wordCount, setWordCount] = useState(0)
+  const [showExport, setShowExport] = useState(false)
 
   const storageKey = projectId && selectedDoc ? `${projectId}-${selectedDoc}` : selectedDoc
 
@@ -112,6 +116,54 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
     }
   }
 
+  const exportPDF = () => {
+    const doc = new jsPDF()
+    const margin = 20
+    const maxWidth = doc.internal.pageSize.getWidth() - margin * 2
+    let y = 20
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(18)
+    doc.text(title || 'Untitled', margin, y)
+    y += 12
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(12)
+    const plainText = editor?.state.doc.textContent || ''
+    const lines = doc.splitTextToSize(plainText, maxWidth)
+    lines.forEach(line => {
+      if (y > 280) { doc.addPage(); y = 20 }
+      doc.text(line, margin, y)
+      y += 7
+    })
+    doc.save(`${title || 'Untitled'}.pdf`)
+    setShowExport(false)
+  }
+
+  const exportDOCX = async () => {
+    const plainText = editor?.state.doc.textContent || ''
+    const paragraphs = plainText.split('\n').filter(p => p.trim()).map(text =>
+      new Paragraph({
+        children: [new TextRun({ text, size: 24 })],
+        spacing: { after: 200 },
+      })
+    )
+    const doc = new Document({
+      sections: [{
+        properties: {},
+        children: [
+          new Paragraph({
+            text: title || 'Untitled',
+            heading: HeadingLevel.HEADING_1,
+            spacing: { after: 400 },
+          }),
+          ...paragraphs
+        ],
+      }],
+    })
+    const blob = await Packer.toBlob(doc)
+    saveAs(blob, `${title || 'Untitled'}.docx`)
+    setShowExport(false)
+  }
+
   const tbStyle = (active) => ({
     background: active ? '#1a1a2e' : 'transparent',
     border: '1px solid #2a2a2e',
@@ -137,7 +189,7 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           />
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 48px', borderBottom: '1px solid #1a1a1d', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 48px', borderBottom: '1px solid #1a1a1d' }}>
 
           <button onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().toggleBold().run() }} style={tbStyle(editor?.isActive('bold'))}>
             <strong>B</strong>
@@ -169,6 +221,42 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           <button onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().toggleBlockquote().run() }} style={tbStyle(editor?.isActive('blockquote'))}>
             ❝
           </button>
+
+          <div style={{ width: '1px', height: '14px', background: '#2a2a2e', margin: '0 4px' }} />
+
+          <div style={{ position: 'relative' }}>
+            <button
+              onMouseDown={(e) => { e.preventDefault(); setShowExport(!showExport) }}
+              style={tbStyle(showExport)}>
+              Export ↓
+            </button>
+            {showExport && (
+              <div style={{ position: 'absolute', top: '34px', left: '0', background: '#141416', border: '1px solid #2a2a2e', borderRadius: '6px', padding: '4px', zIndex: 100, minWidth: '160px' }}>
+                <div
+                  onMouseDown={(e) => { e.preventDefault(); exportPDF() }}
+                  style={{ padding: '8px 12px', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                  📄 Export as PDF
+                </div>
+                <div
+                  onMouseDown={(e) => { e.preventDefault(); exportDOCX() }}
+                  style={{ padding: '8px 12px', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                  📝 Export as DOCX
+                </div>
+              </div>
+            )}
+          </div>
+
+          {distractionFree && (
+            <button
+              onMouseDown={(e) => { e.preventDefault(); setDistractionFree(false) }}
+              style={{ marginLeft: 'auto', background: 'transparent', border: '1px solid #2a2a2e', color: '#555', borderRadius: '4px', padding: '4px 10px', cursor: 'pointer', fontSize: '11px', fontFamily: 'Inter, sans-serif' }}>
+              Exit Focus
+            </button>
+          )}
 
         </div>
 
