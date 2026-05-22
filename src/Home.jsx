@@ -36,6 +36,52 @@ function Home({ onSelectProject }) {
     localStorage.setItem('projects', JSON.stringify(updated))
   }
 
+  const handleImport = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    let content = ''
+    const fileName = file.name.replace(/\.[^/.]+$/, '')
+
+    if (file.name.endsWith('.docx')) {
+      const mammoth = await import('mammoth')
+      const arrayBuffer = await file.arrayBuffer()
+      const result = await mammoth.convertToHtml({ arrayBuffer })
+      content = result.value
+    } else {
+      content = await file.text()
+    }
+
+    const newId = `project-${Date.now()}`
+    const docId = `doc-${Date.now()}`
+
+    const project = {
+      id: newId,
+      name: fileName,
+      type: 'novel',
+      folders: [
+        {
+          id: 'manuscript',
+          name: 'Manuscript',
+          open: true,
+          docs: [{ id: docId, name: fileName }]
+        },
+        { id: 'research', name: 'Research', open: false, docs: [] },
+        { id: 'characters', name: 'Characters', open: false, docs: [] },
+      ],
+      statuses: {},
+      docData: {},
+      lastEdited: new Date().toLocaleDateString(),
+    }
+
+    const projects = JSON.parse(localStorage.getItem('projects') || '[]')
+    projects.unshift(project)
+    localStorage.setItem('projects', JSON.stringify(projects))
+    localStorage.setItem(`${newId}-${docId}`, content)
+
+    onSelectProject('novel', fileName, project)
+  }
+
   const getProjectColor = (type) => {
     const pt = projectTypes.find(p => p.id === type)
     return pt ? pt.color : '#555'
@@ -83,7 +129,7 @@ function Home({ onSelectProject }) {
             flexWrap: 'wrap',
             justifyContent: 'center',
             maxWidth: '720px',
-            marginBottom: '48px',
+            marginBottom: '32px',
           }}>
             {projectTypes.map(pt => (
               <div
@@ -122,6 +168,42 @@ function Home({ onSelectProject }) {
                 </div>
               </div>
             ))}
+          </div>
+
+          <div style={{ width: '100%', maxWidth: '600px', marginBottom: '24px' }}>
+            <label
+              htmlFor="importFile"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                padding: '10px 14px',
+                background: '#0c0c0e',
+                border: '1px dashed #2a2a2e',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                color: '#555',
+                fontSize: '13px',
+                transition: 'all 0.15s',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = '#444'
+                e.currentTarget.style.color = '#888'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = '#2a2a2e'
+                e.currentTarget.style.color = '#555'
+              }}>
+              ↑ Import existing file — DOCX or TXT
+            </label>
+            <input
+              id="importFile"
+              type="file"
+              accept=".docx,.txt,.md"
+              style={{ display: 'none' }}
+              onChange={handleImport}
+            />
           </div>
 
           {recentProjects.length > 0 && (
