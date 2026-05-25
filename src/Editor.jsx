@@ -40,6 +40,9 @@ const editorStyles = `
     color: #888;
     text-decoration: line-through;
   }
+  .ProseMirror u {
+    text-decoration: underline;
+  }
   .ProseMirror p {
     margin-bottom: 4px;
     margin-top: 0;
@@ -164,6 +167,88 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
     setShowExport(false)
   }
 
+  const exportEPUB = async () => {
+    try {
+      const JSZip = (await import('jszip')).default
+      const zip = new JSZip()
+      const content = editor?.getHTML() || ''
+      const docTitle = title || 'Untitled'
+
+      zip.file('mimetype', 'application/epub+zip')
+
+      zip.folder('META-INF').file('container.xml',
+        `<?xml version="1.0"?>
+<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+  <rootfiles>
+    <rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>
+  </rootfiles>
+</container>`)
+
+      const oebps = zip.folder('OEBPS')
+
+      oebps.file('content.opf',
+        `<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uid" version="2.0">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:title>${docTitle}</dc:title>
+    <dc:language>en</dc:language>
+    <dc:identifier id="uid">storytelling-${Date.now()}</dc:identifier>
+  </metadata>
+  <manifest>
+    <item id="chapter1" href="chapter1.html" media-type="application/xhtml+xml"/>
+    <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="chapter1"/>
+  </spine>
+</package>`)
+
+      oebps.file('toc.ncx',
+        `<?xml version="1.0" encoding="UTF-8"?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+  <head>
+    <meta name="dtb:uid" content="storytelling-${Date.now()}"/>
+  </head>
+  <docTitle><text>${docTitle}</text></docTitle>
+  <navMap>
+    <navPoint id="chapter1" playOrder="1">
+      <navLabel><text>${docTitle}</text></navLabel>
+      <content src="chapter1.html"/>
+    </navPoint>
+  </navMap>
+</ncx>`)
+
+      oebps.file('chapter1.html',
+        `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>${docTitle}</title>
+  <style>
+    body { font-family: Georgia, serif; font-size: 1em; line-height: 1.8; margin: 2em; }
+    h1 { font-size: 1.8em; margin-bottom: 0.5em; }
+    h2 { font-size: 1.4em; margin-bottom: 0.4em; }
+    p { margin-bottom: 0.8em; }
+  </style>
+</head>
+<body>
+  <h1>${docTitle}</h1>
+  ${content}
+</body>
+</html>`)
+
+      const blob = await zip.generateAsync({
+        type: 'blob',
+        mimeType: 'application/epub+zip',
+      })
+
+      saveAs(blob, `${docTitle}.epub`)
+      setShowExport(false)
+    } catch (err) {
+      console.error('EPUB export failed:', err)
+    }
+  }
+
   const tbStyle = (active) => ({
     background: active ? '#1a1a2e' : 'transparent',
     border: '1px solid #2a2a2e',
@@ -189,7 +274,7 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           />
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 48px', borderBottom: '1px solid #1a1a1d' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 48px', borderBottom: '1px solid #1a1a1d', flexWrap: 'wrap' }}>
 
           <button onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().toggleBold().run() }} style={tbStyle(editor?.isActive('bold'))}>
             <strong>B</strong>
@@ -199,6 +284,18 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           </button>
           <button onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().toggleStrike().run() }} style={tbStyle(editor?.isActive('strike'))}>
             <span style={{ textDecoration: 'line-through' }}>S</span>
+          </button>
+          <button
+            onMouseDown={(e) => {
+              e.preventDefault()
+              const { from, to } = editor.state.selection
+              const selectedText = editor.state.doc.textBetween(from, to)
+              if (selectedText) {
+                editor.chain().focus().insertContent(`<u>${selectedText}</u>`).run()
+              }
+            }}
+            style={tbStyle(false)}>
+            <span style={{ textDecoration: 'underline' }}>U</span>
           </button>
 
           <div style={{ width: '1px', height: '14px', background: '#2a2a2e', margin: '0 4px' }} />
@@ -231,7 +328,7 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
               Export ↓
             </button>
             {showExport && (
-              <div style={{ position: 'absolute', top: '34px', left: '0', background: '#141416', border: '1px solid #2a2a2e', borderRadius: '6px', padding: '4px', zIndex: 100, minWidth: '160px' }}>
+              <div style={{ position: 'absolute', top: '34px', left: '0', background: '#141416', border: '1px solid #2a2a2e', borderRadius: '6px', padding: '4px', zIndex: 100, minWidth: '170px' }}>
                 <div
                   onMouseDown={(e) => { e.preventDefault(); exportPDF() }}
                   style={{ padding: '8px 12px', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
@@ -245,6 +342,13 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
                   onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                   📝 Export as DOCX
+                </div>
+                <div
+                  onMouseDown={(e) => { e.preventDefault(); exportEPUB() }}
+                  style={{ padding: '8px 12px', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                  📚 Export as EPUB
                 </div>
               </div>
             )}
