@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { Mark } from '@tiptap/core'
+import { Mark, Extension } from '@tiptap/core'
 import jsPDF from 'jspdf'
 import { Document, Paragraph, TextRun, HeadingLevel, Packer } from 'docx'
 import { saveAs } from 'file-saver'
@@ -17,6 +17,32 @@ const UnderlineMark = Mark.create({
   addKeyboardShortcuts() {
     return {
       'Mod-u': () => this.editor.commands.toggleMark('underline'),
+    }
+  },
+})
+
+const TextAlign = Extension.create({
+  name: 'textAlign',
+  addGlobalAttributes() {
+    return [{
+      types: ['paragraph', 'heading'],
+      attributes: {
+        textAlign: {
+          default: 'left',
+          parseHTML: element => element.style.textAlign || 'left',
+          renderHTML: attributes => {
+            if (attributes.textAlign === 'left') return {}
+            return { style: `text-align: ${attributes.textAlign}` }
+          },
+        },
+      },
+    }]
+  },
+  addCommands() {
+    return {
+      setTextAlign: (alignment) => ({ commands }) => {
+        return commands.updateAttributes('paragraph', { textAlign: alignment })
+      },
     }
   },
 })
@@ -92,7 +118,7 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
   const storageKey = projectId && selectedDoc ? `${projectId}-${selectedDoc}` : selectedDoc
 
   const editor = useEditor({
-    extensions: [StarterKit, UnderlineMark],
+    extensions: [StarterKit, UnderlineMark, TextAlign],
     content: localStorage.getItem(storageKey) || '',
     onUpdate: ({ editor }) => {
       localStorage.setItem(storageKey, editor.getHTML())
@@ -191,7 +217,6 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
       const docTitle = title || 'Untitled'
 
       zip.file('mimetype', 'application/epub+zip')
-
       zip.folder('META-INF').file('container.xml',
         `<?xml version="1.0"?>
 <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
@@ -201,7 +226,6 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
 </container>`)
 
       const oebps = zip.folder('OEBPS')
-
       oebps.file('content.opf',
         `<?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uid" version="2.0">
@@ -257,7 +281,6 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
         type: 'blob',
         mimeType: 'application/epub+zip',
       })
-
       saveAs(blob, `${docTitle}.epub`)
       setShowExport(false)
     } catch (err) {
@@ -329,6 +352,18 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           </button>
           <button onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().toggleBlockquote().run() }} style={tbStyle(editor?.isActive('blockquote'))}>
             ❝
+          </button>
+
+          <div style={{ width: '1px', height: '14px', background: '#2a2a2e', margin: '0 4px' }} />
+
+          <button onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().setTextAlign('left').run() }} style={tbStyle(false)}>
+            ←
+          </button>
+          <button onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().setTextAlign('center').run() }} style={tbStyle(false)}>
+            ↔
+          </button>
+          <button onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().setTextAlign('right').run() }} style={tbStyle(false)}>
+            →
           </button>
 
           <div style={{ width: '1px', height: '14px', background: '#2a2a2e', margin: '0 4px' }} />
