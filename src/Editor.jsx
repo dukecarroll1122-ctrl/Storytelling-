@@ -1,9 +1,25 @@
 import { useEffect, useState } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import { Mark } from '@tiptap/core'
 import jsPDF from 'jspdf'
 import { Document, Paragraph, TextRun, HeadingLevel, Packer } from 'docx'
 import { saveAs } from 'file-saver'
+
+const UnderlineMark = Mark.create({
+  name: 'underline',
+  parseHTML() {
+    return [{ tag: 'u' }]
+  },
+  renderHTML() {
+    return ['u', 0]
+  },
+  addKeyboardShortcuts() {
+    return {
+      'Mod-u': () => this.editor.commands.toggleMark('underline'),
+    }
+  },
+})
 
 const editorStyles = `
   .ProseMirror {
@@ -76,7 +92,7 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
   const storageKey = projectId && selectedDoc ? `${projectId}-${selectedDoc}` : selectedDoc
 
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [StarterKit, UnderlineMark],
     content: localStorage.getItem(storageKey) || '',
     onUpdate: ({ editor }) => {
       localStorage.setItem(storageKey, editor.getHTML())
@@ -288,13 +304,9 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           <button
             onMouseDown={(e) => {
               e.preventDefault()
-              const { from, to } = editor.state.selection
-              const selectedText = editor.state.doc.textBetween(from, to)
-              if (selectedText) {
-                editor.chain().focus().insertContent(`<u>${selectedText}</u>`).run()
-              }
+              editor?.chain().focus().toggleMark('underline').run()
             }}
-            style={tbStyle(false)}>
+            style={tbStyle(editor?.isActive('underline'))}>
             <span style={{ textDecoration: 'underline' }}>U</span>
           </button>
 
