@@ -75,6 +75,17 @@ function App() {
     return false
   }
 
+  const getTotalWordCount = () => {
+    let total = 0
+    folders.forEach(folder => {
+      folder.docs.forEach(doc => {
+        const count = docData[doc.id]?.wordCount || 0
+        total += count
+      })
+    })
+    return total
+  }
+
   useEffect(() => {
     if (!projectId || folders.length === 0) return
     const projects = JSON.parse(localStorage.getItem('projects') || '[]')
@@ -245,6 +256,8 @@ function App() {
           <span style={{ color: currentType.color, fontSize: '11px', fontWeight: '500' }}>{currentType.icon} {currentType.label}</span>
           <span style={{ color: '#2a2a2e', fontSize: '11px' }}>•</span>
           <span style={{ color: '#444', fontSize: '11px' }}>{projectName}</span>
+          <span style={{ color: '#2a2a2e', fontSize: '11px' }}>•</span>
+          <span style={{ color: '#444', fontSize: '11px' }}>{getTotalWordCount().toLocaleString()} words</span>
           <div style={{ flex: 1 }} />
           <span style={{ color: '#52b788', fontSize: '11px' }}>● Saved</span>
         </div>

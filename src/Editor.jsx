@@ -114,6 +114,9 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
   const [title, setTitle] = useState(docName || '')
   const [wordCount, setWordCount] = useState(0)
   const [showExport, setShowExport] = useState(false)
+  const [showFindReplace, setShowFindReplace] = useState(false)
+  const [findText, setFindText] = useState('')
+  const [replaceText, setReplaceText] = useState('')
 
   const storageKey = projectId && selectedDoc ? `${projectId}-${selectedDoc}` : selectedDoc
 
@@ -148,6 +151,20 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
     }
   }, [selectedDoc, editor, docName, storageKey])
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'f') {
+        e.preventDefault()
+        setShowFindReplace(prev => !prev)
+      }
+      if (e.key === 'Escape') {
+        setShowFindReplace(false)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
   const handleTitleChange = (e) => {
     const newTitle = e.target.value
     setTitle(newTitle)
@@ -159,6 +176,29 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
         )
       })))
     }
+  }
+
+  const findNext = () => {
+    if (!findText || !editor) return
+    const text = editor.state.doc.textContent
+    const { from } = editor.state.selection
+    let index = text.indexOf(findText, from)
+    if (index === -1) index = text.indexOf(findText)
+    if (index !== -1) {
+      editor.chain().focus().setTextSelection({
+        from: index + 1,
+        to: index + findText.length + 1
+      }).run()
+    }
+  }
+
+  const replaceAll = () => {
+    if (!findText || !editor) return
+    const content = editor.getHTML()
+    const newContent = content.split(findText).join(replaceText)
+    editor.commands.setContent(newContent)
+    localStorage.setItem(storageKey, newContent)
+    setShowFindReplace(false)
   }
 
   const exportPDF = () => {
@@ -302,7 +342,7 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
   return (
     <>
       <style>{editorStyles}</style>
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#0f0f11' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#0f0f11', position: 'relative' }}>
 
         <div style={{ padding: '24px 48px 0', borderBottom: '1px solid #1a1a1d' }}>
           <input
@@ -368,6 +408,14 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
 
           <div style={{ width: '1px', height: '14px', background: '#2a2a2e', margin: '0 4px' }} />
 
+          <button
+            onMouseDown={(e) => { e.preventDefault(); setShowFindReplace(!showFindReplace) }}
+            style={tbStyle(showFindReplace)}>
+            🔍
+          </button>
+
+          <div style={{ width: '1px', height: '14px', background: '#2a2a2e', margin: '0 4px' }} />
+
           <div style={{ position: 'relative' }}>
             <button
               onMouseDown={(e) => { e.preventDefault(); setShowExport(!showExport) }}
@@ -410,6 +458,52 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           )}
 
         </div>
+
+        {showFindReplace && (
+          <div style={{
+            position: 'absolute',
+            top: '120px',
+            right: '32px',
+            background: '#141416',
+            border: '1px solid #2a2a2e',
+            borderRadius: '8px',
+            padding: '16px',
+            zIndex: 200,
+            width: '300px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <span style={{ color: '#888', fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: '500', letterSpacing: '0.08em' }}>FIND & REPLACE</span>
+              <span onClick={() => setShowFindReplace(false)} style={{ color: '#555', cursor: 'pointer', fontSize: '18px', lineHeight: 1 }}>×</span>
+            </div>
+            <input
+              autoFocus
+              value={findText}
+              onChange={(e) => setFindText(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') findNext() }}
+              placeholder="Find..."
+              style={{ width: '100%', background: '#1e1e22', border: '1px solid #2a2a2e', borderRadius: '6px', color: '#ccc', fontSize: '13px', padding: '8px 10px', outline: 'none', marginBottom: '8px', boxSizing: 'border-box', fontFamily: 'Inter, sans-serif' }}
+            />
+            <input
+              value={replaceText}
+              onChange={(e) => setReplaceText(e.target.value)}
+              placeholder="Replace with..."
+              style={{ width: '100%', background: '#1e1e22', border: '1px solid #2a2a2e', borderRadius: '6px', color: '#ccc', fontSize: '13px', padding: '8px 10px', outline: 'none', marginBottom: '12px', boxSizing: 'border-box', fontFamily: 'Inter, sans-serif' }}
+            />
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={findNext}
+                style={{ flex: 1, background: '#1e1e22', border: '1px solid #2a2a2e', color: '#ccc', borderRadius: '6px', padding: '8px', cursor: 'pointer', fontSize: '12px', fontFamily: 'Inter, sans-serif' }}>
+                Find Next
+              </button>
+              <button
+                onClick={replaceAll}
+                style={{ flex: 1, background: 'rgba(232,168,124,0.15)', border: '1px solid rgba(232,168,124,0.3)', color: '#e8a87c', borderRadius: '6px', padding: '8px', cursor: 'pointer', fontSize: '12px', fontFamily: 'Inter, sans-serif' }}>
+                Replace All
+              </button>
+            </div>
+          </div>
+        )}
 
         <div style={{ flex: 1, padding: '32px 48px', overflow: 'auto' }}>
           <EditorContent editor={editor} />
