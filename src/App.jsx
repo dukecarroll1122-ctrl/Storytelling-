@@ -6,6 +6,7 @@ import Corkboard from './Corkboard'
 import Outline from './Outline'
 import Home from './Home'
 import CharacterSheet from './CharacterSheet'
+import Compile from './Compile'
 
 const DEFAULT_STRUCTURES = {
   novel: [
@@ -46,6 +47,7 @@ function App() {
   const [statuses, setStatuses] = useState({})
   const [docData, setDocData] = useState({})
   const [distractionFree, setDistractionFree] = useState(false)
+  const [showCompile, setShowCompile] = useState(false)
 
   const projectTypes = [
     { id: 'novel', icon: '📖', label: 'Novel', color: '#e8a87c' },
@@ -139,6 +141,8 @@ function App() {
     setDistractionFree(false)
   }
 
+  const compile = Compile({ folders, projectName, projectId })
+
   if (screen === 'home') {
     return <Home onSelectProject={handleSelectProject} />
   }
@@ -155,27 +159,66 @@ function App() {
             {currentType.icon} {projectName}
           </p>
 
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: '2px', background: '#141416', borderRadius: '6px', padding: '2px' }}>
-            <button
-              onClick={() => setView('editor')}
-              style={{ background: view === 'editor' ? '#1e1e22' : 'transparent', border: 'none', color: view === 'editor' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
-              Editor
-            </button>
-            <button
-              onClick={() => setView('corkboard')}
-              style={{ background: view === 'corkboard' ? '#1e1e22' : 'transparent', border: 'none', color: view === 'corkboard' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
-              Corkboard
-            </button>
-            <button
-              onClick={() => setView('outline')}
-              style={{ background: view === 'outline' ? '#1e1e22' : 'transparent', border: 'none', color: view === 'outline' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
-              Outline
-            </button>
-            <button
-              onClick={() => setDistractionFree(true)}
-              style={{ background: 'transparent', border: 'none', color: '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
-              Focus
-            </button>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px' }}>
+
+            <div style={{ display: 'flex', gap: '2px', background: '#141416', borderRadius: '6px', padding: '2px' }}>
+              <button
+                onClick={() => setView('editor')}
+                style={{ background: view === 'editor' ? '#1e1e22' : 'transparent', border: 'none', color: view === 'editor' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
+                Editor
+              </button>
+              <button
+                onClick={() => setView('corkboard')}
+                style={{ background: view === 'corkboard' ? '#1e1e22' : 'transparent', border: 'none', color: view === 'corkboard' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
+                Corkboard
+              </button>
+              <button
+                onClick={() => setView('outline')}
+                style={{ background: view === 'outline' ? '#1e1e22' : 'transparent', border: 'none', color: view === 'outline' ? '#ddd' : '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
+                Outline
+              </button>
+              <button
+                onClick={() => setDistractionFree(true)}
+                style={{ background: 'transparent', border: 'none', color: '#555', borderRadius: '4px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
+                Focus
+              </button>
+            </div>
+
+            <div style={{ width: '1px', height: '18px', background: '#1e1e22', margin: '0 4px' }} />
+
+            <div style={{ position: 'relative' }}>
+              <button
+                onClick={() => setShowCompile(!showCompile)}
+                style={{ background: showCompile ? '#1e1e22' : 'transparent', border: '1px solid #2a2a2e', color: '#888', borderRadius: '6px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
+                Compile ↓
+              </button>
+              {showCompile && (
+                <div style={{ position: 'absolute', top: '34px', right: '0', background: '#141416', border: '1px solid #2a2a2e', borderRadius: '6px', padding: '4px', zIndex: 100, minWidth: '180px', boxShadow: '0 8px 32px rgba(0,0,0,0.6)' }}>
+                  <div
+                    onClick={() => { compile.compilePDF(); setShowCompile(false) }}
+                    style={{ padding: '8px 12px', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
+                    onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                    📄 Compile as PDF
+                  </div>
+                  <div
+                    onClick={() => { compile.compileDOCX(); setShowCompile(false) }}
+                    style={{ padding: '8px 12px', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
+                    onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                    📝 Compile as DOCX
+                  </div>
+                  <div
+                    onClick={() => { compile.compileEPUB(); setShowCompile(false) }}
+                    style={{ padding: '8px 12px', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
+                    onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                    📚 Compile as EPUB
+                  </div>
+                </div>
+              )}
+            </div>
+
           </div>
 
         </div>
