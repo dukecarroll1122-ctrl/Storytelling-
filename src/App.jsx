@@ -48,6 +48,7 @@ function App() {
   const [docData, setDocData] = useState({})
   const [distractionFree, setDistractionFree] = useState(false)
   const [showCompile, setShowCompile] = useState(false)
+  const [labels, setLabels] = useState({})
 
   const projectTypes = [
     { id: 'novel', icon: '📖', label: 'Novel', color: '#e8a87c' },
@@ -99,10 +100,11 @@ function App() {
       folders: folders,
       statuses: statuses,
       docData: docData,
+      labels: labels,
       lastEdited: new Date().toLocaleDateString(),
     })
     localStorage.setItem('projects', JSON.stringify(updated))
-  }, [folders, statuses, projectName, projectId, docData])
+  }, [folders, statuses, projectName, projectId, docData, labels])
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -122,6 +124,7 @@ function App() {
       setFolders(existingProject.folders || DEFAULT_STRUCTURES[existingProject.type] || DEFAULT_STRUCTURES.novel)
       setStatuses(existingProject.statuses || {})
       setDocData(existingProject.docData || {})
+      setLabels(existingProject.labels || {})
     } else {
       const newId = `project-${Date.now()}`
       setProjectId(newId)
@@ -130,6 +133,7 @@ function App() {
       setFolders(DEFAULT_STRUCTURES[type] || DEFAULT_STRUCTURES.novel)
       setStatuses({})
       setDocData({})
+      setLabels({})
     }
     const loadedFolders = existingProject
       ? (existingProject.folders || DEFAULT_STRUCTURES[existingProject.type] || DEFAULT_STRUCTURES.novel)
@@ -235,6 +239,8 @@ function App() {
             accentColor={currentType.color}
             folders={folders}
             setFolders={setFolders}
+            labels={labels}
+            setLabels={setLabels}
           />
         )}
 

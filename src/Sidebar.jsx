@@ -1,8 +1,18 @@
 import { useState } from 'react'
 
-function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor, folders, setFolders }) {
+const LABEL_COLORS = [null, '#e06060', '#e8a87c', '#e8d87c', '#52b788', '#7ec8e3', '#c77dff']
+
+function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor, folders, setFolders, labels, setLabels }) {
   const [editingItem, setEditingItem] = useState(null)
   const [editingValue, setEditingValue] = useState('')
+
+  const cycleLabel = (e, docId) => {
+    e.stopPropagation()
+    const current = labels[docId] || null
+    const currentIndex = LABEL_COLORS.indexOf(current)
+    const nextIndex = (currentIndex + 1) % LABEL_COLORS.length
+    setLabels({ ...labels, [docId]: LABEL_COLORS[nextIndex] })
+  }
 
   const toggleFolder = (folderId) => {
     setFolders(folders.map(f =>
@@ -139,8 +149,21 @@ function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor, folder
                   <div
                     onClick={() => setSelectedDoc(doc.id)}
                     onDoubleClick={() => startEditing(doc.id, doc.name)}
-                    style={{ flex: 1, color: selectedDoc === doc.id ? '#fff' : '#aaa', fontSize: '13px', cursor: 'pointer' }}>
-                    📄 {doc.name}
+                    style={{ flex: 1, color: selectedDoc === doc.id ? '#fff' : '#aaa', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span
+                      onClick={(e) => cycleLabel(e, doc.id)}
+                      style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        background: labels[doc.id] || 'transparent',
+                        flexShrink: 0,
+                        cursor: 'pointer',
+                        border: labels[doc.id] ? 'none' : '1px solid #444',
+                        display: 'inline-block',
+                      }}
+                    />
+                    {doc.name}
                   </div>
                 )}
 
