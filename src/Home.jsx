@@ -13,10 +13,47 @@ function Home({ onSelectProject }) {
     { id: 'game', icon: '🎮', label: 'Game', description: 'Chapters, quests and dialogue', color: '#52b788' },
   ]
 
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('projects') || '[]')
-    setRecentProjects(saved)
-  }, [])
+ useEffect(() => {
+  const loadProjects = async () => {
+    const local = JSON.parse(localStorage.getItem('projects') || '[]')
+    setRecentProjects(local)
+
+    try {
+      const response = await fetch('http://localhost:3001/api/projects/temp-user')
+      const dbProjects = await response.json()
+      if (dbProjects && dbProjects.length > 0) {
+        const merged = mergeProjects(local, dbProjects)
+        setRecentProjects(merged)
+        localStorage.setItem('projects', JSON.stringify(merged))
+      }
+    } catch (error) {
+      console.error('Could not load from database:', error)
+    }
+  }
+  loadProjects()
+}, [])
+
+const mergeProjects = (local, remote) => {
+  const merged = [...local]
+  remote.forEach(remoteProject => {
+    const exists = merged.find(p =>
+      p.name === remoteProject.name && p.type === remoteProject.type
+    )
+    if (!exists) {
+      merged.unshift({
+        id: remoteProject.id,
+        name: remoteProject.name,
+        type: remoteProject.type,
+        folders: remoteProject.folders,
+        statuses: remoteProject.statuses,
+        docData: remoteProject.docData,
+        labels: remoteProject.labels,
+        lastEdited: new Date(remoteProject.lastEdited).toLocaleDateString(),
+      })
+    }
+  })
+  return merged
+}
 
   const currentType = projectTypes.find(p => p.id === selectedType)
 

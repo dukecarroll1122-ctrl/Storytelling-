@@ -1,25 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { Mark, Extension } from '@tiptap/core'
+import { Extension } from '@tiptap/core'
 import jsPDF from 'jspdf'
 import { Document, Paragraph, TextRun, HeadingLevel, Packer } from 'docx'
 import { saveAs } from 'file-saver'
-
-const UnderlineMark = Mark.create({
-  name: 'underline',
-  parseHTML() {
-    return [{ tag: 'u' }]
-  },
-  renderHTML() {
-    return ['u', 0]
-  },
-  addKeyboardShortcuts() {
-    return {
-      'Mod-u': () => this.editor.commands.toggleMark('underline'),
-    }
-  },
-})
+import { saveDocument } from './api'
 
 const TextAlign = Extension.create({
   name: 'textAlign',
@@ -121,10 +107,11 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
   const storageKey = projectId && selectedDoc ? `${projectId}-${selectedDoc}` : selectedDoc
 
   const editor = useEditor({
-    extensions: [StarterKit, UnderlineMark, TextAlign],
+    extensions: [StarterKit, TextAlign],
     content: localStorage.getItem(storageKey) || '',
     onUpdate: ({ editor }) => {
-      localStorage.setItem(storageKey, editor.getHTML())
+      const html = editor.getHTML()
+      localStorage.setItem(storageKey, html)
       const text = editor.state.doc.textContent.trim()
       const count = text === '' ? 0 : text.split(/\s+/).length
       setWordCount(count)
@@ -136,6 +123,12 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
             wordCount: count,
           }
         }))
+      }
+      if (projectId && selectedDoc) {
+        const dbId = localStorage.getItem(`db-${projectId}`)
+        if (dbId) {
+          saveDocument(dbId, selectedDoc, html)
+        }
       }
     },
   })

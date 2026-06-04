@@ -7,6 +7,7 @@ import Outline from './Outline'
 import Home from './Home'
 import CharacterSheet from './CharacterSheet'
 import Compile from './Compile'
+import { saveProject, updateProject } from './api'
 
 const DEFAULT_STRUCTURES = {
   novel: [
@@ -91,10 +92,8 @@ function App() {
 
   useEffect(() => {
     if (!projectId || folders.length === 0) return
-    const projects = JSON.parse(localStorage.getItem('projects') || '[]')
-    const updated = projects.filter(p => p.id !== projectId)
-    updated.unshift({
-      id: projectId,
+
+    const projectData = {
       name: projectName,
       type: projectType,
       folders: folders,
@@ -102,8 +101,17 @@ function App() {
       docData: docData,
       labels: labels,
       lastEdited: new Date().toLocaleDateString(),
-    })
+    }
+
+    const projects = JSON.parse(localStorage.getItem('projects') || '[]')
+    const updated = projects.filter(p => p.id !== projectId)
+    updated.unshift({ id: projectId, ...projectData })
     localStorage.setItem('projects', JSON.stringify(updated))
+
+    const dbId = localStorage.getItem(`db-${projectId}`)
+    if (dbId) {
+      updateProject(dbId, projectData)
+    }
   }, [folders, statuses, projectName, projectId, docData, labels])
 
   useEffect(() => {
@@ -127,13 +135,26 @@ function App() {
       setLabels(existingProject.labels || {})
     } else {
       const newId = `project-${Date.now()}`
+      const newFolders = DEFAULT_STRUCTURES[type] || DEFAULT_STRUCTURES.novel
       setProjectId(newId)
       setProjectType(type)
       setProjectName(name)
-      setFolders(DEFAULT_STRUCTURES[type] || DEFAULT_STRUCTURES.novel)
+      setFolders(newFolders)
       setStatuses({})
       setDocData({})
       setLabels({})
+      saveProject({
+        name,
+        type,
+        folders: newFolders,
+        statuses: {},
+        docData: {},
+        labels: {},
+      }).then(data => {
+        if (data && data.id) {
+          localStorage.setItem(`db-${newId}`, data.id)
+        }
+      })
     }
     const loadedFolders = existingProject
       ? (existingProject.folders || DEFAULT_STRUCTURES[existingProject.type] || DEFAULT_STRUCTURES.novel)
