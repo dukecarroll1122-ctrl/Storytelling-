@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { Extension } from '@tiptap/core'
@@ -103,6 +103,16 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
   const [showFindReplace, setShowFindReplace] = useState(false)
   const [findText, setFindText] = useState('')
   const [replaceText, setReplaceText] = useState('')
+  const projectIdRef = useRef(projectId)
+  const selectedDocRef = useRef(selectedDoc)
+
+  useEffect(() => {
+    projectIdRef.current = projectId
+  }, [projectId])
+
+  useEffect(() => {
+    selectedDocRef.current = selectedDoc
+  }, [selectedDoc])
 
   const storageKey = projectId && selectedDoc ? `${projectId}-${selectedDoc}` : selectedDoc
 
@@ -111,38 +121,49 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
     content: localStorage.getItem(storageKey) || '',
     onUpdate: ({ editor }) => {
       const html = editor.getHTML()
-      localStorage.setItem(storageKey, html)
+      const currentProjectId = projectIdRef.current
+      const currentDocId = selectedDocRef.current
+      const currentStorageKey = currentProjectId && currentDocId ? `${currentProjectId}-${currentDocId}` : currentDocId
+      localStorage.setItem(currentStorageKey, html)
       const text = editor.state.doc.textContent.trim()
       const count = text === '' ? 0 : text.split(/\s+/).length
       setWordCount(count)
-      if (selectedDoc && setDocData) {
+      if (currentDocId && setDocData) {
         setDocData(prev => ({
           ...prev,
-          [selectedDoc]: {
-            ...prev[selectedDoc],
+          [currentDocId]: {
+            ...prev[currentDocId],
             wordCount: count,
           }
         }))
       }
-      if (projectId && selectedDoc) {
-        const dbId = localStorage.getItem(`db-${projectId}`)
-        if (dbId) {
-          saveDocument(dbId, selectedDoc, html)
-        }
-      }
+     if (currentProjectId && currentDocId) {
+    const dbId = localStorage.getItem(`db-${currentProjectId}`) || currentProjectId
+    console.log('dbId:', dbId, 'docId:', currentDocId)
+    if (dbId) {
+     saveDocument(dbId, currentDocId, html).then(r => console.log('save result:', r))
+   }
+}
     },
   })
 
-  useEffect(() => {
-    setTitle(docName || '')
-    if (editor) {
-      const saved = localStorage.getItem(storageKey) || ''
-      editor.commands.setContent(saved)
-      const text = editor.state.doc.textContent.trim()
-      const count = text === '' ? 0 : text.split(/\s+/).length
-      setWordCount(count)
+   useEffect(() => {
+  setTitle(docName || '')
+  if (editor && projectId && selectedDoc) {
+    const dbId = localStorage.getItem(`db-${projectId}`) || projectId
+    if (dbId) {
+      import('./api').then(({ getDocument }) => {
+        getDocument(dbId, selectedDoc).then(data => {
+          const content = data?.content || localStorage.getItem(storageKey) || ''
+          editor.commands.setContent(content)
+          const text = editor.state.doc.textContent.trim()
+          const count = text === '' ? 0 : text.split(/\s+/).length
+          setWordCount(count)
+        })
+      })
     }
-  }, [selectedDoc, editor, docName, storageKey])
+  }
+}, [selectedDoc, editor, docName, storageKey, projectId])
 
   useEffect(() => {
     const handleKeyDown = (e) => {
