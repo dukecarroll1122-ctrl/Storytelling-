@@ -139,9 +139,9 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
       }
      if (currentProjectId && currentDocId) {
     const dbId = localStorage.getItem(`db-${currentProjectId}`) || currentProjectId
-    console.log('dbId:', dbId, 'docId:', currentDocId)
+    
     if (dbId) {
-     saveDocument(dbId, currentDocId, html).then(r => console.log('save result:', r))
+     saveDocument(dbId, currentDocId, html)
    }
 }
     },

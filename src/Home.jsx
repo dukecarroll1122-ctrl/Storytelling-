@@ -32,7 +32,7 @@ function Home({ onSelectProject }) {
       setRecentProjects(local)
 
       try {
-        console.log('loading projects for user:', userId)
+        
         const response = await fetch(`http://localhost:3001/api/projects/${userId}`)
         const dbProjects = await response.json()
         if (dbProjects && dbProjects.length > 0) {
