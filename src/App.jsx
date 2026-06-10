@@ -8,6 +8,7 @@ import Home from './Home'
 import CharacterSheet from './CharacterSheet'
 import Compile from './Compile'
 import { saveProject, updateProject } from './api'
+import { useUser } from '@clerk/clerk-react'
 
 const DEFAULT_STRUCTURES = {
   novel: [
@@ -50,6 +51,8 @@ function App() {
   const [distractionFree, setDistractionFree] = useState(false)
   const [showCompile, setShowCompile] = useState(false)
   const [labels, setLabels] = useState({})
+  const { user } = useUser()
+  const userId = user?.id || 'temp-user'
 
   const projectTypes = [
     { id: 'novel', icon: '📖', label: 'Novel', color: '#e8a87c' },
@@ -150,6 +153,7 @@ function App() {
         statuses: {},
         docData: {},
         labels: {},
+        userId,
       }).then(data => {
         if (data && data.id) {
           localStorage.setItem(`db-${newId}`, data.id)

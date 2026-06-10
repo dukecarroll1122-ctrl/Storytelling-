@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react'
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from '@clerk/clerk-react'
 
 function Home({ onSelectProject }) {
   const [selectedType, setSelectedType] = useState(null)
   const [projectName, setProjectName] = useState('')
   const [recentProjects, setRecentProjects] = useState([])
+  const { user, isLoaded } = useUser()
+  const userId = user?.id || 'temp-user'
 
   const projectTypes = [
     { id: 'novel', icon: '📖', label: 'Novel', description: 'Chapters, acts and scenes', color: '#e8a87c' },
@@ -16,11 +18,22 @@ function Home({ onSelectProject }) {
 
   useEffect(() => {
     const loadProjects = async () => {
+      if (!isLoaded) return
+
+      // Clear localStorage if user changed
+  const lastUserId = localStorage.getItem('lastUserId')
+  if (lastUserId && lastUserId !== userId) {
+    localStorage.clear()
+  }
+  localStorage.setItem('lastUserId', userId)
+
+
       const local = JSON.parse(localStorage.getItem('projects') || '[]')
       setRecentProjects(local)
 
       try {
-        const response = await fetch('http://localhost:3001/api/projects/temp-user')
+        console.log('loading projects for user:', userId)
+        const response = await fetch(`http://localhost:3001/api/projects/${userId}`)
         const dbProjects = await response.json()
         if (dbProjects && dbProjects.length > 0) {
           const merged = mergeProjects(local, dbProjects)
@@ -32,7 +45,7 @@ function Home({ onSelectProject }) {
       }
     }
     loadProjects()
-  }, [])
+  }, [userId, isLoaded])
 
   const mergeProjects = (local, remote) => {
     const merged = [...local]
