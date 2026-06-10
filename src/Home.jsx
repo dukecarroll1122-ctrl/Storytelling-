@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react'
 
 function Home({ onSelectProject }) {
   const [selectedType, setSelectedType] = useState(null)
@@ -13,47 +14,47 @@ function Home({ onSelectProject }) {
     { id: 'game', icon: '🎮', label: 'Game', description: 'Chapters, quests and dialogue', color: '#52b788' },
   ]
 
- useEffect(() => {
-  const loadProjects = async () => {
-    const local = JSON.parse(localStorage.getItem('projects') || '[]')
-    setRecentProjects(local)
+  useEffect(() => {
+    const loadProjects = async () => {
+      const local = JSON.parse(localStorage.getItem('projects') || '[]')
+      setRecentProjects(local)
 
-    try {
-      const response = await fetch('http://localhost:3001/api/projects/temp-user')
-      const dbProjects = await response.json()
-      if (dbProjects && dbProjects.length > 0) {
-        const merged = mergeProjects(local, dbProjects)
-        setRecentProjects(merged)
-        localStorage.setItem('projects', JSON.stringify(merged))
+      try {
+        const response = await fetch('http://localhost:3001/api/projects/temp-user')
+        const dbProjects = await response.json()
+        if (dbProjects && dbProjects.length > 0) {
+          const merged = mergeProjects(local, dbProjects)
+          setRecentProjects(merged)
+          localStorage.setItem('projects', JSON.stringify(merged))
+        }
+      } catch (error) {
+        console.error('Could not load from database:', error)
       }
-    } catch (error) {
-      console.error('Could not load from database:', error)
     }
-  }
-  loadProjects()
-}, [])
+    loadProjects()
+  }, [])
 
-const mergeProjects = (local, remote) => {
-  const merged = [...local]
-  remote.forEach(remoteProject => {
-    const exists = merged.find(p =>
-      p.name === remoteProject.name && p.type === remoteProject.type
-    )
-    if (!exists) {
-      merged.unshift({
-        id: remoteProject.id,
-        name: remoteProject.name,
-        type: remoteProject.type,
-        folders: remoteProject.folders,
-        statuses: remoteProject.statuses,
-        docData: remoteProject.docData,
-        labels: remoteProject.labels,
-        lastEdited: new Date(remoteProject.lastEdited).toLocaleDateString(),
-      })
-    }
-  })
-  return merged
-}
+  const mergeProjects = (local, remote) => {
+    const merged = [...local]
+    remote.forEach(remoteProject => {
+      const exists = merged.find(p =>
+        p.name === remoteProject.name && p.type === remoteProject.type
+      )
+      if (!exists) {
+        merged.unshift({
+          id: remoteProject.id,
+          name: remoteProject.name,
+          type: remoteProject.type,
+          folders: remoteProject.folders,
+          statuses: remoteProject.statuses,
+          docData: remoteProject.docData,
+          labels: remoteProject.labels,
+          lastEdited: new Date(remoteProject.lastEdited).toLocaleDateString(),
+        })
+      }
+    })
+    return merged
+  }
 
   const currentType = projectTypes.find(p => p.id === selectedType)
 
@@ -140,7 +141,21 @@ const mergeProjects = (local, remote) => {
       padding: '60px 32px 32px',
       overflowY: 'auto',
       fontFamily: 'Inter, -apple-system, sans-serif',
+      position: 'relative',
     }}>
+
+      <div style={{ position: 'absolute', top: '20px', right: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <SignedOut>
+          <SignInButton mode="modal">
+            <button style={{ background: 'transparent', border: '1px solid #2a2a2e', color: '#888', borderRadius: '6px', padding: '7px 16px', cursor: 'pointer', fontSize: '13px', fontFamily: 'Inter, sans-serif' }}>
+              Sign In
+            </button>
+          </SignInButton>
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
+      </div>
 
       <div style={{ marginBottom: '48px', textAlign: 'center' }}>
         <h1 style={{
