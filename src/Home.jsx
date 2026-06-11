@@ -20,19 +20,10 @@ function Home({ onSelectProject }) {
     const loadProjects = async () => {
       if (!isLoaded) return
 
-      // Clear localStorage if user changed
-  const lastUserId = localStorage.getItem('lastUserId')
-  if (lastUserId && lastUserId !== userId) {
-    localStorage.clear()
-  }
-  localStorage.setItem('lastUserId', userId)
-
-
       const local = JSON.parse(localStorage.getItem('projects') || '[]')
       setRecentProjects(local)
 
       try {
-        
         const response = await fetch(`http://localhost:3001/api/projects/${userId}`)
         const dbProjects = await response.json()
         if (dbProjects && dbProjects.length > 0) {
@@ -145,19 +136,18 @@ function Home({ onSelectProject }) {
 
   return (
     <div style={{
-      minHeight: '100vh',
+      height: '100vh',
       background: '#0f0f11',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      justifyContent: 'center',
-      padding: '60px 32px 32px',
       overflowY: 'auto',
+      padding: '80px 32px 60px',
       fontFamily: 'Inter, -apple-system, sans-serif',
       position: 'relative',
     }}>
 
-      <div style={{ position: 'absolute', top: '20px', right: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div style={{ position: 'fixed', top: '20px', right: '24px', display: 'flex', alignItems: 'center', gap: '12px', zIndex: 100 }}>
         <SignedOut>
           <SignInButton mode="modal">
             <button style={{ background: 'transparent', border: '1px solid #2a2a2e', color: '#888', borderRadius: '6px', padding: '7px 16px', cursor: 'pointer', fontSize: '13px', fontFamily: 'Inter, sans-serif' }}>
@@ -170,7 +160,7 @@ function Home({ onSelectProject }) {
         </SignedIn>
       </div>
 
-      <div style={{ marginBottom: '48px', textAlign: 'center' }}>
+      <div style={{ marginBottom: '48px', textAlign: 'center', width: '100%', maxWidth: '600px' }}>
         <h1 style={{
           color: '#ffffff',
           fontFamily: 'Georgia, serif',
@@ -187,14 +177,14 @@ function Home({ onSelectProject }) {
       </div>
 
       {!selectedType ? (
-        <>
+        <div style={{ width: '100%', maxWidth: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+
           <div style={{
             display: 'flex',
             gap: '12px',
             flexWrap: 'wrap',
             justifyContent: 'center',
-            maxWidth: '720px',
-            marginBottom: '32px',
+            width: '100%',
           }}>
             {projectTypes.map(pt => (
               <div
@@ -204,7 +194,7 @@ function Home({ onSelectProject }) {
                   setProjectName('')
                 }}
                 style={{
-                  width: '130px',
+                  width: '110px',
                   padding: '20px 12px',
                   background: '#0c0c0e',
                   border: '1px solid #1e1e22',
@@ -235,7 +225,7 @@ function Home({ onSelectProject }) {
             ))}
           </div>
 
-          <div style={{ width: '100%', maxWidth: '600px', marginBottom: '24px' }}>
+          <div style={{ width: '100%' }}>
             <label
               htmlFor="importFile"
               style={{
@@ -272,7 +262,7 @@ function Home({ onSelectProject }) {
           </div>
 
           {recentProjects.length > 0 && (
-            <div style={{ width: '100%', maxWidth: '600px' }}>
+            <div style={{ width: '100%' }}>
               <p style={{ color: '#444', fontSize: '11px', letterSpacing: '0.08em', marginBottom: '10px', fontWeight: '500' }}>
                 RECENT PROJECTS
               </p>
@@ -315,7 +305,8 @@ function Home({ onSelectProject }) {
               </div>
             </div>
           )}
-        </>
+
+        </div>
       ) : (
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '44px', marginBottom: '20px' }}>{currentType.icon}</div>
