@@ -7,6 +7,7 @@ import Outline from './Outline'
 import Home from './Home'
 import CharacterSheet from './CharacterSheet'
 import Compile from './Compile'
+import Pricing from './Pricing'
 import { saveProject, updateProject } from './api'
 import { useUser } from '@clerk/clerk-react'
 
@@ -50,6 +51,7 @@ function App() {
   const [docData, setDocData] = useState({})
   const [distractionFree, setDistractionFree] = useState(false)
   const [showCompile, setShowCompile] = useState(false)
+  const [showPricing, setShowPricing] = useState(false)
   const [labels, setLabels] = useState({})
   const { user } = useUser()
   const userId = user?.id || 'temp-user'
@@ -215,6 +217,14 @@ function App() {
 
             <div style={{ width: '1px', height: '18px', background: '#1e1e22', margin: '0 4px' }} />
 
+            <button
+              onClick={() => setShowPricing(true)}
+              style={{ background: 'transparent', border: '1px solid #2a2a2e', color: '#7ec8e3', borderRadius: '6px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
+              Upgrade ↑
+            </button>
+
+            <div style={{ width: '1px', height: '18px', background: '#1e1e22', margin: '0 4px' }} />
+
             <div style={{ position: 'relative' }}>
               <button
                 onClick={() => setShowCompile(!showCompile)}
@@ -336,6 +346,8 @@ function App() {
           <span style={{ color: '#52b788', fontSize: '11px' }}>● Saved</span>
         </div>
       )}
+
+      {showPricing && <Pricing onClose={() => setShowPricing(false)} />}
 
     </div>
   )
