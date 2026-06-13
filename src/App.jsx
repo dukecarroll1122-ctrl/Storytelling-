@@ -8,7 +8,7 @@ import Home from './Home'
 import CharacterSheet from './CharacterSheet'
 import Compile from './Compile'
 import Pricing from './Pricing'
-import { saveProject, updateProject } from './api'
+import { saveProject, updateProject, getUserPlan } from './api'
 import { useUser } from '@clerk/clerk-react'
 
 const DEFAULT_STRUCTURES = {
@@ -55,6 +55,13 @@ function App() {
   const [labels, setLabels] = useState({})
   const { user } = useUser()
   const userId = user?.id || 'temp-user'
+  const [userPlan, setUserPlan] = useState('free')
+
+useEffect(() => {
+  if (user) {
+    getUserPlan(userId).then(plan => setUserPlan(plan))
+  }
+}, [userId, user])
 
   const projectTypes = [
     { id: 'novel', icon: '📖', label: 'Novel', color: '#e8a87c' },
@@ -217,11 +224,13 @@ function App() {
 
             <div style={{ width: '1px', height: '18px', background: '#1e1e22', margin: '0 4px' }} />
 
-            <button
-              onClick={() => setShowPricing(true)}
-              style={{ background: 'transparent', border: '1px solid #2a2a2e', color: '#7ec8e3', borderRadius: '6px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
-              Upgrade ↑
-            </button>
+            {userPlan === 'free' && (
+              <button
+                onClick={() => setShowPricing(true)}
+                style={{ background: 'transparent', border: '1px solid #2a2a2e', color: '#7ec8e3', borderRadius: '6px', padding: '4px 12px', fontSize: '11px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>
+                Upgrade ↑
+              </button>
+            )}
 
             <div style={{ width: '1px', height: '18px', background: '#1e1e22', margin: '0 4px' }} />
 

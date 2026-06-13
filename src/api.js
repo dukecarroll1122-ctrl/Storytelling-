@@ -12,7 +12,7 @@ export const saveProject = async (project) => {
         statuses: project.statuses,
         docData: project.docData,
         labels: project.labels,
-        userId: 'temp-user',
+        userId: project.userId,
       }),
     })
     const data = await response.json()
@@ -91,5 +91,16 @@ export const getDocument = async (projectDbId, docId) => {
   } catch (error) {
     console.error('Failed to fetch document:', error)
     return null
+  }
+}
+
+export const getUserPlan = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/api/projects/user/${userId}/plan`)
+    const data = await response.json()
+    return data.plan
+  } catch (error) {
+    console.error('Failed to fetch user plan:', error)
+    return 'free'
   }
 }

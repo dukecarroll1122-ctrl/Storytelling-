@@ -7,6 +7,15 @@ function Home({ onSelectProject }) {
   const [recentProjects, setRecentProjects] = useState([])
   const { user, isLoaded } = useUser()
   const userId = user?.id || 'temp-user'
+  const [userPlan, setUserPlan] = useState('free')
+
+useEffect(() => {
+  if (isLoaded && user) {
+    import('./api').then(({ getUserPlan }) => {
+      getUserPlan(userId).then(plan => setUserPlan(plan))
+    })
+  }
+}, [userId, user, isLoaded])
 
   const projectTypes = [
     { id: 'novel', icon: '📖', label: 'Novel', description: 'Chapters, acts and scenes', color: '#e8a87c' },
@@ -62,10 +71,14 @@ function Home({ onSelectProject }) {
 
   const currentType = projectTypes.find(p => p.id === selectedType)
 
-  const handleStart = () => {
-    const name = projectName.trim() || `My ${currentType.label}`
-    onSelectProject(selectedType, name, null)
+const handleStart = () => {
+  if (userPlan === 'free' && recentProjects.length >= 3) {
+    alert('Free plan is limited to 3 projects. Upgrade to Pro for unlimited projects.')
+    return
   }
+  const name = projectName.trim() || `My ${currentType.label}`
+  onSelectProject(selectedType, name, null)
+}
 
   const handleOpenProject = (project) => {
     onSelectProject(project.type, project.name, project)
