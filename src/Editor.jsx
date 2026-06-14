@@ -6,6 +6,7 @@ import jsPDF from 'jspdf'
 import { Document, Paragraph, TextRun, HeadingLevel, Packer } from 'docx'
 import { saveAs } from 'file-saver'
 import { saveDocument } from './api'
+import AIAssistant from './AIAssistant'
 
 const TextAlign = Extension.create({
   name: 'textAlign',
@@ -101,6 +102,7 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
   const [wordCount, setWordCount] = useState(0)
   const [showExport, setShowExport] = useState(false)
   const [showFindReplace, setShowFindReplace] = useState(false)
+  const [showAI, setShowAI] = useState(false)
   const [findText, setFindText] = useState('')
   const [replaceText, setReplaceText] = useState('')
   const projectIdRef = useRef(projectId)
@@ -137,33 +139,32 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           }
         }))
       }
-     if (currentProjectId && currentDocId) {
-    const dbId = localStorage.getItem(`db-${currentProjectId}`) || currentProjectId
-    
-    if (dbId) {
-     saveDocument(dbId, currentDocId, html)
-   }
-}
+      if (currentProjectId && currentDocId) {
+        const dbId = localStorage.getItem(`db-${currentProjectId}`) || currentProjectId
+        if (dbId) {
+          saveDocument(dbId, currentDocId, html)
+        }
+      }
     },
   })
 
-   useEffect(() => {
-  setTitle(docName || '')
-  if (editor && projectId && selectedDoc) {
-    const dbId = localStorage.getItem(`db-${projectId}`) || projectId
-    if (dbId) {
-      import('./api').then(({ getDocument }) => {
-        getDocument(dbId, selectedDoc).then(data => {
-          const content = data?.content || localStorage.getItem(storageKey) || ''
-          editor.commands.setContent(content)
-          const text = editor.state.doc.textContent.trim()
-          const count = text === '' ? 0 : text.split(/\s+/).length
-          setWordCount(count)
+  useEffect(() => {
+    setTitle(docName || '')
+    if (editor && projectId && selectedDoc) {
+      const dbId = localStorage.getItem(`db-${projectId}`) || projectId
+      if (dbId) {
+        import('./api').then(({ getDocument }) => {
+          getDocument(dbId, selectedDoc).then(data => {
+            const content = data?.content || localStorage.getItem(storageKey) || ''
+            editor.commands.setContent(content)
+            const text = editor.state.doc.textContent.trim()
+            const count = text === '' ? 0 : text.split(/\s+/).length
+            setWordCount(count)
+          })
         })
-      })
+      }
     }
-  }
-}, [selectedDoc, editor, docName, storageKey, projectId])
+  }, [selectedDoc, editor, docName, storageKey, projectId])
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -428,6 +429,12 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
             🔍
           </button>
 
+          <button
+            onMouseDown={(e) => { e.preventDefault(); setShowAI(!showAI) }}
+            style={tbStyle(showAI)}>
+            ✦ AI
+          </button>
+
           <div style={{ width: '1px', height: '14px', background: '#2a2a2e', margin: '0 4px' }} />
 
           <div style={{ position: 'relative' }}>
@@ -518,6 +525,8 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
             </div>
           </div>
         )}
+
+        {showAI && <AIAssistant editor={editor} onClose={() => setShowAI(false)} />}
 
         <div style={{ flex: 1, padding: '32px 48px', overflow: 'auto' }}>
           <EditorContent editor={editor} />
