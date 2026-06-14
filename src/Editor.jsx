@@ -97,7 +97,7 @@ const editorStyles = `
   }
 `
 
-function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, docData, setDocData, projectId, distractionFree, setDistractionFree }) {
+function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, docData, setDocData, projectId, distractionFree, setDistractionFree, userPlan }) {
   const [title, setTitle] = useState(docName || '')
   const [wordCount, setWordCount] = useState(0)
   const [showExport, setShowExport] = useState(false)
@@ -430,9 +430,16 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           </button>
 
           <button
-            onMouseDown={(e) => { e.preventDefault(); setShowAI(!showAI) }}
-            style={tbStyle(showAI)}>
-            ✦ AI
+            onMouseDown={(e) => {
+    e.preventDefault()
+    if (userPlan === 'free') {
+      alert('AI Assistant is a Pro feature. Upgrade to unlock AI writing assistance.')
+      return
+    }
+    setShowAI(!showAI)
+  }}
+  style={tbStyle(showAI)}>
+  ✦ AI
           </button>
 
           <div style={{ width: '1px', height: '14px', background: '#2a2a2e', margin: '0 4px' }} />

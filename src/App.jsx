@@ -300,6 +300,7 @@ useEffect(() => {
             projectId={projectId}
             distractionFree={distractionFree}
             setDistractionFree={setDistractionFree}
+            userPlan={userPlan}
           />
         )}
 
