@@ -171,7 +171,7 @@ function Compile({ folders, projectName, projectId }) {
     ).join('\n    ')
 
     const navPoints = docs.map((d, i) =>
-      `<navPoint id="chapter${i}" playOrder="${i + 1}">
+      `<navPoint id="chapter${i}" playOrder="${i + 2}">
       <navLabel><text>${d.name}</text></navLabel>
       <content src="chapter${i}.html"/>
     </navPoint>`
@@ -186,10 +186,12 @@ function Compile({ folders, projectName, projectId }) {
     <dc:identifier id="uid">storytelling-${Date.now()}</dc:identifier>
   </metadata>
   <manifest>
+    <item id="titlepage" href="titlepage.html" media-type="application/xhtml+xml"/>
     ${manifestItems}
     <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
   </manifest>
   <spine toc="ncx">
+    <itemref idref="titlepage"/>
     ${spineItems}
   </spine>
 </package>`)
@@ -202,9 +204,31 @@ function Compile({ folders, projectName, projectId }) {
   </head>
   <docTitle><text>${docTitle}</text></docTitle>
   <navMap>
+    <navPoint id="titlepage" playOrder="1">
+      <navLabel><text>Title Page</text></navLabel>
+      <content src="titlepage.html"/>
+    </navPoint>
     ${navPoints}
   </navMap>
 </ncx>`)
+
+    oebps.file('titlepage.html',
+      `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>${docTitle}</title>
+  <style>
+    body { font-family: Georgia, serif; text-align: center; margin-top: 40%; }
+    h1 { font-size: 2em; }
+    p { color: #666; }
+  </style>
+</head>
+<body>
+  <h1>${docTitle}</h1>
+  <p>${new Date().getFullYear()}</p>
+</body>
+</html>`)
 
     docs.forEach((d, i) => {
       oebps.file(`chapter${i}.html`,
