@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf'
-import { Document, Paragraph, TextRun, HeadingLevel, Packer, PageBreak } from 'docx'
+import { Document, Paragraph, TextRun, HeadingLevel, Packer, PageBreak, AlignmentType } from 'docx'
 import { saveAs } from 'file-saver'
 
 function Compile({ folders, projectName, projectId }) {
@@ -31,19 +31,22 @@ function Compile({ folders, projectName, projectId }) {
     const docs = getAllDocs()
     const doc = new jsPDF()
     const margin = 20
-    const maxWidth = doc.internal.pageSize.getWidth() - margin * 2
+    const pageWidth = doc.internal.pageSize.getWidth()
+    const pageHeight = doc.internal.pageSize.getHeight()
+    const maxWidth = pageWidth - margin * 2
     let y = 20
 
+    // Title page
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(24)
-    doc.text(projectName || 'Untitled', margin, y)
-    y += 20
+    doc.setFontSize(28)
+    doc.text(projectName || 'Untitled', pageWidth / 2, pageHeight / 2 - 10, { align: 'center' })
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(12)
+    doc.text(new Date().getFullYear().toString(), pageWidth / 2, pageHeight / 2 + 10, { align: 'center' })
 
     docs.forEach((d, i) => {
-      if (i > 0) {
-        doc.addPage()
-        y = 20
-      }
+      doc.addPage()
+      y = 20
 
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(18)
@@ -65,6 +68,16 @@ function Compile({ folders, projectName, projectId }) {
       }
     })
 
+    const pageCount = doc.internal.getNumberOfPages()
+    for (let i = 2; i <= pageCount; i++) {
+      doc.setPage(i)
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(10)
+      doc.setTextColor(150)
+      doc.text(`${i - 1}`, pageWidth / 2, pageHeight - 10, { align: 'center' })
+      doc.setTextColor(0)
+    }
+
     doc.save(`${projectName || 'Untitled'}.pdf`)
   }
 
@@ -72,11 +85,25 @@ function Compile({ folders, projectName, projectId }) {
     const docs = getAllDocs()
     const children = []
 
+    // Title page
     children.push(
       new Paragraph({
         text: projectName || 'Untitled',
-        heading: HeadingLevel.HEADING_1,
-        spacing: { after: 600 },
+        heading: HeadingLevel.TITLE,
+        alignment: AlignmentType.CENTER,
+        spacing: { before: 3000, after: 200 },
+      })
+    )
+    children.push(
+      new Paragraph({
+        text: new Date().getFullYear().toString(),
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 200 },
+      })
+    )
+    children.push(
+      new Paragraph({
+        children: [new PageBreak()],
       })
     )
 
