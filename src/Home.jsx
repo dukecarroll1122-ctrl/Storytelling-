@@ -1,21 +1,166 @@
 import { useState, useEffect } from 'react'
 import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from '@clerk/clerk-react'
 
+const TEMPLATES = {
+  novel: [
+    {
+      id: 'blank',
+      name: 'Blank',
+      description: 'Start from scratch',
+      folders: [
+        { id: 'manuscript', name: 'Manuscript', open: true, docs: [{ id: 'doc-1', name: 'Chapter 1' }] },
+        { id: 'research', name: 'Research', open: false, docs: [] },
+        { id: 'characters', name: 'Characters', open: false, docs: [] },
+      ]
+    },
+    {
+      id: 'three-act',
+      name: 'Three Act Structure',
+      description: 'Classic beginning, middle, end',
+      folders: [
+        { id: 'act1', name: 'Act 1 — Setup', open: true, docs: [{ id: 'doc-1', name: 'Chapter 1' }, { id: 'doc-2', name: 'Chapter 2' }] },
+        { id: 'act2', name: 'Act 2 — Confrontation', open: false, docs: [{ id: 'doc-3', name: 'Chapter 3' }, { id: 'doc-4', name: 'Chapter 4' }] },
+        { id: 'act3', name: 'Act 3 — Resolution', open: false, docs: [{ id: 'doc-5', name: 'Chapter 5' }] },
+        { id: 'research', name: 'Research', open: false, docs: [] },
+        { id: 'characters', name: 'Characters', open: false, docs: [] },
+      ]
+    },
+    {
+      id: 'heros-journey',
+      name: "Hero's Journey",
+      description: 'The classic 12-stage story arc',
+      folders: [
+        { id: 'ordinary-world', name: 'Ordinary World', open: true, docs: [{ id: 'doc-1', name: 'The Beginning' }] },
+        { id: 'call', name: 'Call to Adventure', open: false, docs: [{ id: 'doc-2', name: 'The Call' }] },
+        { id: 'trials', name: 'Trials & Allies', open: false, docs: [{ id: 'doc-3', name: 'The Road' }] },
+        { id: 'ordeal', name: 'The Ordeal', open: false, docs: [{ id: 'doc-4', name: 'Dark Night' }] },
+        { id: 'return', name: 'The Return', open: false, docs: [{ id: 'doc-5', name: 'Coming Home' }] },
+        { id: 'characters', name: 'Characters', open: false, docs: [] },
+        { id: 'research', name: 'Research', open: false, docs: [] },
+      ]
+    },
+  ],
+  comic: [
+    {
+      id: 'blank',
+      name: 'Blank',
+      description: 'Start from scratch',
+      folders: [
+        { id: 'issue1', name: 'Issue 1', open: true, docs: [{ id: 'doc-1', name: 'Page 1' }] },
+        { id: 'research', name: 'Research', open: false, docs: [] },
+        { id: 'characters', name: 'Characters', open: false, docs: [] },
+      ]
+    },
+    {
+      id: 'miniseries',
+      name: 'Miniseries',
+      description: '5-issue story arc',
+      folders: [
+        { id: 'issue1', name: 'Issue 1', open: true, docs: [{ id: 'doc-1', name: 'Page 1' }] },
+        { id: 'issue2', name: 'Issue 2', open: false, docs: [{ id: 'doc-2', name: 'Page 1' }] },
+        { id: 'issue3', name: 'Issue 3', open: false, docs: [{ id: 'doc-3', name: 'Page 1' }] },
+        { id: 'issue4', name: 'Issue 4', open: false, docs: [{ id: 'doc-4', name: 'Page 1' }] },
+        { id: 'issue5', name: 'Issue 5', open: false, docs: [{ id: 'doc-5', name: 'Page 1' }] },
+        { id: 'characters', name: 'Characters', open: false, docs: [] },
+      ]
+    },
+  ],
+  tv: [
+    {
+      id: 'blank',
+      name: 'Blank',
+      description: 'Start from scratch',
+      folders: [
+        { id: 'season1', name: 'Season 1', open: true, docs: [{ id: 'doc-1', name: 'Episode 1' }] },
+        { id: 'research', name: 'Research', open: false, docs: [] },
+        { id: 'characters', name: 'Characters', open: false, docs: [] },
+      ]
+    },
+    {
+      id: 'pilot-plus',
+      name: 'Pilot Season',
+      description: 'Pilot + 6 episode season',
+      folders: [
+        { id: 'development', name: 'Development', open: true, docs: [{ id: 'doc-1', name: 'Series Bible' }, { id: 'doc-2', name: 'Pilot' }] },
+        { id: 'season1', name: 'Season 1', open: false, docs: [
+          { id: 'doc-3', name: 'Episode 1' },
+          { id: 'doc-4', name: 'Episode 2' },
+          { id: 'doc-5', name: 'Episode 3' },
+          { id: 'doc-6', name: 'Episode 4' },
+          { id: 'doc-7', name: 'Episode 5' },
+          { id: 'doc-8', name: 'Episode 6' },
+        ]},
+        { id: 'characters', name: 'Characters', open: false, docs: [] },
+        { id: 'research', name: 'Research', open: false, docs: [] },
+      ]
+    },
+  ],
+  movie: [
+    {
+      id: 'blank',
+      name: 'Blank',
+      description: 'Start from scratch',
+      folders: [
+        { id: 'act1', name: 'Act 1', open: true, docs: [{ id: 'doc-1', name: 'Opening Scene' }] },
+        { id: 'research', name: 'Research', open: false, docs: [] },
+        { id: 'characters', name: 'Characters', open: false, docs: [] },
+      ]
+    },
+    {
+      id: 'screenplay',
+      name: 'Screenplay',
+      description: 'Three act screenplay structure',
+      folders: [
+        { id: 'act1', name: 'Act 1 (pp. 1-25)', open: true, docs: [{ id: 'doc-1', name: 'Opening Image' }, { id: 'doc-2', name: 'Setup' }, { id: 'doc-3', name: 'Inciting Incident' }] },
+        { id: 'act2a', name: 'Act 2A (pp. 25-55)', open: false, docs: [{ id: 'doc-4', name: 'New World' }, { id: 'doc-5', name: 'Fun & Games' }] },
+        { id: 'act2b', name: 'Act 2B (pp. 55-85)', open: false, docs: [{ id: 'doc-6', name: 'Midpoint' }, { id: 'doc-7', name: 'Dark Night' }] },
+        { id: 'act3', name: 'Act 3 (pp. 85-110)', open: false, docs: [{ id: 'doc-8', name: 'Climax' }, { id: 'doc-9', name: 'Resolution' }] },
+        { id: 'characters', name: 'Characters', open: false, docs: [] },
+      ]
+    },
+  ],
+  game: [
+    {
+      id: 'blank',
+      name: 'Blank',
+      description: 'Start from scratch',
+      folders: [
+        { id: 'chapter1', name: 'Chapter 1', open: true, docs: [{ id: 'doc-1', name: 'Quest 1' }] },
+        { id: 'research', name: 'Research', open: false, docs: [] },
+        { id: 'characters', name: 'Characters', open: false, docs: [] },
+      ]
+    },
+    {
+      id: 'rpg',
+      name: 'RPG Story',
+      description: 'Main quest with side quests',
+      folders: [
+        { id: 'main', name: 'Main Quest', open: true, docs: [{ id: 'doc-1', name: 'Prologue' }, { id: 'doc-2', name: 'Act 1' }, { id: 'doc-3', name: 'Act 2' }, { id: 'doc-4', name: 'Final Act' }] },
+        { id: 'side', name: 'Side Quests', open: false, docs: [{ id: 'doc-5', name: 'Side Quest 1' }] },
+        { id: 'dialogue', name: 'Dialogue Trees', open: false, docs: [] },
+        { id: 'characters', name: 'Characters', open: false, docs: [] },
+        { id: 'world', name: 'World Building', open: false, docs: [] },
+      ]
+    },
+  ],
+}
+
 function Home({ onSelectProject }) {
   const [selectedType, setSelectedType] = useState(null)
+  const [selectedTemplate, setSelectedTemplate] = useState(null)
   const [projectName, setProjectName] = useState('')
   const [recentProjects, setRecentProjects] = useState([])
   const { user, isLoaded } = useUser()
   const userId = user?.id || 'temp-user'
   const [userPlan, setUserPlan] = useState('free')
 
-useEffect(() => {
-  if (isLoaded && user) {
-    import('./api').then(({ getUserPlan }) => {
-      getUserPlan(userId).then(plan => setUserPlan(plan))
-    })
-  }
-}, [userId, user, isLoaded])
+  useEffect(() => {
+    if (isLoaded && user) {
+      import('./api').then(({ getUserPlan }) => {
+        getUserPlan(userId).then(plan => setUserPlan(plan))
+      })
+    }
+  }, [userId, user, isLoaded])
 
   const projectTypes = [
     { id: 'novel', icon: '📖', label: 'Novel', description: 'Chapters, acts and scenes', color: '#e8a87c' },
@@ -28,6 +173,12 @@ useEffect(() => {
   useEffect(() => {
     const loadProjects = async () => {
       if (!isLoaded) return
+
+      const lastUserId = localStorage.getItem('lastUserId')
+      if (lastUserId && lastUserId !== userId) {
+        localStorage.clear()
+      }
+      localStorage.setItem('lastUserId', userId)
 
       const local = JSON.parse(localStorage.getItem('projects') || '[]')
       setRecentProjects(local)
@@ -70,15 +221,17 @@ useEffect(() => {
   }
 
   const currentType = projectTypes.find(p => p.id === selectedType)
+  const templates = selectedType ? TEMPLATES[selectedType] : []
 
-const handleStart = () => {
-  if (userPlan === 'free' && recentProjects.length >= 3) {
-    alert('Free plan is limited to 3 projects. Upgrade to Pro for unlimited projects.')
-    return
+  const handleStart = () => {
+    if (userPlan === 'free' && recentProjects.length >= 3) {
+      alert('Free plan is limited to 3 projects. Upgrade to Pro for unlimited projects.')
+      return
+    }
+    const name = projectName.trim() || `My ${currentType.label}`
+    const template = templates.find(t => t.id === selectedTemplate)
+    onSelectProject(selectedType, name, null, template?.folders)
   }
-  const name = projectName.trim() || `My ${currentType.label}`
-  onSelectProject(selectedType, name, null)
-}
 
   const handleOpenProject = (project) => {
     onSelectProject(project.type, project.name, project)
@@ -147,6 +300,8 @@ const handleStart = () => {
     return pt ? pt.icon : '📄'
   }
 
+  const step = !selectedType ? 'type' : !selectedTemplate ? 'template' : 'name'
+
   return (
     <div style={{
       height: '100vh',
@@ -185,13 +340,14 @@ const handleStart = () => {
           Storytelling
         </h1>
         <p style={{ color: '#555', fontSize: '13px', fontWeight: '400' }}>
-          {selectedType ? `Name your ${currentType.label.toLowerCase()}` : 'What are you working on?'}
+          {step === 'type' && 'What are you working on?'}
+          {step === 'template' && `Choose a template for your ${currentType.label.toLowerCase()}`}
+          {step === 'name' && `Name your ${currentType.label.toLowerCase()}`}
         </p>
       </div>
 
-      {!selectedType ? (
+      {step === 'type' && (
         <div style={{ width: '100%', maxWidth: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-
           <div style={{
             display: 'flex',
             gap: '12px',
@@ -204,6 +360,7 @@ const handleStart = () => {
                 key={pt.id}
                 onClick={() => {
                   setSelectedType(pt.id)
+                  setSelectedTemplate(null)
                   setProjectName('')
                 }}
                 style={{
@@ -318,9 +475,77 @@ const handleStart = () => {
               </div>
             </div>
           )}
-
         </div>
-      ) : (
+      )}
+
+      {step === 'template' && (
+        <div style={{ width: '100%', maxWidth: '600px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+            {templates.map(t => (
+              <div
+                key={t.id}
+                onClick={() => setSelectedTemplate(t.id)}
+                style={{
+                  padding: '16px 20px',
+                  background: selectedTemplate === t.id ? `${currentType.color}11` : '#0c0c0e',
+                  border: `1px solid ${selectedTemplate === t.id ? currentType.color + '44' : '#1e1e22'}`,
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = '#141416'}
+                onMouseLeave={e => e.currentTarget.style.background = selectedTemplate === t.id ? `${currentType.color}11` : '#0c0c0e'}>
+                <div style={{ color: '#e0e0e0', fontSize: '14px', fontWeight: '500', marginBottom: '4px' }}>
+                  {t.name}
+                </div>
+                <div style={{ color: '#555', fontSize: '12px' }}>
+                  {t.description}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+            <button
+              onClick={() => {
+                setSelectedType(null)
+                setSelectedTemplate(null)
+              }}
+              style={{
+                background: 'transparent',
+                border: '1px solid #2a2a2e',
+                color: '#555',
+                borderRadius: '6px',
+                padding: '10px 22px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontFamily: 'inherit',
+              }}>
+              Back
+            </button>
+            <button
+              onClick={() => {
+                if (selectedTemplate) setSelectedTemplate(selectedTemplate)
+                else setSelectedTemplate('blank')
+              }}
+              disabled={!selectedTemplate}
+              style={{
+                background: selectedTemplate ? currentType.color + '22' : '#0c0c0e',
+                border: `1px solid ${selectedTemplate ? currentType.color + '55' : '#2a2a2e'}`,
+                color: selectedTemplate ? currentType.color : '#444',
+                borderRadius: '6px',
+                padding: '10px 22px',
+                cursor: selectedTemplate ? 'pointer' : 'default',
+                fontSize: '13px',
+                fontFamily: 'inherit',
+                fontWeight: '500',
+              }}>
+              Continue →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {step === 'name' && (
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '44px', marginBottom: '20px' }}>{currentType.icon}</div>
           <input
@@ -330,8 +555,7 @@ const handleStart = () => {
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleStart()
               if (e.key === 'Escape') {
-                setSelectedType(null)
-                setProjectName('')
+                setSelectedTemplate(null)
               }
             }}
             placeholder={`My ${currentType.label}`}
@@ -352,10 +576,7 @@ const handleStart = () => {
           />
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
             <button
-              onClick={() => {
-                setSelectedType(null)
-                setProjectName('')
-              }}
+              onClick={() => setSelectedTemplate(null)}
               style={{
                 background: 'transparent',
                 border: '1px solid #2a2a2e',

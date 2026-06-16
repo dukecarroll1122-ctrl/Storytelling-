@@ -136,7 +136,7 @@ useEffect(() => {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [distractionFree])
 
-  const handleSelectProject = (type, name, existingProject) => {
+  const handleSelectProject = (type, name, existingProject, templateFolders ) => {
     if (existingProject) {
       setProjectId(existingProject.id)
       setProjectType(existingProject.type)
@@ -147,7 +147,7 @@ useEffect(() => {
       setLabels(existingProject.labels || {})
     } else {
       const newId = `project-${Date.now()}`
-      const newFolders = DEFAULT_STRUCTURES[type] || DEFAULT_STRUCTURES.novel
+      const newFolders = templateFolders || DEFAULT_STRUCTURES[type] || DEFAULT_STRUCTURES.novel
       setProjectId(newId)
       setProjectType(type)
       setProjectName(name)
