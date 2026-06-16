@@ -97,7 +97,7 @@ const editorStyles = `
   }
 `
 
-function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, docData, setDocData, projectId, distractionFree, setDistractionFree, userPlan }) {
+function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, docData, setDocData, projectId, distractionFree, setDistractionFree, userPlan, wordGoal, todayWords, onWordsUpdate }) {
   const [title, setTitle] = useState(docName || '')
   const [wordCount, setWordCount] = useState(0)
   const [showExport, setShowExport] = useState(false)
@@ -130,6 +130,7 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
       const text = editor.state.doc.textContent.trim()
       const count = text === '' ? 0 : text.split(/\s+/).length
       setWordCount(count)
+      if (onWordsUpdate) onWordsUpdate(count)
       if (currentDocId && setDocData) {
         setDocData(prev => ({
           ...prev,

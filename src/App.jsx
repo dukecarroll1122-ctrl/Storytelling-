@@ -56,12 +56,23 @@ function App() {
   const { user } = useUser()
   const userId = user?.id || 'temp-user'
   const [userPlan, setUserPlan] = useState('free')
+  const [wordGoal, setWordGoal] = useState(() => {
+    return parseInt(localStorage.getItem('wordGoal') || '500')
+  })
+  const [todayWords, setTodayWords] = useState(() => {
+    const today = new Date().toDateString()
+    const saved = JSON.parse(localStorage.getItem('dailyWords') || '{}')
+    return saved[today] || 0
+  })
+  const [streak, setStreak] = useState(() => {
+    return parseInt(localStorage.getItem('streak') || '0')
+  })
 
-useEffect(() => {
-  if (user) {
-    getUserPlan(userId).then(plan => setUserPlan(plan))
-  }
-}, [userId, user])
+  useEffect(() => {
+    if (user) {
+      getUserPlan(userId).then(plan => setUserPlan(plan))
+    }
+  }, [userId, user])
 
   const projectTypes = [
     { id: 'novel', icon: '📖', label: 'Novel', color: '#e8a87c' },
@@ -102,6 +113,26 @@ useEffect(() => {
     return total
   }
 
+  const updateDailyWords = (count) => {
+    const today = new Date().toDateString()
+    const saved = JSON.parse(localStorage.getItem('dailyWords') || '{}')
+    saved[today] = count
+    localStorage.setItem('dailyWords', JSON.stringify(saved))
+    setTodayWords(count)
+
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+    const yesterdayStr = yesterday.toDateString()
+    const hitGoalToday = count >= wordGoal
+    const hitGoalYesterday = (saved[yesterdayStr] || 0) >= wordGoal
+
+    if (hitGoalToday) {
+      const newStreak = hitGoalYesterday ? streak + 1 : 1
+      setStreak(newStreak)
+      localStorage.setItem('streak', newStreak.toString())
+    }
+  }
+
   useEffect(() => {
     if (!projectId || folders.length === 0) return
 
@@ -136,7 +167,7 @@ useEffect(() => {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [distractionFree])
 
-  const handleSelectProject = (type, name, existingProject, templateFolders ) => {
+  const handleSelectProject = (type, name, existingProject, templateFolders) => {
     if (existingProject) {
       setProjectId(existingProject.id)
       setProjectType(existingProject.type)
@@ -171,7 +202,7 @@ useEffect(() => {
     }
     const loadedFolders = existingProject
       ? (existingProject.folders || DEFAULT_STRUCTURES[existingProject.type] || DEFAULT_STRUCTURES.novel)
-      : (DEFAULT_STRUCTURES[type] || DEFAULT_STRUCTURES.novel)
+      : (templateFolders || DEFAULT_STRUCTURES[type] || DEFAULT_STRUCTURES.novel)
     const firstDoc = loadedFolders[0]?.docs[0]
     setSelectedDoc(firstDoc ? firstDoc.id : '')
     setView('editor')
@@ -301,6 +332,9 @@ useEffect(() => {
             distractionFree={distractionFree}
             setDistractionFree={setDistractionFree}
             userPlan={userPlan}
+            wordGoal={wordGoal}
+            todayWords={todayWords}
+            onWordsUpdate={updateDailyWords}
           />
         )}
 
@@ -352,6 +386,13 @@ useEffect(() => {
           <span style={{ color: '#444', fontSize: '11px' }}>{projectName}</span>
           <span style={{ color: '#2a2a2e', fontSize: '11px' }}>•</span>
           <span style={{ color: '#444', fontSize: '11px' }}>{getTotalWordCount().toLocaleString()} words</span>
+          <span style={{ color: '#2a2a2e', fontSize: '11px' }}>•</span>
+          <span style={{ color: todayWords >= wordGoal ? '#52b788' : '#444', fontSize: '11px' }}>
+            {todayWords}/{wordGoal} today
+          </span>
+          {streak > 0 && (
+            <span style={{ color: '#e8a87c', fontSize: '11px' }}>🔥 {streak} day streak</span>
+          )}
           <div style={{ flex: 1 }} />
           <span style={{ color: '#52b788', fontSize: '11px' }}>● Saved</span>
         </div>
