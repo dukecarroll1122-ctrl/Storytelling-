@@ -184,7 +184,7 @@ function Home({ onSelectProject }) {
       setRecentProjects(local)
 
       try {
-        const response = await fetch(`http://localhost:3001/api/projects/${userId}`)
+        const response = await fetch(`https://storytelling-server-production.up.railway.app/api/projects/${userId}`)
         const dbProjects = await response.json()
         if (dbProjects && dbProjects.length > 0) {
           const merged = mergeProjects(local, dbProjects)

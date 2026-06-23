@@ -6,7 +6,7 @@ function Pricing({ onClose }) {
 
   const handleCheckout = async (plan) => {
     try {
-      const response = await fetch('http://localhost:3001/api/payments/create-checkout-session', {
+      const response = await fetch('https://storytelling-server-production.up.railway.app/api/payments/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ plan, userId }),

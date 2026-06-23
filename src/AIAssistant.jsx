@@ -12,7 +12,7 @@ function AIAssistant({ editor, onClose }) {
 
     try {
       const context = editor?.state.doc.textContent || ''
-      const res = await fetch('http://localhost:3001/api/ai/assist', {
+      const res = await fetch('https://storytelling-server-production.up.railway.app/api/ai/assist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, context: context.slice(-2000) }),
