@@ -68,11 +68,21 @@ function App() {
     return parseInt(localStorage.getItem('streak') || '0')
   })
 
-  useEffect(() => {
-    if (user) {
-      getUserPlan(userId).then(plan => setUserPlan(plan))
-    }
-  }, [userId, user])
+ useEffect(() => {
+  if (user) {
+    getUserPlan(userId).then(plan => setUserPlan(plan))
+  }
+}, [userId, user])
+
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search)
+  if (params.get('payment') === 'success' && user) {
+    getUserPlan(userId).then(plan => {
+      setUserPlan(plan)
+      window.history.replaceState({}, '', window.location.pathname)
+    })
+  }
+}, [user, userId])
 
   const projectTypes = [
     { id: 'novel', icon: '📖', label: 'Novel', color: '#e8a87c' },

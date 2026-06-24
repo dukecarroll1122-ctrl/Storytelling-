@@ -103,6 +103,7 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
   const [showExport, setShowExport] = useState(false)
   const [showFindReplace, setShowFindReplace] = useState(false)
   const [showAI, setShowAI] = useState(false)
+  const [saveStatus, setSaveStatus] = useState('saved')
   const [findText, setFindText] = useState('')
   const [replaceText, setReplaceText] = useState('')
   const projectIdRef = useRef(projectId)
@@ -142,9 +143,22 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
       }
       if (currentProjectId && currentDocId) {
         const dbId = localStorage.getItem(`db-${currentProjectId}`) || currentProjectId
-        if (dbId) {
-          saveDocument(dbId, currentDocId, html)
-        }
+       if (dbId) {
+  setSaveStatus('saving')
+  const attemptSave = async (retries = 3) => {
+    try {
+      await saveDocument(dbId, currentDocId, html)
+      setSaveStatus('saved')
+    } catch (err) {
+      if (retries > 1) {
+        setTimeout(() => attemptSave(retries - 1), 2000)
+      } else {
+        setSaveStatus('error')
+      }
+    }
+  }
+  attemptSave()
+}
       }
     },
   })
@@ -432,15 +446,15 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
 
           <button
             onMouseDown={(e) => {
-    e.preventDefault()
-    if (userPlan === 'free') {
-      alert('AI Assistant is a Pro feature. Upgrade to unlock AI writing assistance.')
-      return
-    }
-    setShowAI(!showAI)
-  }}
-  style={tbStyle(showAI)}>
-  ✦ AI
+              e.preventDefault()
+              if (userPlan === 'free') {
+                alert('AI Assistant is a Pro feature. Upgrade to unlock AI writing assistance.')
+                return
+              }
+              setShowAI(!showAI)
+            }}
+            style={tbStyle(showAI)}>
+            ✦ AI
           </button>
 
           <div style={{ width: '1px', height: '14px', background: '#2a2a2e', margin: '0 4px' }} />
@@ -540,8 +554,11 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           <EditorContent editor={editor} />
         </div>
 
-        <div style={{ padding: '8px 48px', borderTop: '1px solid #1a1a1d', color: '#555', fontSize: '12px', fontFamily: 'Inter, sans-serif' }}>
-          {wordCount} words
+        <div style={{ padding: '8px 48px', borderTop: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', fontFamily: 'Inter, sans-serif' }}>
+          <span style={{ color: '#555' }}>{wordCount} words</span>
+          <span style={{ color: saveStatus === 'saved' ? '#52b788' : saveStatus === 'saving' ? '#7ec8e3' : '#e06060' }}>
+            {saveStatus === 'saved' ? '● Saved' : saveStatus === 'saving' ? '◌ Saving...' : '● Save failed'}
+          </span>
         </div>
 
       </div>
