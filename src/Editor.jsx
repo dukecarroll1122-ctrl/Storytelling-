@@ -143,22 +143,27 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
       }
       if (currentProjectId && currentDocId) {
         const dbId = localStorage.getItem(`db-${currentProjectId}`) || currentProjectId
-       if (dbId) {
-  setSaveStatus('saving')
-  const attemptSave = async (retries = 3) => {
-    try {
-      await saveDocument(dbId, currentDocId, html)
-      setSaveStatus('saved')
-    } catch (err) {
-      if (retries > 1) {
-        setTimeout(() => attemptSave(retries - 1), 2000)
-      } else {
-        setSaveStatus('error')
-      }
-    }
-  }
-  attemptSave()
-}
+        if (dbId) {
+          setSaveStatus('saving')
+          const attemptSave = async (retries = 3) => {
+            try {
+              await saveDocument(dbId, currentDocId, html)
+              setSaveStatus('saved')
+              const backupKey = `backup-${currentDocId}`
+              const backups = JSON.parse(localStorage.getItem(backupKey) || '[]')
+              backups.unshift({ content: html, timestamp: new Date().toISOString() })
+              if (backups.length > 5) backups.pop()
+              localStorage.setItem(backupKey, JSON.stringify(backups))
+            } catch (err) {
+              if (retries > 1) {
+                setTimeout(() => attemptSave(retries - 1), 2000)
+              } else {
+                setSaveStatus('error')
+              }
+            }
+          }
+          attemptSave()
+        }
       }
     },
   })

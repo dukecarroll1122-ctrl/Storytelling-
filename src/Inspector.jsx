@@ -18,8 +18,25 @@ function Inspector({ selectedDoc, docData, setDocData }) {
   const wordCount = currentData.wordCount || 0
   const target = parseInt(currentData.target) || 0
   const progress = target > 0 ? Math.min(Math.round((wordCount / target) * 100), 100) : 0
-
   const progressColor = progress >= 100 ? '#52b788' : progress >= 60 ? '#e8a87c' : '#7ec8e3'
+
+  const getBackups = () => {
+    if (!selectedDoc) return []
+    const backupKey = `backup-${selectedDoc}`
+    return JSON.parse(localStorage.getItem(backupKey) || '[]')
+  }
+
+  const formatTime = (timestamp) => {
+    const date = new Date(timestamp)
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' · ' + date.toLocaleDateString()
+  }
+
+  const restoreBackup = (content) => {
+    if (!selectedDoc) return
+    if (!window.confirm('Restore this version? Your current content will be replaced.')) return
+    localStorage.setItem(selectedDoc, content)
+    window.location.reload()
+  }
 
   return (
     <div style={{ width: '260px', background: '#0c0c0e', borderLeft: '1px solid #1a1a1d', display: 'flex', flexDirection: 'column' }}>
@@ -34,6 +51,11 @@ function Inspector({ selectedDoc, docData, setDocData }) {
           onClick={() => setActiveTab('notes')}
           style={{ flex: 1, padding: '10px', background: 'transparent', border: 'none', color: activeTab === 'notes' ? '#fff' : '#555', cursor: 'pointer', fontSize: '11px', fontFamily: 'Inter, sans-serif', fontWeight: '500', borderBottom: activeTab === 'notes' ? '2px solid #7ec8e3' : '2px solid transparent', letterSpacing: '0.06em' }}>
           NOTES
+        </button>
+        <button
+          onClick={() => setActiveTab('history')}
+          style={{ flex: 1, padding: '10px', background: 'transparent', border: 'none', color: activeTab === 'history' ? '#fff' : '#555', cursor: 'pointer', fontSize: '11px', fontFamily: 'Inter, sans-serif', fontWeight: '500', borderBottom: activeTab === 'history' ? '2px solid #7ec8e3' : '2px solid transparent', letterSpacing: '0.06em' }}>
+          HISTORY
         </button>
       </div>
 
@@ -107,6 +129,35 @@ function Inspector({ selectedDoc, docData, setDocData }) {
               placeholder="Private notes about this document..."
               style={{ width: '100%', height: '200px', background: '#141416', border: '1px solid #1e1e22', color: '#999', borderRadius: '6px', padding: '10px', fontSize: '12px', fontFamily: 'Georgia, serif', lineHeight: '1.7', resize: 'none', outline: 'none', boxSizing: 'border-box' }}
             />
+          </div>
+        )}
+
+        {selectedDoc && activeTab === 'history' && (
+          <div>
+            <p style={{ color: '#555', fontSize: '11px', marginBottom: '12px', letterSpacing: '0.08em', fontWeight: '500' }}>VERSION HISTORY</p>
+            {getBackups().length === 0 ? (
+              <p style={{ color: '#444', fontSize: '12px', fontStyle: 'italic' }}>
+                No backups yet. Backups are saved automatically when your document syncs to the cloud.
+              </p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {getBackups().map((backup, index) => (
+                  <div key={index} style={{ background: '#141416', border: '1px solid #1e1e22', borderRadius: '6px', padding: '10px' }}>
+                    <div style={{ color: '#888', fontSize: '11px', fontFamily: 'Inter, sans-serif', marginBottom: '8px' }}>
+                      {index === 0 ? '🕐 Latest backup' : `🕐 ${formatTime(backup.timestamp)}`}
+                    </div>
+                    <div style={{ color: '#555', fontSize: '11px', fontFamily: 'Georgia, serif', fontStyle: 'italic', marginBottom: '8px', lineHeight: '1.5' }}>
+                      {backup.content.replace(/<[^>]+>/g, '').slice(0, 80)}...
+                    </div>
+                    <button
+                      onClick={() => restoreBackup(backup.content)}
+                      style={{ background: 'transparent', border: '1px solid #2a2a2e', color: '#7ec8e3', borderRadius: '4px', padding: '4px 10px', cursor: 'pointer', fontSize: '11px', fontFamily: 'Inter, sans-serif' }}>
+                      Restore
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
