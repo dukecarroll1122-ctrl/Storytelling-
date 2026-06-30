@@ -65,6 +65,22 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
 
   const storageKey = projectId && selectedDoc ? `${projectId}-${selectedDoc}` : selectedDoc
 
+  const centerCursor = (smooth = true) => {
+    if (!editor) return
+    requestAnimationFrame(() => {
+      const { from } = editor.state.selection
+      const coords = editor.view.coordsAtPos(from)
+      const editorWrapper = document.querySelector('.editor-scroll-area')
+      if (editorWrapper && coords) {
+        const wrapperRect = editorWrapper.getBoundingClientRect()
+        const lineHeight = 26
+        const cursorOffsetFromTop = coords.top - wrapperRect.top
+        const targetScroll = editorWrapper.scrollTop + cursorOffsetFromTop - (wrapperRect.height / 2) + (lineHeight / 2)
+        editorWrapper.scrollTo({ top: Math.max(0, targetScroll), behavior: smooth ? 'smooth' : 'auto' })
+      }
+    })
+  }
+
   const editor = useEditor({
     extensions: [StarterKit, TextAlign],
     content: localStorage.getItem(storageKey) || '',
@@ -112,7 +128,17 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
         }
       }
     },
+    onSelectionUpdate: () => {
+      if (!distractionFree) return
+      centerCursor(true)
+    },
   })
+
+  useEffect(() => {
+    if (distractionFree && editor) {
+      setTimeout(() => centerCursor(false), 50)
+    }
+  }, [distractionFree, editor])
 
   useEffect(() => {
     setTitle(docName || '')
@@ -319,6 +345,8 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
     fontSize: '13px',
     fontFamily: 'Inter, sans-serif',
   })
+
+  const readingTime = Math.max(1, Math.round(wordCount / 200))
 
   return (
     <>
@@ -613,12 +641,13 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
 
         {showAI && <AIAssistant editor={editor} onClose={() => setShowAI(false)} />}
 
-        <div style={{ flex: 1, padding: '32px 48px', overflow: 'auto' }}>
+        <div className="editor-scroll-area" style={{ flex: 1, padding: distractionFree ? '40vh 48px' : '32px 48px', overflow: 'auto' }}>
           <EditorContent editor={editor} />
         </div>
 
         <div style={{ padding: '8px 48px', borderTop: `1px solid ${currentTheme.border}`, display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', fontFamily: 'Inter, sans-serif' }}>
           <span style={{ color: theme === 'dark' ? '#555' : '#888' }}>{wordCount} words</span>
+          <span style={{ color: theme === 'dark' ? '#555' : '#888' }}>· {readingTime} min read</span>
           <span style={{ color: saveStatus === 'saved' ? '#52b788' : saveStatus === 'saving' ? '#7ec8e3' : '#e06060' }}>
             {saveStatus === 'saved' ? '● Saved' : saveStatus === 'saving' ? '◌ Saving...' : '● Save failed'}
           </span>
