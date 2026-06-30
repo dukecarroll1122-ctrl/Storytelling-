@@ -52,6 +52,11 @@ function App() {
   const [distractionFree, setDistractionFree] = useState(false)
   const [showCompile, setShowCompile] = useState(false)
   const [showPricing, setShowPricing] = useState(false)
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark')
+
+useEffect(() => {
+  localStorage.setItem('theme', theme)
+}, [theme])
   const [labels, setLabels] = useState({})
   const { user } = useUser()
   const userId = user?.id || 'temp-user'
@@ -345,6 +350,8 @@ useEffect(() => {
             wordGoal={wordGoal}
             todayWords={todayWords}
             onWordsUpdate={updateDailyWords}
+            theme={theme}
+            setTheme={setTheme}
           />
         )}
 

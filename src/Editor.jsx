@@ -34,70 +34,14 @@ const TextAlign = Extension.create({
   },
 })
 
-const editorStyles = `
-  .ProseMirror {
-    outline: none;
-    min-height: 400px;
-    color: #d4d0c8;
-    font-family: Georgia, serif;
-    font-size: 16px;
-    line-height: 1.8;
+function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, docData, setDocData, projectId, distractionFree, setDistractionFree, userPlan, wordGoal, todayWords, onWordsUpdate, theme, setTheme }) {
+  const themes = {
+    dark: { bg: '#0f0f11', text: '#d4d0c8', heading: '#ffffff', border: '#1a1a1d' },
+    sepia: { bg: '#f4ecd8', text: '#5b4636', heading: '#3a2e22', border: '#ddd0b5' },
+    light: { bg: '#ffffff', text: '#2a2a2a', heading: '#0a0a0a', border: '#e5e5e5' },
   }
-  .ProseMirror h1 {
-    color: #ffffff;
-    font-size: 36px;
-    font-weight: bold;
-    margin-bottom: 8px;
-    margin-top: 8px;
-  }
-  .ProseMirror h2 {
-    color: #dddddd;
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 6px;
-    margin-top: 6px;
-  }
-  .ProseMirror strong {
-    color: #ffffff;
-    font-weight: bold;
-  }
-  .ProseMirror em {
-    color: #d4d0c8;
-    font-style: italic;
-  }
-  .ProseMirror s {
-    color: #888;
-    text-decoration: line-through;
-  }
-  .ProseMirror u {
-    text-decoration: underline;
-  }
-  .ProseMirror p {
-    margin-bottom: 4px;
-    margin-top: 0;
-  }
-  .ProseMirror ul {
-    padding-left: 24px;
-    margin-bottom: 8px;
-  }
-  .ProseMirror ol {
-    padding-left: 24px;
-    margin-bottom: 8px;
-  }
-  .ProseMirror li {
-    margin-bottom: 4px;
-    color: #d4d0c8;
-  }
-  .ProseMirror blockquote {
-    border-left: 3px solid #2a2a2e;
-    padding-left: 16px;
-    margin-left: 0;
-    color: #888;
-    font-style: italic;
-  }
-`
+  const currentTheme = themes[theme] || themes.dark
 
-function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, docData, setDocData, projectId, distractionFree, setDistractionFree, userPlan, wordGoal, todayWords, onWordsUpdate }) {
   const [title, setTitle] = useState(docName || '')
   const [wordCount, setWordCount] = useState(0)
   const [showExport, setShowExport] = useState(false)
@@ -106,6 +50,7 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
   const [saveStatus, setSaveStatus] = useState('saved')
   const [findText, setFindText] = useState('')
   const [replaceText, setReplaceText] = useState('')
+  const [showThemeMenu, setShowThemeMenu] = useState(false)
   const projectIdRef = useRef(projectId)
   const selectedDocRef = useRef(selectedDoc)
 
@@ -376,19 +321,80 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
 
   return (
     <>
-      <style>{editorStyles}</style>
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#0f0f11', position: 'relative' }}>
+      <style>{`
+        .ProseMirror {
+          outline: none;
+          min-height: 400px;
+          color: ${currentTheme.text};
+          font-family: Georgia, serif;
+          font-size: 16px;
+          line-height: 1.8;
+        }
+        .ProseMirror h1 {
+          color: ${currentTheme.heading};
+          font-size: 36px;
+          font-weight: bold;
+          margin-bottom: 8px;
+          margin-top: 8px;
+        }
+        .ProseMirror h2 {
+          color: ${currentTheme.heading};
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 6px;
+          margin-top: 6px;
+        }
+        .ProseMirror strong {
+          color: ${currentTheme.heading};
+          font-weight: bold;
+        }
+        .ProseMirror em {
+          color: ${currentTheme.text};
+          font-style: italic;
+        }
+        .ProseMirror s {
+          color: #888;
+          text-decoration: line-through;
+        }
+        .ProseMirror u {
+          text-decoration: underline;
+        }
+        .ProseMirror p {
+          margin-bottom: 4px;
+          margin-top: 0;
+        }
+        .ProseMirror ul {
+          padding-left: 24px;
+          margin-bottom: 8px;
+        }
+        .ProseMirror ol {
+          padding-left: 24px;
+          margin-bottom: 8px;
+        }
+        .ProseMirror li {
+          margin-bottom: 4px;
+          color: ${currentTheme.text};
+        }
+        .ProseMirror blockquote {
+          border-left: 3px solid ${currentTheme.border};
+          padding-left: 16px;
+          margin-left: 0;
+          color: #888;
+          font-style: italic;
+        }
+      `}</style>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: currentTheme.bg, position: 'relative' }}>
 
-        <div style={{ padding: '24px 48px 0', borderBottom: '1px solid #1a1a1d' }}>
+        <div style={{ padding: '24px 48px 0', borderBottom: `1px solid ${currentTheme.border}` }}>
           <input
             value={title}
             onChange={handleTitleChange}
             placeholder="Untitled"
-            style={{ background: 'transparent', border: 'none', outline: 'none', color: '#ffffff', fontSize: '22px', fontFamily: 'Georgia, serif', width: '100%', marginBottom: '12px' }}
+            style={{ background: 'transparent', border: 'none', outline: 'none', color: currentTheme.heading, fontSize: '22px', fontFamily: 'Georgia, serif', width: '100%', marginBottom: '12px' }}
           />
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 48px', borderBottom: '1px solid #1a1a1d', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 48px', borderBottom: `1px solid ${currentTheme.border}`, flexWrap: 'wrap' }}>
 
           <button onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().toggleBold().run() }} style={tbStyle(editor?.isActive('bold'))}>
             <strong>B</strong>
@@ -461,6 +467,30 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
             style={tbStyle(showAI)}>
             ✦ AI
           </button>
+
+          <div style={{ width: '1px', height: '14px', background: '#2a2a2e', margin: '0 4px' }} />
+
+          <div style={{ position: 'relative' }}>
+            <button
+              onMouseDown={(e) => { e.preventDefault(); setShowThemeMenu(!showThemeMenu) }}
+              style={tbStyle(showThemeMenu)}>
+              🎨 Theme
+            </button>
+            {showThemeMenu && (
+              <div style={{ position: 'absolute', top: '34px', left: '0', background: '#141416', border: '1px solid #2a2a2e', borderRadius: '6px', padding: '4px', zIndex: 100, minWidth: '120px' }}>
+                {['dark', 'sepia', 'light'].map(t => (
+                  <div
+                    key={t}
+                    onMouseDown={(e) => { e.preventDefault(); setTheme(t); setShowThemeMenu(false) }}
+                    style={{ padding: '8px 12px', color: theme === t ? '#7ec8e3' : '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif', textTransform: 'capitalize' }}
+                    onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                    {t === 'dark' ? '🌙' : t === 'sepia' ? '📜' : '☀️'} {t}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           <div style={{ width: '1px', height: '14px', background: '#2a2a2e', margin: '0 4px' }} />
 
@@ -559,8 +589,8 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           <EditorContent editor={editor} />
         </div>
 
-        <div style={{ padding: '8px 48px', borderTop: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', fontFamily: 'Inter, sans-serif' }}>
-          <span style={{ color: '#555' }}>{wordCount} words</span>
+        <div style={{ padding: '8px 48px', borderTop: `1px solid ${currentTheme.border}`, display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', fontFamily: 'Inter, sans-serif' }}>
+          <span style={{ color: theme === 'dark' ? '#555' : '#888' }}>{wordCount} words</span>
           <span style={{ color: saveStatus === 'saved' ? '#52b788' : saveStatus === 'saving' ? '#7ec8e3' : '#e06060' }}>
             {saveStatus === 'saved' ? '● Saved' : saveStatus === 'saving' ? '◌ Saving...' : '● Save failed'}
           </span>
