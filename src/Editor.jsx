@@ -34,7 +34,7 @@ const TextAlign = Extension.create({
   },
 })
 
-function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, docData, setDocData, projectId, distractionFree, setDistractionFree, userPlan, wordGoal, todayWords, onWordsUpdate, theme, setTheme }) {
+function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, docData, setDocData, projectId, distractionFree, setDistractionFree, userPlan, wordGoal, todayWords, onWordsUpdate, theme, setTheme, fontFamily, setFontFamily }) {
   const themes = {
     dark: { bg: '#0f0f11', text: '#d4d0c8', heading: '#ffffff', border: '#1a1a1d' },
     sepia: { bg: '#f4ecd8', text: '#5b4636', heading: '#3a2e22', border: '#ddd0b5' },
@@ -51,6 +51,7 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
   const [findText, setFindText] = useState('')
   const [replaceText, setReplaceText] = useState('')
   const [showThemeMenu, setShowThemeMenu] = useState(false)
+  const [showFontMenu, setShowFontMenu] = useState(false)
   const projectIdRef = useRef(projectId)
   const selectedDocRef = useRef(selectedDoc)
 
@@ -326,7 +327,7 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           outline: none;
           min-height: 400px;
           color: ${currentTheme.text};
-          font-family: Georgia, serif;
+          font-family: ${fontFamily};
           font-size: 16px;
           line-height: 1.8;
         }
@@ -486,6 +487,33 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
                     onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                     {t === 'dark' ? '🌙' : t === 'sepia' ? '📜' : '☀️'} {t}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div style={{ position: 'relative' }}>
+            <button
+              onMouseDown={(e) => { e.preventDefault(); setShowFontMenu(!showFontMenu) }}
+              style={tbStyle(showFontMenu)}>
+              Aa Font
+            </button>
+            {showFontMenu && (
+              <div style={{ position: 'absolute', top: '34px', left: '0', background: '#141416', border: '1px solid #2a2a2e', borderRadius: '6px', padding: '4px', zIndex: 100, minWidth: '180px' }}>
+                {[
+                  { label: 'Georgia', value: 'Georgia, serif' },
+                  { label: 'Times New Roman', value: '"Times New Roman", serif' },
+                  { label: 'Courier (Screenplay)', value: '"Courier New", monospace' },
+                  { label: 'Helvetica', value: 'Helvetica, Arial, sans-serif' },
+                ].map(f => (
+                  <div
+                    key={f.value}
+                    onMouseDown={(e) => { e.preventDefault(); setFontFamily(f.value); setShowFontMenu(false) }}
+                    style={{ padding: '8px 12px', color: fontFamily === f.value ? '#7ec8e3' : '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: f.value }}
+                    onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                    {f.label}
                   </div>
                 ))}
               </div>

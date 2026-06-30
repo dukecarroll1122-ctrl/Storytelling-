@@ -57,6 +57,11 @@ function App() {
 useEffect(() => {
   localStorage.setItem('theme', theme)
 }, [theme])
+const [fontFamily, setFontFamily] = useState(() => localStorage.getItem('fontFamily') || 'Georgia, serif')
+
+useEffect(() => {
+  localStorage.setItem('fontFamily', fontFamily)
+}, [fontFamily])
   const [labels, setLabels] = useState({})
   const { user } = useUser()
   const userId = user?.id || 'temp-user'
@@ -352,6 +357,8 @@ useEffect(() => {
             onWordsUpdate={updateDailyWords}
             theme={theme}
             setTheme={setTheme}
+            fontFamily={fontFamily}
+            setFontFamily={setFontFamily}
           />
         )}
 
