@@ -336,6 +336,7 @@ useEffect(() => {
             setFolders={setFolders}
             labels={labels}
             setLabels={setLabels}
+            statuses={statuses}
           />
         )}
 

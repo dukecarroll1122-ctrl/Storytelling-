@@ -2,7 +2,14 @@ import { useState } from 'react'
 
 const LABEL_COLORS = [null, '#e06060', '#e8a87c', '#e8d87c', '#52b788', '#7ec8e3', '#c77dff']
 
-function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor, folders, setFolders, labels, setLabels }) {
+const STATUS_COLORS = {
+  Todo: '#444',
+  Draft: '#7ec8e3',
+  Revised: '#52b788',
+  Final: '#e8a87c',
+}
+
+function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor, folders, setFolders, labels, setLabels, statuses }) {
   const [editingItem, setEditingItem] = useState(null)
   const [editingValue, setEditingValue] = useState('')
 
@@ -12,6 +19,15 @@ function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor, folder
     const currentIndex = LABEL_COLORS.indexOf(current)
     const nextIndex = (currentIndex + 1) % LABEL_COLORS.length
     setLabels({ ...labels, [docId]: LABEL_COLORS[nextIndex] })
+  }
+
+  const getStatusColor = (docId) => {
+    const status = statuses?.[docId] || 'Todo'
+    return STATUS_COLORS[status] || '#444'
+  }
+
+  const getStatusLabel = (docId) => {
+    return statuses?.[docId] || 'Todo'
   }
 
   const toggleFolder = (folderId) => {
@@ -131,7 +147,9 @@ function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor, folder
                   background: selectedDoc === doc.id ? accentColor + '22' : 'transparent',
                   borderRadius: '4px',
                   borderLeft: selectedDoc === doc.id ? `2px solid ${accentColor}` : '2px solid transparent',
-                }}>
+                }}
+                onMouseEnter={e => { if (selectedDoc !== doc.id) e.currentTarget.style.background = '#141416' }}
+                onMouseLeave={e => { if (selectedDoc !== doc.id) e.currentTarget.style.background = 'transparent' }}>
 
                 {editingItem === doc.id ? (
                   <input
@@ -162,8 +180,21 @@ function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor, folder
                         border: labels[doc.id] ? 'none' : '1px solid #444',
                         display: 'inline-block',
                       }}
+                      title="Click to cycle label color"
                     />
                     {doc.name}
+                    <span
+                      style={{
+                        marginLeft: 'auto',
+                        fontSize: '9px',
+                        fontFamily: 'Inter, sans-serif',
+                        fontWeight: '600',
+                        letterSpacing: '0.04em',
+                        color: getStatusColor(doc.id),
+                        opacity: 0.8,
+                      }}>
+                      {getStatusLabel(doc.id) !== 'Todo' ? getStatusLabel(doc.id).toUpperCase() : ''}
+                    </span>
                   </div>
                 )}
 
