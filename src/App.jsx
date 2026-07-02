@@ -5,6 +5,7 @@ import Editor from './Editor'
 import Corkboard from './Corkboard'
 import Outline from './Outline'
 import Home from './Home'
+import Landing from './Landing'
 import CharacterSheet from './CharacterSheet'
 import Compile from './Compile'
 import Pricing from './Pricing'
@@ -53,17 +54,9 @@ function App() {
   const [showCompile, setShowCompile] = useState(false)
   const [showPricing, setShowPricing] = useState(false)
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark')
-
-useEffect(() => {
-  localStorage.setItem('theme', theme)
-}, [theme])
-const [fontFamily, setFontFamily] = useState(() => localStorage.getItem('fontFamily') || 'Georgia, serif')
-
-useEffect(() => {
-  localStorage.setItem('fontFamily', fontFamily)
-}, [fontFamily])
+  const [fontFamily, setFontFamily] = useState(() => localStorage.getItem('fontFamily') || 'Georgia, serif')
   const [labels, setLabels] = useState({})
-  const { user } = useUser()
+  const { user, isLoaded } = useUser()
   const userId = user?.id || 'temp-user'
   const [userPlan, setUserPlan] = useState('free')
   const [wordGoal, setWordGoal] = useState(() => {
@@ -78,21 +71,29 @@ useEffect(() => {
     return parseInt(localStorage.getItem('streak') || '0')
   })
 
- useEffect(() => {
-  if (user) {
-    getUserPlan(userId).then(plan => setUserPlan(plan))
-  }
-}, [userId, user])
+  useEffect(() => {
+    localStorage.setItem('theme', theme)
+  }, [theme])
 
-useEffect(() => {
-  const params = new URLSearchParams(window.location.search)
-  if (params.get('payment') === 'success' && user) {
-    getUserPlan(userId).then(plan => {
-      setUserPlan(plan)
-      window.history.replaceState({}, '', window.location.pathname)
-    })
-  }
-}, [user, userId])
+  useEffect(() => {
+    localStorage.setItem('fontFamily', fontFamily)
+  }, [fontFamily])
+
+  useEffect(() => {
+    if (user) {
+      getUserPlan(userId).then(plan => setUserPlan(plan))
+    }
+  }, [userId, user])
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('payment') === 'success' && user) {
+      getUserPlan(userId).then(plan => {
+        setUserPlan(plan)
+        window.history.replaceState({}, '', window.location.pathname)
+      })
+    }
+  }, [user, userId])
 
   const projectTypes = [
     { id: 'novel', icon: '📖', label: 'Novel', color: '#e8a87c' },
@@ -233,6 +234,8 @@ useEffect(() => {
   const compile = Compile({ folders, projectName, projectId })
 
   if (screen === 'home') {
+    if (!isLoaded) return null
+    if (!user) return <Landing />
     return <Home onSelectProject={handleSelectProject} />
   }
 
