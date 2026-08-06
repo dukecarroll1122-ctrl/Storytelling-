@@ -65,7 +65,7 @@ function Outline({ selectedDoc, setSelectedDoc, accentColor, folders, statuses, 
                 <div style={{ color: selectedDoc === doc.id ? '#fff' : '#c0bdb8', fontWeight: '500' }}>
                   {doc.name}
                 </div>
-                <div style={{ color: '#444', fontSize: '11px', marginTop: '2px' }}>
+                <div style={{ color: '#8f8f99', fontSize: '11px', marginTop: '2px' }}>
                   {doc.folder}
                 </div>
               </td>

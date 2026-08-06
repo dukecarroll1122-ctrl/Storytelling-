@@ -1,9 +1,16 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { SparkleIcon } from './icons'
 
 function AIAssistant({ editor, onClose }) {
   const [prompt, setPrompt] = useState('')
   const [response, setResponse] = useState('')
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const onKeyDown = (e) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [onClose])
 
   const handleAsk = async () => {
     if (!prompt.trim()) return
@@ -44,8 +51,10 @@ function AIAssistant({ editor, onClose }) {
       fontFamily: 'Inter, sans-serif',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-        <span style={{ color: '#7ec8e3', fontSize: '12px', fontWeight: '600', letterSpacing: '0.08em' }}>✦ AI ASSISTANT</span>
-        <span onClick={onClose} style={{ color: '#555', cursor: 'pointer', fontSize: '18px', lineHeight: 1 }}>×</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#7ec8e3', fontSize: '12px', fontWeight: '600', letterSpacing: '0.08em' }}>
+          <SparkleIcon width="13" height="13" /> AI ASSISTANT
+        </span>
+        <button aria-label="Close AI Assistant" onClick={onClose} style={{ background: 'none', border: 'none', color: '#8f8f99', cursor: 'pointer', fontSize: '18px', lineHeight: 1 }}>×</button>
       </div>
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px' }}>

@@ -1,8 +1,16 @@
+import { useEffect } from 'react'
 import { useUser } from '@clerk/clerk-react'
+import { CheckIcon } from './icons'
 
 function Pricing({ onClose }) {
   const { user } = useUser()
   const userId = user?.id || 'temp-user'
+
+  useEffect(() => {
+    const onKeyDown = (e) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [onClose])
 
   const handleCheckout = async (plan) => {
     try {
@@ -43,7 +51,7 @@ function Pricing({ onClose }) {
           <h2 style={{ color: '#fff', fontSize: '28px', fontFamily: 'Georgia, serif', fontWeight: 'normal', marginBottom: '8px' }}>
             Choose your plan
           </h2>
-          <p style={{ color: '#555', fontSize: '14px' }}>Start free, upgrade when you're ready</p>
+          <p style={{ color: '#9d9da7', fontSize: '14px' }}>Start free, upgrade when you're ready</p>
         </div>
 
         <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
@@ -58,10 +66,10 @@ function Pricing({ onClose }) {
           }}>
             <h3 style={{ color: '#888', fontSize: '12px', letterSpacing: '0.1em', marginBottom: '16px' }}>FREE</h3>
             <div style={{ color: '#fff', fontSize: '36px', fontFamily: 'Georgia, serif', marginBottom: '8px' }}>$0</div>
-            <div style={{ color: '#555', fontSize: '13px', marginBottom: '24px' }}>Forever free</div>
+            <div style={{ color: '#9d9da7', fontSize: '13px', marginBottom: '24px' }}>Forever free</div>
             <div style={{ textAlign: 'left', marginBottom: '24px' }}>
               {['3 projects', 'All project types', 'Export PDF, DOCX, EPUB', 'Local save'].map(f => (
-                <div key={f} style={{ color: '#666', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid #1a1a1d' }}>✓ {f}</div>
+                <div key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#8f8f99', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid #1a1a1d' }}><CheckIcon width="12" height="12" /> {f}</div>
               ))}
             </div>
             <button
@@ -85,10 +93,10 @@ function Pricing({ onClose }) {
             </div>
             <h3 style={{ color: '#7ec8e3', fontSize: '12px', letterSpacing: '0.1em', marginBottom: '16px' }}>PRO</h3>
             <div style={{ color: '#fff', fontSize: '36px', fontFamily: 'Georgia, serif', marginBottom: '8px' }}>$10</div>
-            <div style={{ color: '#555', fontSize: '13px', marginBottom: '24px' }}>per month</div>
+            <div style={{ color: '#9d9da7', fontSize: '13px', marginBottom: '24px' }}>per month</div>
             <div style={{ textAlign: 'left', marginBottom: '24px' }}>
               {['Unlimited projects', 'Cloud sync across devices', 'AI writing assistant', 'Priority support'].map(f => (
-                <div key={f} style={{ color: '#aaa', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid #1a1a1d' }}>✓ {f}</div>
+                <div key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#c2c2cc', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid #1a1a1d' }}><CheckIcon width="12" height="12" /> {f}</div>
               ))}
             </div>
             <button
@@ -108,10 +116,10 @@ function Pricing({ onClose }) {
           }}>
             <h3 style={{ color: '#888', fontSize: '12px', letterSpacing: '0.1em', marginBottom: '16px' }}>OUTRIGHT</h3>
             <div style={{ color: '#fff', fontSize: '36px', fontFamily: 'Georgia, serif', marginBottom: '8px' }}>$20</div>
-            <div style={{ color: '#555', fontSize: '13px', marginBottom: '24px' }}>one time</div>
+            <div style={{ color: '#9d9da7', fontSize: '13px', marginBottom: '24px' }}>one time</div>
             <div style={{ textAlign: 'left', marginBottom: '24px' }}>
               {['Unlimited projects', 'Cloud sync across devices', 'No subscription', 'Lifetime updates'].map(f => (
-                <div key={f} style={{ color: '#aaa', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid #1a1a1d' }}>✓ {f}</div>
+                <div key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#c2c2cc', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid #1a1a1d' }}><CheckIcon width="12" height="12" /> {f}</div>
               ))}
             </div>
             <button
@@ -124,7 +132,7 @@ function Pricing({ onClose }) {
         </div>
 
         <div style={{ textAlign: 'center', marginTop: '24px' }}>
-          <span onClick={onClose} style={{ color: '#444', fontSize: '13px', cursor: 'pointer' }}>← Back</span>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#8f8f99', fontSize: '13px', cursor: 'pointer' }}>← Back</button>
         </div>
 
       </div>

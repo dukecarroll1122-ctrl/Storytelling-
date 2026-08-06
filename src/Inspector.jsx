@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { CheckIcon, ClockIcon } from './icons'
 
 function Inspector({ selectedDoc, docData, setDocData }) {
   const [activeTab, setActiveTab] = useState('synopsis')
@@ -104,15 +105,15 @@ function Inspector({ selectedDoc, docData, setDocData }) {
             {target > 0 && (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <span style={{ color: '#444', fontSize: '11px', fontFamily: 'Inter, sans-serif' }}>{wordCount} / {target} words</span>
+                  <span style={{ color: '#8f8f99', fontSize: '11px', fontFamily: 'Inter, sans-serif' }}>{wordCount} / {target} words</span>
                   <span style={{ color: progressColor, fontSize: '11px', fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>{progress}%</span>
                 </div>
                 <div style={{ width: '100%', height: '4px', background: '#1e1e22', borderRadius: '2px', overflow: 'hidden' }}>
                   <div style={{ width: `${progress}%`, height: '100%', background: progressColor, borderRadius: '2px', transition: 'width 0.3s ease' }} />
                 </div>
                 {progress >= 100 && (
-                  <p style={{ color: '#52b788', fontSize: '11px', marginTop: '8px', fontFamily: 'Inter, sans-serif' }}>
-                    ✓ Goal reached!
+                  <p style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#52b788', fontSize: '11px', marginTop: '8px', fontFamily: 'Inter, sans-serif' }}>
+                    <CheckIcon width="12" height="12" /> Goal reached!
                   </p>
                 )}
               </div>
@@ -136,15 +137,15 @@ function Inspector({ selectedDoc, docData, setDocData }) {
           <div>
             <p style={{ color: '#555', fontSize: '11px', marginBottom: '12px', letterSpacing: '0.08em', fontWeight: '500' }}>VERSION HISTORY</p>
             {getBackups().length === 0 ? (
-              <p style={{ color: '#444', fontSize: '12px', fontStyle: 'italic' }}>
+              <p style={{ color: '#8f8f99', fontSize: '12px', fontStyle: 'italic' }}>
                 No backups yet. Backups are saved automatically when your document syncs to the cloud.
               </p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {getBackups().map((backup, index) => (
                   <div key={index} style={{ background: '#141416', border: '1px solid #1e1e22', borderRadius: '6px', padding: '10px' }}>
-                    <div style={{ color: '#888', fontSize: '11px', fontFamily: 'Inter, sans-serif', marginBottom: '8px' }}>
-                      {index === 0 ? '🕐 Latest backup' : `🕐 ${formatTime(backup.timestamp)}`}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#888', fontSize: '11px', fontFamily: 'Inter, sans-serif', marginBottom: '8px' }}>
+                      <ClockIcon width="12" height="12" /> {index === 0 ? 'Latest backup' : formatTime(backup.timestamp)}
                     </div>
                     <div style={{ color: '#555', fontSize: '11px', fontFamily: 'Georgia, serif', fontStyle: 'italic', marginBottom: '8px', lineHeight: '1.5' }}>
                       {backup.content.replace(/<[^>]+>/g, '').slice(0, 80)}...
