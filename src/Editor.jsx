@@ -43,6 +43,15 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
   }
   const currentTheme = themes[theme] || themes.dark
 
+  const [isNarrow, setIsNarrow] = useState(() => window.innerWidth < 640)
+  const contentPadX = isNarrow ? '20px' : '48px'
+
+  useEffect(() => {
+    const onResize = () => setIsNarrow(window.innerWidth < 640)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
   const [title, setTitle] = useState(docName || '')
   const [wordCount, setWordCount] = useState(0)
   const [showExport, setShowExport] = useState(false)
@@ -424,7 +433,7 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           />
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 48px', borderBottom: `1px solid ${currentTheme.border}`, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: `8px ${contentPadX}`, borderBottom: `1px solid ${currentTheme.border}`, flexWrap: 'wrap' }}>
 
           <button onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().toggleBold().run() }} style={tbStyle(editor?.isActive('bold'))}>
             <strong>B</strong>
@@ -656,11 +665,11 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
 
         {showAI && <AIAssistant editor={editor} onClose={() => setShowAI(false)} />}
 
-        <div className="editor-scroll-area" style={{ flex: 1, padding: distractionFree ? '40vh 48px' : '32px 48px', overflow: 'auto' }}>
+        <div className="editor-scroll-area" style={{ flex: 1, padding: distractionFree ? `40vh ${contentPadX}` : `32px ${contentPadX}`, overflow: 'auto' }}>
           <EditorContent editor={editor} />
         </div>
 
-        <div style={{ padding: '8px 48px', borderTop: `1px solid ${currentTheme.border}`, display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', fontFamily: 'Inter, sans-serif' }}>
+        <div style={{ padding: `8px ${contentPadX}`, borderTop: `1px solid ${currentTheme.border}`, display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', fontFamily: 'Inter, sans-serif' }}>
           <span style={{ color: theme === 'dark' ? '#555' : '#888' }}>{wordCount} words</span>
           <span style={{ color: theme === 'dark' ? '#555' : '#888' }}>· {readingTime} min read</span>
           <span style={{ color: saveStatus === 'saved' ? '#52b788' : saveStatus === 'saving' ? '#7ec8e3' : '#e06060' }}>

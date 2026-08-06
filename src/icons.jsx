@@ -27,6 +27,8 @@ export const FolderIcon = icon(<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2
 export const ClockIcon = icon(<><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></>)
 export const FlameIcon = icon(<path d="M12 2c1 3-2 4-2 7a3 3 0 0 0 6 0c1.5 1.5 2 3.5 2 5a6 6 0 1 1-12 0c0-4 2-6 3-8 1-1.5 2-2.5 3-4Z" />)
 export const QuoteIcon = icon(<><path d="M7 8a3 3 0 0 0-3 3v2a3 3 0 0 0 3 3h1v-5H6a1 1 0 0 1 1-1V8Z" fill="currentColor" stroke="none" /><path d="M17 8a3 3 0 0 0-3 3v2a3 3 0 0 0 3 3h1v-5h-2a1 1 0 0 1 1-1V8Z" fill="currentColor" stroke="none" /></>)
+export const MenuIcon = icon(<path d="M4 6h16M4 12h16M4 18h16" />)
+export const PanelIcon = icon(<><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M15 4v16" /></>)
 
 export const PROJECT_TYPE_ICONS = {
   novel: BookIcon,
