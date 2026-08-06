@@ -121,7 +121,7 @@ function Landing() {
               ))}
             </ul>
             <SignUpButton mode="modal">
-              <button className="landing-btn landing-btn-primary landing-price-cta">Get Pro →</button>
+              <button className="landing-btn landing-btn-strong landing-price-cta">Get Pro →</button>
             </SignUpButton>
           </div>
 

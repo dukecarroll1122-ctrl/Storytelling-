@@ -57,6 +57,18 @@
   color: #ccc;
 }
 
+.landing-btn-strong {
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: #08131a;
+  font-weight: 600;
+}
+
+.landing-btn-strong:hover {
+  background: #93d2e6;
+  border-color: #93d2e6;
+}
+
 /* Nav */
 .landing-nav {
   display: flex;
@@ -118,7 +130,7 @@
 
 .landing-hero p {
   font-size: 18px;
-  color: #999;
+  color: #a8a8b3;
   line-height: 1.7;
   margin-bottom: 40px;
   max-width: 560px;
@@ -134,7 +146,7 @@
 }
 
 .landing-hero-note {
-  color: #666;
+  color: #7d7d87;
   font-size: 12px;
   margin-top: 16px;
 }
@@ -174,11 +186,13 @@
   border-top: 3px solid var(--card-color, var(--accent));
   border-radius: 10px;
   text-align: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .landing-type-card:hover {
   transform: translateY(-3px);
   border-color: #2a2a2e;
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 .landing-type-icon {
@@ -196,7 +210,7 @@
 }
 
 .landing-type-desc {
-  color: #666;
+  color: #83838d;
   font-size: 12px;
   line-height: 1.5;
 }
@@ -219,10 +233,13 @@
   background: #0c0c0e;
   border: 1px solid #1a1a1d;
   border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .landing-feature-card:hover {
   border-color: #2a2a2e;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 .landing-feature-icon {
@@ -239,7 +256,7 @@
 }
 
 .landing-feature-desc {
-  color: #777;
+  color: #8f8f99;
   font-size: 13px;
   line-height: 1.7;
 }
@@ -263,44 +280,51 @@
 .landing-price-card {
   flex: 1;
   min-width: 220px;
-  padding: 32px;
+  padding: 36px 32px 32px;
   background: #0f0f11;
   border: 1px solid #1e1e22;
   border-radius: 12px;
   text-align: center;
   position: relative;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .landing-price-card:hover {
   border-color: #2a2a2e;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 .landing-price-card--featured {
-  border: 1px solid rgba(126, 200, 227, 0.3);
+  border: 1px solid rgba(126, 200, 227, 0.4);
+  background: linear-gradient(180deg, rgba(126, 200, 227, 0.06), #0f0f11 60%);
 }
 
 .landing-price-card--featured:hover {
-  border-color: rgba(126, 200, 227, 0.5);
+  border-color: rgba(126, 200, 227, 0.6);
+  box-shadow: 0 16px 32px -8px rgba(126, 200, 227, 0.15), 0 0 0 1px rgba(126, 200, 227, 0.1);
 }
 
 .landing-price-badge {
   position: absolute;
-  top: -12px;
+  top: -13px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--accent);
-  color: #000;
+  color: #08131a;
   font-size: 10px;
-  font-weight: 600;
-  padding: 3px 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 4px 14px;
   border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(126, 200, 227, 0.35);
 }
 
 .landing-price-tier {
   font-size: 11px;
   letter-spacing: 0.1em;
   margin-bottom: 16px;
-  color: #777;
+  color: #83838d;
 }
 
 .landing-price-tier--accent {
@@ -315,7 +339,7 @@
 }
 
 .landing-price-period {
-  color: #666;
+  color: #7d7d87;
   font-size: 13px;
   margin-bottom: 24px;
 }
@@ -329,7 +353,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #999;
+  color: #a8a8b3;
   font-size: 13px;
   padding: 6px 0;
   border-bottom: 1px solid #1a1a1d;
@@ -359,11 +383,11 @@
 .landing-footer-brand {
   font-family: Georgia, serif;
   font-size: 16px;
-  color: #666;
+  color: #7d7d87;
 }
 
 .landing-footer-copy {
-  color: #555;
+  color: #6b6b75;
   font-size: 12px;
 }
 
