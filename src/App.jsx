@@ -11,7 +11,7 @@ import Compile from './Compile'
 import Pricing from './Pricing'
 import { saveProject, updateProject, getUserPlan } from './api'
 import { useUser } from '@clerk/clerk-react'
-import { PROJECT_TYPE_ICONS, FileIcon, FileTextIcon, BookIcon, FlameIcon } from './icons'
+import { PROJECT_TYPE_ICONS, FileIcon, FileTextIcon, BookIcon, FlameIcon, MenuIcon, PanelIcon } from './icons'
 
 const DEFAULT_STRUCTURES = {
   novel: [
@@ -71,6 +71,27 @@ function App() {
   const [streak, setStreak] = useState(() => {
     return parseInt(localStorage.getItem('streak') || '0')
   })
+  const [isCompact, setIsCompact] = useState(() => window.innerWidth < 1024)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [inspectorOpen, setInspectorOpen] = useState(false)
+
+  useEffect(() => {
+    const onResize = () => setIsCompact(window.innerWidth < 1024)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  useEffect(() => {
+    if (!sidebarOpen && !inspectorOpen) return
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setSidebarOpen(false)
+        setInspectorOpen(false)
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [sidebarOpen, inspectorOpen])
 
   useEffect(() => {
     localStorage.setItem('theme', theme)
@@ -244,15 +265,24 @@ function App() {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0f0f11', fontFamily: 'Inter, -apple-system, sans-serif' }}>
 
       {!distractionFree && (
-        <div style={{ height: '48px', background: '#0c0c0e', borderBottom: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '8px' }}>
+        <div style={{ height: '48px', minHeight: '48px', background: '#0c0c0e', borderBottom: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '8px', overflowX: 'auto' }}>
+
+          {isCompact && (
+            <button
+              aria-label="Toggle binder"
+              onClick={() => setSidebarOpen(o => !o)}
+              style={{ flexShrink: 0, display: 'flex', background: sidebarOpen ? '#1e1e22' : 'transparent', border: '1px solid #2a2a2e', color: '#ccc', borderRadius: '6px', padding: '6px', cursor: 'pointer' }}>
+              <MenuIcon width="16" height="16" />
+            </button>
+          )}
 
           <button
             onClick={() => setScreen('home')}
-            style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', color: '#ffffff', fontSize: '13px', fontFamily: 'Inter, sans-serif', fontWeight: '500', cursor: 'pointer', letterSpacing: '0.01em' }}>
+            style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', color: '#ffffff', fontSize: '13px', fontFamily: 'Inter, sans-serif', fontWeight: '500', cursor: 'pointer', letterSpacing: '0.01em', whiteSpace: 'nowrap' }}>
             {(() => { const TypeIcon = PROJECT_TYPE_ICONS[currentType.id]; return <TypeIcon width="14" height="14" /> })()} {projectName}
           </button>
 
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
 
             <div style={{ display: 'flex', gap: '2px', background: '#141416', borderRadius: '6px', padding: '2px' }}>
               <button
@@ -325,26 +355,44 @@ function App() {
               )}
             </div>
 
+            {isCompact && !distractionFree && (
+              <button
+                aria-label="Toggle inspector"
+                onClick={() => setInspectorOpen(o => !o)}
+                style={{ display: 'flex', background: inspectorOpen ? '#1e1e22' : 'transparent', border: '1px solid #2a2a2e', color: '#ccc', borderRadius: '6px', padding: '6px', cursor: 'pointer' }}>
+                <PanelIcon width="16" height="16" />
+              </button>
+            )}
+
           </div>
 
         </div>
       )}
 
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden', position: 'relative' }}>
 
-        {!distractionFree && (
-          <Sidebar
-            key={projectId}
-            selectedDoc={selectedDoc}
-            setSelectedDoc={setSelectedDoc}
-            projectType={projectType}
-            accentColor={currentType.color}
-            folders={folders}
-            setFolders={setFolders}
-            labels={labels}
-            setLabels={setLabels}
-            statuses={statuses}
+        {!distractionFree && isCompact && sidebarOpen && (
+          <div
+            onClick={() => setSidebarOpen(false)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 199 }}
           />
+        )}
+
+        {!distractionFree && (!isCompact || sidebarOpen) && (
+          <div style={isCompact ? { position: 'fixed', top: '48px', bottom: 0, left: 0, zIndex: 200, boxShadow: '4px 0 24px rgba(0,0,0,0.5)' } : undefined}>
+            <Sidebar
+              key={projectId}
+              selectedDoc={selectedDoc}
+              setSelectedDoc={(id) => { setSelectedDoc(id); if (isCompact) setSidebarOpen(false) }}
+              projectType={projectType}
+              accentColor={currentType.color}
+              folders={folders}
+              setFolders={setFolders}
+              labels={labels}
+              setLabels={setLabels}
+              statuses={statuses}
+            />
+          </div>
         )}
 
         {view === 'editor' && !isCharacterDoc() && (
@@ -401,12 +449,21 @@ function App() {
           />
         )}
 
-        {!distractionFree && (
-          <Inspector
-            selectedDoc={selectedDoc}
-            docData={docData}
-            setDocData={setDocData}
+        {!distractionFree && isCompact && inspectorOpen && (
+          <div
+            onClick={() => setInspectorOpen(false)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 199 }}
           />
+        )}
+
+        {!distractionFree && (!isCompact || inspectorOpen) && (
+          <div style={isCompact ? { position: 'fixed', top: '48px', bottom: 0, right: 0, zIndex: 200, boxShadow: '-4px 0 24px rgba(0,0,0,0.5)' } : undefined}>
+            <Inspector
+              selectedDoc={selectedDoc}
+              docData={docData}
+              setDocData={setDocData}
+            />
+          </div>
         )}
 
       </div>

@@ -57,7 +57,7 @@ function CharacterSheet({ selectedDoc, folders, docData, setDocData }) {
 
       <div style={{ padding: '32px 48px', maxWidth: '720px' }}>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '4px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px', marginBottom: '4px' }}>
           <div>
             <label style={labelStyle}>NAME</label>
             <input

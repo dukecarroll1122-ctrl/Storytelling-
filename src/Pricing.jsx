@@ -43,21 +43,25 @@ function Pricing({ onClose }) {
         background: '#0f0f11',
         border: '1px solid #1e1e22',
         borderRadius: '16px',
-        padding: '48px',
+        padding: '32px 24px',
         maxWidth: '800px',
         width: '90%',
+        maxHeight: '90vh',
+        overflowY: 'auto',
+        boxSizing: 'border-box',
       }}>
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <h2 style={{ color: '#fff', fontSize: '28px', fontFamily: 'Georgia, serif', fontWeight: 'normal', marginBottom: '8px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <h2 style={{ color: '#fff', fontSize: '24px', fontFamily: 'Georgia, serif', fontWeight: 'normal', marginBottom: '8px' }}>
             Choose your plan
           </h2>
           <p style={{ color: '#9d9da7', fontSize: '14px' }}>Start free, upgrade when you're ready</p>
         </div>
 
-        <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }}>
 
           <div style={{
             flex: 1,
+            minWidth: '220px',
             background: '#0c0c0e',
             border: '1px solid #1e1e22',
             borderRadius: '12px',
@@ -81,6 +85,7 @@ function Pricing({ onClose }) {
 
           <div style={{
             flex: 1,
+            minWidth: '220px',
             background: '#0c0c0e',
             border: '1px solid #7ec8e344',
             borderRadius: '12px',
@@ -108,6 +113,7 @@ function Pricing({ onClose }) {
 
           <div style={{
             flex: 1,
+            minWidth: '220px',
             background: '#0c0c0e',
             border: '1px solid #1e1e22',
             borderRadius: '12px',
