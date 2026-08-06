@@ -1,0 +1,423 @@
+.landing-page {
+  --accent: #7ec8e3;
+  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #0f0f11;
+  color: #e2e2ea;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-overflow-scrolling: touch;
+}
+
+.landing-page * {
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 150ms ease, opacity 180ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-page * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Buttons */
+.landing-btn {
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.landing-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.landing-btn-primary {
+  background: rgba(126, 200, 227, 0.15);
+  border: 1px solid rgba(126, 200, 227, 0.4);
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.landing-btn-primary:hover {
+  background: rgba(126, 200, 227, 0.25);
+  border-color: rgba(126, 200, 227, 0.6);
+}
+
+.landing-btn-secondary {
+  background: transparent;
+  border: 1px solid #2a2a2e;
+  color: #888;
+}
+
+.landing-btn-secondary:hover {
+  border-color: #444;
+  color: #ccc;
+}
+
+/* Nav */
+.landing-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 48px;
+  border-bottom: 1px solid #1a1a1d;
+  position: sticky;
+  top: 0;
+  background: #0f0f11;
+  z-index: 100;
+}
+
+.landing-nav-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.landing-nav .landing-btn {
+  padding: 8px 18px;
+  font-size: 13px;
+}
+
+.landing-logo {
+  font-family: Georgia, serif;
+  font-size: 20px;
+  color: #fff;
+}
+
+/* Hero */
+.landing-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 100px 48px 80px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.landing-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+
+.landing-hero h1 {
+  font-family: Georgia, serif;
+  font-size: 56px;
+  font-weight: normal;
+  line-height: 1.15;
+  color: #ffffff;
+  margin-bottom: 24px;
+  letter-spacing: -1px;
+}
+
+.landing-hero p {
+  font-size: 18px;
+  color: #999;
+  line-height: 1.7;
+  margin-bottom: 40px;
+  max-width: 560px;
+}
+
+.landing-hero-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.landing-hero-actions .landing-btn {
+  padding: 14px 32px;
+}
+
+.landing-hero-note {
+  color: #666;
+  font-size: 12px;
+  margin-top: 16px;
+}
+
+/* Section shared */
+.landing-section-label {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: #777;
+  margin-bottom: 48px;
+}
+
+/* Project Types */
+.landing-types {
+  padding: 80px 48px;
+  border-top: 1px solid #1a1a1d;
+  border-bottom: 1px solid #1a1a1d;
+  background: #0c0c0e;
+}
+
+.landing-types-grid {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.landing-type-card {
+  width: 160px;
+  padding: 28px 16px;
+  background: #0f0f11;
+  border: 1px solid #1e1e22;
+  border-top: 3px solid var(--card-color, var(--accent));
+  border-radius: 10px;
+  text-align: center;
+}
+
+.landing-type-card:hover {
+  transform: translateY(-3px);
+  border-color: #2a2a2e;
+}
+
+.landing-type-icon {
+  color: var(--card-color, var(--accent));
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.landing-type-label {
+  color: var(--card-color, var(--accent));
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.landing-type-desc {
+  color: #666;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Features */
+.landing-features {
+  padding: 80px 48px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.landing-features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.landing-feature-card {
+  padding: 32px;
+  background: #0c0c0e;
+  border: 1px solid #1a1a1d;
+  border-radius: 10px;
+}
+
+.landing-feature-card:hover {
+  border-color: #2a2a2e;
+}
+
+.landing-feature-icon {
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.landing-feature-title {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-family: Georgia, serif;
+}
+
+.landing-feature-desc {
+  color: #777;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* Pricing */
+.landing-pricing {
+  padding: 80px 48px;
+  border-top: 1px solid #1a1a1d;
+  background: #0c0c0e;
+}
+
+.landing-pricing-grid {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  max-width: 800px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.landing-price-card {
+  flex: 1;
+  min-width: 220px;
+  padding: 32px;
+  background: #0f0f11;
+  border: 1px solid #1e1e22;
+  border-radius: 12px;
+  text-align: center;
+  position: relative;
+}
+
+.landing-price-card:hover {
+  border-color: #2a2a2e;
+}
+
+.landing-price-card--featured {
+  border: 1px solid rgba(126, 200, 227, 0.3);
+}
+
+.landing-price-card--featured:hover {
+  border-color: rgba(126, 200, 227, 0.5);
+}
+
+.landing-price-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: #000;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 12px;
+  border-radius: 20px;
+}
+
+.landing-price-tier {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+  color: #777;
+}
+
+.landing-price-tier--accent {
+  color: var(--accent);
+}
+
+.landing-price-amount {
+  color: #fff;
+  font-size: 40px;
+  font-family: Georgia, serif;
+  margin-bottom: 8px;
+}
+
+.landing-price-period {
+  color: #666;
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+.landing-price-features {
+  list-style: none;
+  text-align: left;
+}
+
+.landing-price-features li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #999;
+  font-size: 13px;
+  padding: 6px 0;
+  border-bottom: 1px solid #1a1a1d;
+}
+
+.landing-price-features li svg {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.landing-price-cta {
+  margin-top: 24px;
+  width: 100%;
+  padding: 12px;
+  font-size: 13px;
+}
+
+/* Footer */
+.landing-footer {
+  padding: 40px 48px;
+  border-top: 1px solid #1a1a1d;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.landing-footer-brand {
+  font-family: Georgia, serif;
+  font-size: 16px;
+  color: #666;
+}
+
+.landing-footer-copy {
+  color: #555;
+  font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .landing-nav {
+    padding: 16px 24px;
+  }
+
+  .landing-hero {
+    padding: 64px 24px 56px;
+  }
+
+  .landing-hero h1 {
+    font-size: 36px;
+  }
+
+  .landing-hero p {
+    font-size: 16px;
+  }
+
+  .landing-types,
+  .landing-features,
+  .landing-pricing {
+    padding: 56px 24px;
+  }
+
+  .landing-features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-footer {
+    padding: 32px 24px;
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .landing-hero h1 {
+    font-size: 30px;
+  }
+
+  .landing-hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .landing-hero-actions .landing-btn {
+    width: 100%;
+  }
+
+  .landing-type-card {
+    width: 140px;
+  }
+}
