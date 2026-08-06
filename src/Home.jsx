@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from '@clerk/clerk-react'
+import './Home.css'
+import { PROJECT_TYPE_ICONS, UploadIcon, XIcon, FileIcon } from './icons'
 
 const TEMPLATES = {
   novel: [
@@ -163,11 +165,11 @@ function Home({ onSelectProject }) {
   }, [userId, user, isLoaded])
 
   const projectTypes = [
-    { id: 'novel', icon: '📖', label: 'Novel', description: 'Chapters, acts and scenes', color: '#e8a87c' },
-    { id: 'comic', icon: '💥', label: 'Comic', description: 'Issues, pages and panels', color: '#f4a261' },
-    { id: 'tv', icon: '📺', label: 'TV Show', description: 'Seasons, episodes and scenes', color: '#7ec8e3' },
-    { id: 'movie', icon: '🎬', label: 'Movie', description: 'Acts, sequences and scenes', color: '#c77dff' },
-    { id: 'game', icon: '🎮', label: 'Game', description: 'Chapters, quests and dialogue', color: '#52b788' },
+    { id: 'novel', label: 'Novel', description: 'Chapters, acts and scenes', color: '#e8a87c' },
+    { id: 'comic', label: 'Comic', description: 'Issues, pages and panels', color: '#f4a261' },
+    { id: 'tv', label: 'TV Show', description: 'Seasons, episodes and scenes', color: '#7ec8e3' },
+    { id: 'movie', label: 'Movie', description: 'Acts, sequences and scenes', color: '#c77dff' },
+    { id: 'game', label: 'Game', description: 'Chapters, quests and dialogue', color: '#52b788' },
   ]
 
   useEffect(() => {
@@ -292,35 +294,20 @@ function Home({ onSelectProject }) {
 
   const getProjectColor = (type) => {
     const pt = projectTypes.find(p => p.id === type)
-    return pt ? pt.color : '#555'
+    return pt ? pt.color : '#7ec8e3'
   }
 
-  const getProjectIcon = (type) => {
-    const pt = projectTypes.find(p => p.id === type)
-    return pt ? pt.icon : '📄'
-  }
+  const getProjectIcon = (type) => PROJECT_TYPE_ICONS[type] || FileIcon
 
   const step = !selectedType ? 'type' : !selectedTemplate ? 'template' : 'name'
 
   return (
-    <div style={{
-      height: '100vh',
-      background: '#0f0f11',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      overflowY: 'auto',
-      padding: '80px 32px 60px',
-      fontFamily: 'Inter, -apple-system, sans-serif',
-      position: 'relative',
-    }}>
+    <div className="home-page">
 
-      <div style={{ position: 'fixed', top: '20px', right: '24px', display: 'flex', alignItems: 'center', gap: '12px', zIndex: 100 }}>
+      <div className="home-topbar">
         <SignedOut>
           <SignInButton mode="modal">
-            <button style={{ background: 'transparent', border: '1px solid #2a2a2e', color: '#888', borderRadius: '6px', padding: '7px 16px', cursor: 'pointer', fontSize: '13px', fontFamily: 'Inter, sans-serif' }}>
-              Sign In
-            </button>
+            <button className="home-signin-btn">Sign In</button>
           </SignInButton>
         </SignedOut>
         <SignedIn>
@@ -328,18 +315,9 @@ function Home({ onSelectProject }) {
         </SignedIn>
       </div>
 
-      <div style={{ marginBottom: '48px', textAlign: 'center', width: '100%', maxWidth: '600px' }}>
-        <h1 style={{
-          color: '#ffffff',
-          fontFamily: 'Georgia, serif',
-          fontSize: '32px',
-          fontWeight: 'normal',
-          marginBottom: '8px',
-          letterSpacing: '-0.5px',
-        }}>
-          Storytelling
-        </h1>
-        <p style={{ color: '#555', fontSize: '13px', fontWeight: '400' }}>
+      <div className="home-header">
+        <h1>Storytelling</h1>
+        <p>
           {step === 'type' && 'What are you working on?'}
           {step === 'template' && `Choose a template for your ${currentType.label.toLowerCase()}`}
           {step === 'name' && `Name your ${currentType.label.toLowerCase()}`}
@@ -347,131 +325,74 @@ function Home({ onSelectProject }) {
       </div>
 
       {step === 'type' && (
-        <div style={{ width: '100%', maxWidth: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-          <div style={{
-            display: 'flex',
-            gap: '12px',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            width: '100%',
-          }}>
-            {projectTypes.map(pt => (
-              <div
-                key={pt.id}
-                onClick={() => {
-                  setSelectedType(pt.id)
-                  setSelectedTemplate(null)
-                  setProjectName('')
-                }}
-                style={{
-                  width: '110px',
-                  padding: '20px 12px',
-                  background: '#0c0c0e',
-                  border: '1px solid #1e1e22',
-                  borderTop: `2px solid ${pt.color}`,
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                  transition: 'all 0.15s',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = '#141416'
-                  e.currentTarget.style.transform = 'translateY(-3px)'
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.4)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = '#0c0c0e'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = 'none'
-                }}>
-                <div style={{ fontSize: '28px', marginBottom: '10px' }}>{pt.icon}</div>
-                <div style={{ color: pt.color, fontSize: '12px', fontWeight: '600', marginBottom: '4px' }}>
-                  {pt.label}
-                </div>
-                <div style={{ color: '#444', fontSize: '11px', lineHeight: '1.5' }}>
-                  {pt.description}
-                </div>
-              </div>
-            ))}
+        <div className="home-step">
+          <div className="home-types-grid">
+            {projectTypes.map(pt => {
+              const Icon = PROJECT_TYPE_ICONS[pt.id]
+              return (
+                <button
+                  key={pt.id}
+                  type="button"
+                  className="home-type-card"
+                  style={{ '--card-color': pt.color }}
+                  onClick={() => {
+                    setSelectedType(pt.id)
+                    setSelectedTemplate(null)
+                    setProjectName('')
+                  }}>
+                  <div className="home-type-icon"><Icon /></div>
+                  <div className="home-type-label">{pt.label}</div>
+                  <div className="home-type-desc">{pt.description}</div>
+                </button>
+              )
+            })}
           </div>
 
-          <div style={{ width: '100%' }}>
-            <label
-              htmlFor="importFile"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                padding: '10px 14px',
-                background: '#0c0c0e',
-                border: '1px dashed #2a2a2e',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                color: '#555',
-                fontSize: '13px',
-                transition: 'all 0.15s',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = '#444'
-                e.currentTarget.style.color = '#888'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = '#2a2a2e'
-                e.currentTarget.style.color = '#555'
-              }}>
-              ↑ Import existing file — DOCX or TXT
+          <div className="home-import">
+            <label htmlFor="importFile" className="home-import-label">
+              <UploadIcon width="16" height="16" />
+              Import existing file — DOCX or TXT
             </label>
             <input
               id="importFile"
               type="file"
               accept=".docx,.txt,.md"
-              style={{ display: 'none' }}
+              className="home-import-input"
               onChange={handleImport}
             />
           </div>
 
           {recentProjects.length > 0 && (
-            <div style={{ width: '100%' }}>
-              <p style={{ color: '#444', fontSize: '11px', letterSpacing: '0.08em', marginBottom: '10px', fontWeight: '500' }}>
-                RECENT PROJECTS
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                {recentProjects.map(project => (
-                  <div
-                    key={project.id}
-                    onClick={() => handleOpenProject(project)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      padding: '10px 14px',
-                      background: '#0c0c0e',
-                      border: '1px solid #1e1e22',
-                      borderLeft: `2px solid ${getProjectColor(project.type)}`,
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      transition: 'all 0.15s',
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.background = '#141416'}
-                    onMouseLeave={e => e.currentTarget.style.background = '#0c0c0e'}>
-                    <span style={{ fontSize: '18px', marginRight: '10px' }}>
-                      {getProjectIcon(project.type)}
-                    </span>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ color: '#e0e0e0', fontSize: '13px', fontWeight: '500', marginBottom: '2px' }}>
-                        {project.name}
-                      </div>
-                      <div style={{ color: '#444', fontSize: '11px' }}>
-                        {project.type} • edited {project.lastEdited}
-                      </div>
+            <div className="home-recent">
+              <p className="home-recent-label">RECENT PROJECTS</p>
+              <div className="home-recent-list">
+                {recentProjects.map(project => {
+                  const Icon = getProjectIcon(project.type)
+                  return (
+                    <div
+                      key={project.id}
+                      className="home-recent-item"
+                      style={{ '--card-color': getProjectColor(project.type) }}>
+                      <button
+                        type="button"
+                        className="home-recent-open"
+                        onClick={() => handleOpenProject(project)}>
+                        <span className="home-recent-icon"><Icon width="18" height="18" /></span>
+                        <span className="home-recent-info">
+                          <span className="home-recent-name">{project.name}</span>
+                          <span className="home-recent-meta">{project.type} • edited {project.lastEdited}</span>
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={`Delete ${project.name}`}
+                        className="home-recent-delete"
+                        onClick={(e) => deleteProject(e, project.id)}>
+                        <XIcon width="14" height="14" />
+                      </button>
                     </div>
-                    <span
-                      onClick={(e) => deleteProject(e, project.id)}
-                      style={{ color: '#333', fontSize: '18px', cursor: 'pointer', padding: '4px 8px', lineHeight: 1 }}>
-                      ×
-                    </span>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           )}
@@ -479,134 +400,79 @@ function Home({ onSelectProject }) {
       )}
 
       {step === 'template' && (
-        <div style={{ width: '100%', maxWidth: '600px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+        <div className="home-templates" style={{ '--card-color': currentType.color }}>
+          <div className="home-templates-list">
             {templates.map(t => (
-              <div
+              <button
                 key={t.id}
-                onClick={() => setSelectedTemplate(t.id)}
-                style={{
-                  padding: '16px 20px',
-                  background: selectedTemplate === t.id ? `${currentType.color}11` : '#0c0c0e',
-                  border: `1px solid ${selectedTemplate === t.id ? currentType.color + '44' : '#1e1e22'}`,
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s',
-                }}
-                onMouseEnter={e => e.currentTarget.style.background = '#141416'}
-                onMouseLeave={e => e.currentTarget.style.background = selectedTemplate === t.id ? `${currentType.color}11` : '#0c0c0e'}>
-                <div style={{ color: '#e0e0e0', fontSize: '14px', fontWeight: '500', marginBottom: '4px' }}>
-                  {t.name}
-                </div>
-                <div style={{ color: '#555', fontSize: '12px' }}>
-                  {t.description}
-                </div>
-              </div>
+                type="button"
+                className={`home-template-card${selectedTemplate === t.id ? ' home-template-card--selected' : ''}`}
+                style={{ '--tint': `${currentType.color}11` }}
+                onClick={() => setSelectedTemplate(t.id)}>
+                <div className="home-template-name">{t.name}</div>
+                <div className="home-template-desc">{t.description}</div>
+              </button>
             ))}
           </div>
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+          <div className="home-actions">
             <button
+              type="button"
+              className="home-btn home-btn-back"
               onClick={() => {
                 setSelectedType(null)
                 setSelectedTemplate(null)
-              }}
-              style={{
-                background: 'transparent',
-                border: '1px solid #2a2a2e',
-                color: '#555',
-                borderRadius: '6px',
-                padding: '10px 22px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontFamily: 'inherit',
               }}>
               Back
             </button>
             <button
+              type="button"
+              className="home-btn home-btn-primary"
               onClick={() => {
-                if (selectedTemplate) setSelectedTemplate(selectedTemplate)
-                else setSelectedTemplate('blank')
+                if (!selectedTemplate) setSelectedTemplate('blank')
               }}
-              disabled={!selectedTemplate}
-              style={{
-                background: selectedTemplate ? currentType.color + '22' : '#0c0c0e',
-                border: `1px solid ${selectedTemplate ? currentType.color + '55' : '#2a2a2e'}`,
-                color: selectedTemplate ? currentType.color : '#444',
-                borderRadius: '6px',
-                padding: '10px 22px',
-                cursor: selectedTemplate ? 'pointer' : 'default',
-                fontSize: '13px',
-                fontFamily: 'inherit',
-                fontWeight: '500',
-              }}>
+              disabled={!selectedTemplate}>
               Continue →
             </button>
           </div>
         </div>
       )}
 
-      {step === 'name' && (
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '44px', marginBottom: '20px' }}>{currentType.icon}</div>
-          <input
-            autoFocus
-            value={projectName}
-            onChange={(e) => setProjectName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleStart()
-              if (e.key === 'Escape') {
-                setSelectedTemplate(null)
-              }
-            }}
-            placeholder={`My ${currentType.label}`}
-            style={{
-              background: '#0c0c0e',
-              border: `1px solid ${currentType.color}44`,
-              borderRadius: '8px',
-              color: '#ffffff',
-              fontSize: '20px',
-              fontFamily: 'Georgia, serif',
-              padding: '12px 24px',
-              outline: 'none',
-              textAlign: 'center',
-              width: '300px',
-              marginBottom: '24px',
-              display: 'block',
-            }}
-          />
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-            <button
-              onClick={() => setSelectedTemplate(null)}
-              style={{
-                background: 'transparent',
-                border: '1px solid #2a2a2e',
-                color: '#555',
-                borderRadius: '6px',
-                padding: '10px 22px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontFamily: 'inherit',
-              }}>
-              Back
-            </button>
-            <button
-              onClick={handleStart}
-              style={{
-                background: currentType.color + '22',
-                border: `1px solid ${currentType.color}55`,
-                color: currentType.color,
-                borderRadius: '6px',
-                padding: '10px 22px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontFamily: 'inherit',
-                fontWeight: '500',
-              }}>
-              Start Writing →
-            </button>
+      {step === 'name' && (() => {
+        const NameIcon = PROJECT_TYPE_ICONS[currentType.id]
+        return (
+          <div className="home-name-step" style={{ '--card-color': currentType.color }}>
+            <div className="home-name-icon"><NameIcon width="40" height="40" /></div>
+            <input
+              autoFocus
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleStart()
+                if (e.key === 'Escape') {
+                  setSelectedTemplate(null)
+                }
+              }}
+              placeholder={`My ${currentType.label}`}
+              aria-label="Project name"
+              className="home-name-input"
+            />
+            <div className="home-actions">
+              <button
+                type="button"
+                className="home-btn home-btn-back"
+                onClick={() => setSelectedTemplate(null)}>
+                Back
+              </button>
+              <button
+                type="button"
+                className="home-btn home-btn-primary"
+                onClick={handleStart}>
+                Start Writing →
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )
+      })()}
 
     </div>
   )
