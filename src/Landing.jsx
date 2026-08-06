@@ -1,362 +1,150 @@
 import { SignInButton, SignUpButton } from '@clerk/clerk-react'
+import './Landing.css'
+
+const icon = (path) => (props) => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+    {path}
+  </svg>
+)
+
+const BookIcon = icon(<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z" />)
+const BurstIcon = icon(<path d="M13 2 4.5 13.5H12L11 22l8.5-11.5H12L13 2Z" />)
+const TvIcon = icon(<><rect x="2" y="7" width="20" height="14" rx="2" /><path d="m17 2-5 5-5-5" /></>)
+const FilmIcon = icon(<><rect x="2" y="3" width="20" height="18" rx="2" /><path d="M7 3v18M17 3v18M2 8h5M2 16h5M17 8h5M17 16h5" /></>)
+const GamepadIcon = icon(<><path d="M6 12h4m-2-2v4M15 13h.01M18 11h.01" /><rect x="2" y="6" width="20" height="12" rx="6" /></>)
+const PenIcon = icon(<path d="m17 3 4 4L7 21H3v-4L17 3Z" />)
+const CloudIcon = icon(<path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.4 1.5A4 4 0 0 0 6.5 19h11Z" />)
+const SparkleIcon = icon(<path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8" />)
+const PackageIcon = icon(<><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z" /><path d="M3 8l9 5 9-5M12 13v8" /></>)
+const CheckIcon = icon(<path d="M20 6 9 17l-5-5" />)
 
 function Landing() {
   const projectTypes = [
-    { icon: '📖', label: 'Novel', description: 'Chapters, acts and scenes', color: '#e8a87c' },
-    { icon: '💥', label: 'Comic', description: 'Issues, pages and panels', color: '#f4a261' },
-    { icon: '📺', label: 'TV Show', description: 'Seasons and episodes', color: '#7ec8e3' },
-    { icon: '🎬', label: 'Movie', description: 'Acts and sequences', color: '#c77dff' },
-    { icon: '🎮', label: 'Game', description: 'Quests and dialogue', color: '#52b788' },
+    { Icon: BookIcon, label: 'Novel', description: 'Chapters, acts and scenes', color: '#e8a87c' },
+    { Icon: BurstIcon, label: 'Comic', description: 'Issues, pages and panels', color: '#f4a261' },
+    { Icon: TvIcon, label: 'TV Show', description: 'Seasons and episodes', color: '#7ec8e3' },
+    { Icon: FilmIcon, label: 'Movie', description: 'Acts and sequences', color: '#c77dff' },
+    { Icon: GamepadIcon, label: 'Game', description: 'Quests and dialogue', color: '#52b788' },
   ]
 
   const features = [
-    { icon: '✍️', title: 'Rich Text Editor', description: 'Beautiful writing environment with full formatting, focus mode, and typewriter scrolling.' },
-    { icon: '☁️', title: 'Cloud Sync', description: 'Your writing syncs across every device automatically. Never lose a word.' },
-    { icon: '✦', title: 'AI Writing Assistant', description: 'Stuck? Your AI assistant helps you brainstorm, improve scenes, and find plot holes.' },
-    { icon: '📦', title: 'Export Anywhere', description: 'Compile your manuscript to PDF, DOCX, or EPUB with a single click.' },
+    { Icon: PenIcon, title: 'Rich Text Editor', description: 'Beautiful writing environment with full formatting, focus mode, and typewriter scrolling.' },
+    { Icon: CloudIcon, title: 'Cloud Sync', description: 'Your writing syncs across every device automatically. Never lose a word.' },
+    { Icon: SparkleIcon, title: 'AI Writing Assistant', description: 'Stuck? Your AI assistant helps you brainstorm, improve scenes, and find plot holes.' },
+    { Icon: PackageIcon, title: 'Export Anywhere', description: 'Compile your manuscript to PDF, DOCX, or EPUB with a single click.' },
   ]
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#0f0f11',
-      color: '#e2e2ea',
-      fontFamily: 'Inter, -apple-system, sans-serif',
-      overflowX: 'hidden',
-    }}>
+    <div className="landing-page">
 
-      {/* Nav */}
-      <nav style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '20px 48px',
-        borderBottom: '1px solid #1a1a1d',
-        position: 'sticky',
-        top: 0,
-        background: '#0f0f11',
-        zIndex: 100,
-      }}>
-        <span style={{ fontFamily: 'Georgia, serif', fontSize: '20px', color: '#fff' }}>
-          Storytelling
-        </span>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+      <nav className="landing-nav">
+        <span className="landing-logo">Storytelling</span>
+        <div className="landing-nav-actions">
           <SignInButton mode="modal">
-            <button style={{
-              background: 'transparent',
-              border: '1px solid #2a2a2e',
-              color: '#888',
-              borderRadius: '6px',
-              padding: '8px 18px',
-              cursor: 'pointer',
-              fontSize: '13px',
-              fontFamily: 'Inter, sans-serif',
-            }}>
-              Sign In
-            </button>
+            <button className="landing-btn landing-btn-secondary">Sign In</button>
           </SignInButton>
           <SignUpButton mode="modal">
-            <button style={{
-              background: 'rgba(126,200,227,0.15)',
-              border: '1px solid rgba(126,200,227,0.4)',
-              color: '#7ec8e3',
-              borderRadius: '6px',
-              padding: '8px 18px',
-              cursor: 'pointer',
-              fontSize: '13px',
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: '500',
-            }}>
-              Get Started Free
-            </button>
+            <button className="landing-btn landing-btn-primary">Get Started Free</button>
           </SignUpButton>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        textAlign: 'center',
-        padding: '100px 48px 80px',
-        maxWidth: '800px',
-        margin: '0 auto',
-      }}>
-        <div style={{
-          fontSize: '11px',
-          fontWeight: '600',
-          letterSpacing: '0.15em',
-          color: '#7ec8e3',
-          marginBottom: '24px',
-          fontFamily: 'Inter, sans-serif',
-        }}>
-          THE WRITING APP FOR EVERY KIND OF STORY
-        </div>
-        <h1 style={{
-          fontFamily: 'Georgia, serif',
-          fontSize: '56px',
-          fontWeight: 'normal',
-          lineHeight: '1.15',
-          color: '#ffffff',
-          marginBottom: '24px',
-          letterSpacing: '-1px',
-        }}>
-          Your story deserves the right tool
-        </h1>
-        <p style={{
-          fontSize: '18px',
-          color: '#666',
-          lineHeight: '1.7',
-          marginBottom: '40px',
-          maxWidth: '560px',
-        }}>
+      <section className="landing-hero">
+        <div className="landing-eyebrow">THE WRITING APP FOR EVERY KIND OF STORY</div>
+        <h1>Your story deserves the right tool</h1>
+        <p>
           Storytelling is a creative writing platform for novelists, screenwriters, comic writers and game designers. One app, every kind of story.
         </p>
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div className="landing-hero-actions">
           <SignUpButton mode="modal">
-            <button style={{
-              background: 'rgba(126,200,227,0.15)',
-              border: '1px solid rgba(126,200,227,0.4)',
-              color: '#7ec8e3',
-              borderRadius: '8px',
-              padding: '14px 32px',
-              cursor: 'pointer',
-              fontSize: '15px',
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: '500',
-            }}>
-              Start Writing Free →
-            </button>
+            <button className="landing-btn landing-btn-primary">Start Writing Free →</button>
           </SignUpButton>
           <SignInButton mode="modal">
-            <button style={{
-              background: 'transparent',
-              border: '1px solid #2a2a2e',
-              color: '#666',
-              borderRadius: '8px',
-              padding: '14px 32px',
-              cursor: 'pointer',
-              fontSize: '15px',
-              fontFamily: 'Inter, sans-serif',
-            }}>
-              Sign In
-            </button>
+            <button className="landing-btn landing-btn-secondary">Sign In</button>
           </SignInButton>
         </div>
-        <p style={{ color: '#444', fontSize: '12px', marginTop: '16px' }}>
-          Free forever · No credit card required
-        </p>
+        <p className="landing-hero-note">Free forever · No credit card required</p>
       </section>
 
-      {/* Project Types */}
-      <section style={{
-        padding: '80px 48px',
-        borderTop: '1px solid #1a1a1d',
-        borderBottom: '1px solid #1a1a1d',
-        background: '#0c0c0e',
-      }}>
-        <p style={{
-          textAlign: 'center',
-          fontSize: '11px',
-          fontWeight: '600',
-          letterSpacing: '0.15em',
-          color: '#555',
-          marginBottom: '48px',
-          fontFamily: 'Inter, sans-serif',
-        }}>
-          BUILT FOR EVERY KIND OF STORY
-        </p>
-        <div style={{
-          display: 'flex',
-          gap: '16px',
-          justifyContent: 'center',
-          flexWrap: 'wrap',
-          maxWidth: '900px',
-          margin: '0 auto',
-        }}>
-          {projectTypes.map(pt => (
-            <div key={pt.label} style={{
-              width: '160px',
-              padding: '28px 16px',
-              background: '#0f0f11',
-              border: '1px solid #1e1e22',
-              borderTop: `3px solid ${pt.color}`,
-              borderRadius: '10px',
-              textAlign: 'center',
-            }}>
-              <div style={{ fontSize: '32px', marginBottom: '12px' }}>{pt.icon}</div>
-              <div style={{ color: pt.color, fontSize: '13px', fontWeight: '600', marginBottom: '6px' }}>
-                {pt.label}
-              </div>
-              <div style={{ color: '#444', fontSize: '12px', lineHeight: '1.5' }}>
-                {pt.description}
-              </div>
+      <section className="landing-types">
+        <p className="landing-section-label">BUILT FOR EVERY KIND OF STORY</p>
+        <div className="landing-types-grid">
+          {projectTypes.map(({ Icon, label, description, color }) => (
+            <div key={label} className="landing-type-card" style={{ '--card-color': color }}>
+              <div className="landing-type-icon"><Icon /></div>
+              <div className="landing-type-label">{label}</div>
+              <div className="landing-type-desc">{description}</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Features */}
-      <section style={{ padding: '80px 48px', maxWidth: '900px', margin: '0 auto' }}>
-        <p style={{
-          textAlign: 'center',
-          fontSize: '11px',
-          fontWeight: '600',
-          letterSpacing: '0.15em',
-          color: '#555',
-          marginBottom: '48px',
-          fontFamily: 'Inter, sans-serif',
-        }}>
-          EVERYTHING YOU NEED TO WRITE
-        </p>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '24px',
-        }}>
-          {features.map(f => (
-            <div key={f.title} style={{
-              padding: '32px',
-              background: '#0c0c0e',
-              border: '1px solid #1a1a1d',
-              borderRadius: '10px',
-            }}>
-              <div style={{ fontSize: '28px', marginBottom: '16px' }}>{f.icon}</div>
-              <div style={{ color: '#fff', fontSize: '16px', fontWeight: '500', marginBottom: '8px', fontFamily: 'Georgia, serif' }}>
-                {f.title}
-              </div>
-              <div style={{ color: '#555', fontSize: '13px', lineHeight: '1.7' }}>
-                {f.description}
-              </div>
+      <section className="landing-features">
+        <p className="landing-section-label">EVERYTHING YOU NEED TO WRITE</p>
+        <div className="landing-features-grid">
+          {features.map(({ Icon, title, description }) => (
+            <div key={title} className="landing-feature-card">
+              <div className="landing-feature-icon"><Icon /></div>
+              <div className="landing-feature-title">{title}</div>
+              <div className="landing-feature-desc">{description}</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Pricing */}
-      <section style={{
-        padding: '80px 48px',
-        borderTop: '1px solid #1a1a1d',
-        background: '#0c0c0e',
-      }}>
-        <p style={{
-          textAlign: 'center',
-          fontSize: '11px',
-          fontWeight: '600',
-          letterSpacing: '0.15em',
-          color: '#555',
-          marginBottom: '48px',
-          fontFamily: 'Inter, sans-serif',
-        }}>
-          SIMPLE PRICING
-        </p>
-        <div style={{
-          display: 'flex',
-          gap: '16px',
-          justifyContent: 'center',
-          maxWidth: '800px',
-          margin: '0 auto',
-          flexWrap: 'wrap',
-        }}>
+      <section className="landing-pricing">
+        <p className="landing-section-label">SIMPLE PRICING</p>
+        <div className="landing-pricing-grid">
 
-          {/* Free */}
-          <div style={{
-            flex: 1,
-            minWidth: '220px',
-            padding: '32px',
-            background: '#0f0f11',
-            border: '1px solid #1e1e22',
-            borderRadius: '12px',
-            textAlign: 'center',
-          }}>
-            <div style={{ color: '#555', fontSize: '11px', letterSpacing: '0.1em', marginBottom: '16px' }}>FREE</div>
-            <div style={{ color: '#fff', fontSize: '40px', fontFamily: 'Georgia, serif', marginBottom: '8px' }}>$0</div>
-            <div style={{ color: '#444', fontSize: '13px', marginBottom: '24px' }}>Forever free</div>
-            {['3 projects', 'All project types', 'Export PDF, DOCX, EPUB'].map(f => (
-              <div key={f} style={{ color: '#555', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid #1a1a1d', textAlign: 'left' }}>✓ {f}</div>
-            ))}
+          <div className="landing-price-card">
+            <div className="landing-price-tier">FREE</div>
+            <div className="landing-price-amount">$0</div>
+            <div className="landing-price-period">Forever free</div>
+            <ul className="landing-price-features">
+              {['3 projects', 'All project types', 'Export PDF, DOCX, EPUB'].map(f => (
+                <li key={f}><CheckIcon width="14" height="14" strokeWidth="2" />{f}</li>
+              ))}
+            </ul>
             <SignUpButton mode="modal">
-              <button style={{ marginTop: '24px', width: '100%', padding: '12px', background: 'transparent', border: '1px solid #2a2a2e', color: '#666', borderRadius: '8px', cursor: 'pointer', fontSize: '13px' }}>
-                Get Started Free
-              </button>
+              <button className="landing-btn landing-btn-secondary landing-price-cta">Get Started Free</button>
             </SignUpButton>
           </div>
 
-          {/* Pro */}
-          <div style={{
-            flex: 1,
-            minWidth: '220px',
-            padding: '32px',
-            background: '#0f0f11',
-            border: '1px solid rgba(126,200,227,0.3)',
-            borderRadius: '12px',
-            textAlign: 'center',
-            position: 'relative',
-          }}>
-            <div style={{
-              position: 'absolute',
-              top: '-12px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              background: '#7ec8e3',
-              color: '#000',
-              fontSize: '10px',
-              fontWeight: '600',
-              padding: '3px 12px',
-              borderRadius: '20px',
-            }}>
-              POPULAR
-            </div>
-            <div style={{ color: '#7ec8e3', fontSize: '11px', letterSpacing: '0.1em', marginBottom: '16px' }}>PRO</div>
-            <div style={{ color: '#fff', fontSize: '40px', fontFamily: 'Georgia, serif', marginBottom: '8px' }}>$10</div>
-            <div style={{ color: '#444', fontSize: '13px', marginBottom: '24px' }}>per month</div>
-            {['Unlimited projects', 'Cloud sync', 'AI writing assistant'].map(f => (
-              <div key={f} style={{ color: '#aaa', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid #1a1a1d', textAlign: 'left' }}>✓ {f}</div>
-            ))}
+          <div className="landing-price-card landing-price-card--featured">
+            <div className="landing-price-badge">POPULAR</div>
+            <div className="landing-price-tier landing-price-tier--accent">PRO</div>
+            <div className="landing-price-amount">$10</div>
+            <div className="landing-price-period">per month</div>
+            <ul className="landing-price-features">
+              {['Unlimited projects', 'Cloud sync', 'AI writing assistant'].map(f => (
+                <li key={f}><CheckIcon width="14" height="14" strokeWidth="2" />{f}</li>
+              ))}
+            </ul>
             <SignUpButton mode="modal">
-              <button style={{ marginTop: '24px', width: '100%', padding: '12px', background: 'rgba(126,200,227,0.15)', border: '1px solid rgba(126,200,227,0.4)', color: '#7ec8e3', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '500' }}>
-                Get Pro →
-              </button>
+              <button className="landing-btn landing-btn-primary landing-price-cta">Get Pro →</button>
             </SignUpButton>
           </div>
 
-          {/* Outright */}
-          <div style={{
-            flex: 1,
-            minWidth: '220px',
-            padding: '32px',
-            background: '#0f0f11',
-            border: '1px solid #1e1e22',
-            borderRadius: '12px',
-            textAlign: 'center',
-          }}>
-            <div style={{ color: '#555', fontSize: '11px', letterSpacing: '0.1em', marginBottom: '16px' }}>OUTRIGHT</div>
-            <div style={{ color: '#fff', fontSize: '40px', fontFamily: 'Georgia, serif', marginBottom: '8px' }}>$20</div>
-            <div style={{ color: '#444', fontSize: '13px', marginBottom: '24px' }}>one time</div>
-            {['Unlimited projects', 'Cloud sync', 'No subscription'].map(f => (
-              <div key={f} style={{ color: '#aaa', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid #1a1a1d', textAlign: 'left' }}>✓ {f}</div>
-            ))}
+          <div className="landing-price-card">
+            <div className="landing-price-tier">OUTRIGHT</div>
+            <div className="landing-price-amount">$20</div>
+            <div className="landing-price-period">one time</div>
+            <ul className="landing-price-features">
+              {['Unlimited projects', 'Cloud sync', 'No subscription'].map(f => (
+                <li key={f}><CheckIcon width="14" height="14" strokeWidth="2" />{f}</li>
+              ))}
+            </ul>
             <SignUpButton mode="modal">
-              <button style={{ marginTop: '24px', width: '100%', padding: '12px', background: 'transparent', border: '1px solid #2a2a2e', color: '#888', borderRadius: '8px', cursor: 'pointer', fontSize: '13px' }}>
-                Buy Outright →
-              </button>
+              <button className="landing-btn landing-btn-secondary landing-price-cta">Buy Outright →</button>
             </SignUpButton>
           </div>
 
         </div>
       </section>
 
-      {/* Footer */}
-      <footer style={{
-        padding: '40px 48px',
-        borderTop: '1px solid #1a1a1d',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
-        <span style={{ fontFamily: 'Georgia, serif', fontSize: '16px', color: '#444' }}>Storytelling</span>
-        <span style={{ color: '#333', fontSize: '12px' }}>© 2026 · Built by Randy Carroll</span>
+      <footer className="landing-footer">
+        <span className="landing-footer-brand">Storytelling</span>
+        <span className="landing-footer-copy">© 2026 · Built by Randy Carroll</span>
       </footer>
 
     </div>
