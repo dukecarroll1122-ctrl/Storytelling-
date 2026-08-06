@@ -11,6 +11,7 @@ import Compile from './Compile'
 import Pricing from './Pricing'
 import { saveProject, updateProject, getUserPlan } from './api'
 import { useUser } from '@clerk/clerk-react'
+import { PROJECT_TYPE_ICONS, FileIcon, FileTextIcon, BookIcon, FlameIcon } from './icons'
 
 const DEFAULT_STRUCTURES = {
   novel: [
@@ -96,11 +97,11 @@ function App() {
   }, [user, userId])
 
   const projectTypes = [
-    { id: 'novel', icon: '📖', label: 'Novel', color: '#e8a87c' },
-    { id: 'comic', icon: '💥', label: 'Comic', color: '#f4a261' },
-    { id: 'tv', icon: '📺', label: 'TV Show', color: '#7ec8e3' },
-    { id: 'movie', icon: '🎬', label: 'Movie', color: '#c77dff' },
-    { id: 'game', icon: '🎮', label: 'Game', color: '#52b788' },
+    { id: 'novel', label: 'Novel', color: '#e8a87c' },
+    { id: 'comic', label: 'Comic', color: '#f4a261' },
+    { id: 'tv', label: 'TV Show', color: '#7ec8e3' },
+    { id: 'movie', label: 'Movie', color: '#c77dff' },
+    { id: 'game', label: 'Game', color: '#52b788' },
   ]
 
   const currentType = projectTypes.find(p => p.id === projectType)
@@ -245,11 +246,11 @@ function App() {
       {!distractionFree && (
         <div style={{ height: '48px', background: '#0c0c0e', borderBottom: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '8px' }}>
 
-          <p
+          <button
             onClick={() => setScreen('home')}
-            style={{ color: '#ffffff', fontSize: '13px', fontFamily: 'Inter, sans-serif', fontWeight: '500', cursor: 'pointer', letterSpacing: '0.01em' }}>
-            {currentType.icon} {projectName}
-          </p>
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', color: '#ffffff', fontSize: '13px', fontFamily: 'Inter, sans-serif', fontWeight: '500', cursor: 'pointer', letterSpacing: '0.01em' }}>
+            {(() => { const TypeIcon = PROJECT_TYPE_ICONS[currentType.id]; return <TypeIcon width="14" height="14" /> })()} {projectName}
+          </button>
 
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px' }}>
 
@@ -296,27 +297,30 @@ function App() {
               </button>
               {showCompile && (
                 <div style={{ position: 'absolute', top: '34px', right: '0', background: '#141416', border: '1px solid #2a2a2e', borderRadius: '6px', padding: '4px', zIndex: 100, minWidth: '180px', boxShadow: '0 8px 32px rgba(0,0,0,0.6)' }}>
-                  <div
+                  <button
+                    type="button"
                     onClick={() => { compile.compilePDF(); setShowCompile(false) }}
-                    style={{ padding: '8px 12px', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', textAlign: 'left', border: 'none', padding: '8px 12px', background: 'transparent', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
                     onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                    📄 Compile as PDF
-                  </div>
-                  <div
+                    <FileIcon width="14" height="14" /> Compile as PDF
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => { compile.compileDOCX(); setShowCompile(false) }}
-                    style={{ padding: '8px 12px', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', textAlign: 'left', border: 'none', padding: '8px 12px', background: 'transparent', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
                     onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                    📝 Compile as DOCX
-                  </div>
-                  <div
+                    <FileTextIcon width="14" height="14" /> Compile as DOCX
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => { compile.compileEPUB(); setShowCompile(false) }}
-                    style={{ padding: '8px 12px', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', textAlign: 'left', border: 'none', padding: '8px 12px', background: 'transparent', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
                     onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                    📚 Compile as EPUB
-                  </div>
+                    <BookIcon width="14" height="14" /> Compile as EPUB
+                  </button>
                 </div>
               )}
             </div>
@@ -409,17 +413,21 @@ function App() {
 
       {!distractionFree && (
         <div style={{ height: '28px', background: '#0a0a0c', borderTop: '1px solid #1a1a1d', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '16px' }}>
-          <span style={{ color: currentType.color, fontSize: '11px', fontWeight: '500' }}>{currentType.icon} {currentType.label}</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: currentType.color, fontSize: '11px', fontWeight: '500' }}>
+            {(() => { const TypeIcon = PROJECT_TYPE_ICONS[currentType.id]; return <TypeIcon width="12" height="12" /> })()} {currentType.label}
+          </span>
           <span style={{ color: '#2a2a2e', fontSize: '11px' }}>•</span>
-          <span style={{ color: '#444', fontSize: '11px' }}>{projectName}</span>
+          <span style={{ color: '#83838d', fontSize: '11px' }}>{projectName}</span>
           <span style={{ color: '#2a2a2e', fontSize: '11px' }}>•</span>
-          <span style={{ color: '#444', fontSize: '11px' }}>{getTotalWordCount().toLocaleString()} words</span>
+          <span style={{ color: '#83838d', fontSize: '11px' }}>{getTotalWordCount().toLocaleString()} words</span>
           <span style={{ color: '#2a2a2e', fontSize: '11px' }}>•</span>
-          <span style={{ color: todayWords >= wordGoal ? '#52b788' : '#444', fontSize: '11px' }}>
+          <span style={{ color: todayWords >= wordGoal ? '#52b788' : '#83838d', fontSize: '11px' }}>
             {todayWords}/{wordGoal} today
           </span>
           {streak > 0 && (
-            <span style={{ color: '#e8a87c', fontSize: '11px' }}>🔥 {streak} day streak</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#e8a87c', fontSize: '11px' }}>
+              <FlameIcon width="12" height="12" /> {streak} day streak
+            </span>
           )}
           <div style={{ flex: 1 }} />
           <span style={{ color: '#52b788', fontSize: '11px' }}>● Saved</span>

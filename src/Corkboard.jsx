@@ -65,7 +65,7 @@ function Corkboard({ selectedDoc, setSelectedDoc, accentColor, folders, docData 
               {card.name}
             </div>
 
-            <div style={{ fontSize: '12px', color: card.synopsis ? '#888' : '#444', fontFamily: 'Georgia, serif', lineHeight: '1.6', fontStyle: card.synopsis ? 'normal' : 'italic', flex: 1 }}>
+            <div style={{ fontSize: '12px', color: card.synopsis ? '#c2c2cc' : '#8f8f99', fontFamily: 'Georgia, serif', lineHeight: '1.6', fontStyle: card.synopsis ? 'normal' : 'italic', flex: 1 }}>
               {card.synopsis || 'No synopsis yet...'}
             </div>
 

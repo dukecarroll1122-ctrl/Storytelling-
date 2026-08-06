@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FolderIcon } from './icons'
 
 const LABEL_COLORS = [null, '#e06060', '#e8a87c', '#e8d87c', '#52b788', '#7ec8e3', '#c77dff']
 
@@ -96,7 +97,7 @@ function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor, folder
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', borderBottom: '1px solid #1a1a1d' }}>
         <p style={{ color: '#555', fontSize: '11px', letterSpacing: '0.1em' }}>BINDER</p>
-        <button onClick={addFolder} style={{ background: 'none', border: 'none', color: '#555', fontSize: '18px', cursor: 'pointer' }}>+</button>
+        <button aria-label="Add folder" onClick={addFolder} style={{ background: 'none', border: 'none', color: '#8f8f99', fontSize: '18px', cursor: 'pointer' }}>+</button>
       </div>
 
       <div style={{ padding: '6px', flex: 1, overflow: 'auto' }}>
@@ -128,13 +129,13 @@ function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor, folder
                 <div
                   onClick={() => toggleFolder(folder.id)}
                   onDoubleClick={() => startEditing(folder.id, folder.name)}
-                  style={{ flex: 1, color: '#ccc', fontSize: '13px', cursor: 'pointer' }}>
-                  📁 {folder.name}
+                  style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '6px', color: '#ccc', fontSize: '13px', cursor: 'pointer' }}>
+                  <FolderIcon width="14" height="14" /> {folder.name}
                 </div>
               )}
 
-              <span onClick={() => addDoc(folder.id)} style={{ color: '#555', fontSize: '16px', cursor: 'pointer', padding: '0 4px' }}>+</span>
-              <span onClick={() => deleteFolder(folder.id)} style={{ color: '#444', fontSize: '16px', cursor: 'pointer' }}>×</span>
+              <button aria-label="Add document" onClick={() => addDoc(folder.id)} style={{ background: 'none', border: 'none', color: '#8f8f99', fontSize: '16px', cursor: 'pointer', padding: '0 4px' }}>+</button>
+              <button aria-label="Delete folder" onClick={() => deleteFolder(folder.id)} style={{ background: 'none', border: 'none', color: '#7d7d87', fontSize: '16px', cursor: 'pointer' }}>×</button>
             </div>
 
             {folder.open && folder.docs.map(doc => (
@@ -198,7 +199,7 @@ function Sidebar({ selectedDoc, setSelectedDoc, projectType, accentColor, folder
                   </div>
                 )}
 
-                <span onClick={() => deleteDoc(folder.id, doc.id)} style={{ color: '#444', fontSize: '16px', cursor: 'pointer' }}>×</span>
+                <button aria-label="Delete document" onClick={() => deleteDoc(folder.id, doc.id)} style={{ background: 'none', border: 'none', color: '#7d7d87', fontSize: '16px', cursor: 'pointer' }}>×</button>
               </div>
             ))}
 

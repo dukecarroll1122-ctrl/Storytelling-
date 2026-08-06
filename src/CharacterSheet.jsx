@@ -29,7 +29,7 @@ function CharacterSheet({ selectedDoc, folders, docData, setDocData }) {
     fontSize: '10px',
     fontWeight: '600',
     letterSpacing: '0.1em',
-    color: '#444',
+    color: '#8f8f99',
     marginBottom: '6px',
     fontFamily: 'Inter, sans-serif',
     display: 'block',
@@ -47,7 +47,7 @@ function CharacterSheet({ selectedDoc, folders, docData, setDocData }) {
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#0f0f11', overflow: 'auto' }}>
 
       <div style={{ padding: '32px 48px 16px', borderBottom: '1px solid #1a1a1d' }}>
-        <div style={{ fontSize: '11px', color: '#444', letterSpacing: '0.1em', marginBottom: '6px', fontFamily: 'Inter, sans-serif' }}>
+        <div style={{ fontSize: '11px', color: '#8f8f99', letterSpacing: '0.1em', marginBottom: '6px', fontFamily: 'Inter, sans-serif' }}>
           CHARACTER SHEET
         </div>
         <h2 style={{ fontSize: '24px', fontFamily: 'Georgia, serif', fontWeight: '500', color: '#fff' }}>

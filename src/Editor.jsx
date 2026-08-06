@@ -7,6 +7,7 @@ import { Document, Paragraph, TextRun, HeadingLevel, Packer } from 'docx'
 import { saveAs } from 'file-saver'
 import { saveDocument } from './api'
 import AIAssistant from './AIAssistant'
+import { QuoteIcon, SearchIcon, SparkleIcon, PaletteIcon, MoonIcon, ScrollIcon, SunIcon, FileIcon, FileTextIcon, BookIcon } from './icons'
 
 const TextAlign = Extension.create({
   name: 'textAlign',
@@ -460,8 +461,8 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           <button onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().toggleOrderedList().run() }} style={tbStyle(editor?.isActive('orderedList'))}>
             1≡
           </button>
-          <button onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().toggleBlockquote().run() }} style={tbStyle(editor?.isActive('blockquote'))}>
-            ❝
+          <button aria-label="Blockquote" onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().toggleBlockquote().run() }} style={tbStyle(editor?.isActive('blockquote'))}>
+            <QuoteIcon width="14" height="14" />
           </button>
 
           <div style={{ width: '1px', height: '14px', background: '#2a2a2e', margin: '0 4px' }} />
@@ -479,9 +480,10 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           <div style={{ width: '1px', height: '14px', background: '#2a2a2e', margin: '0 4px' }} />
 
           <button
+            aria-label="Find and replace"
             onMouseDown={(e) => { e.preventDefault(); setShowFindReplace(!showFindReplace) }}
             style={tbStyle(showFindReplace)}>
-            🔍
+            <SearchIcon width="14" height="14" />
           </button>
 
           <button
@@ -493,8 +495,8 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
               }
               setShowAI(!showAI)
             }}
-            style={tbStyle(showAI)}>
-            ✦ AI
+            style={{ ...tbStyle(showAI), display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <SparkleIcon width="14" height="14" /> AI
           </button>
 
           <div style={{ width: '1px', height: '14px', background: '#2a2a2e', margin: '0 4px' }} />
@@ -502,21 +504,26 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           <div style={{ position: 'relative' }}>
             <button
               onMouseDown={(e) => { e.preventDefault(); setShowThemeMenu(!showThemeMenu) }}
-              style={tbStyle(showThemeMenu)}>
-              🎨 Theme
+              style={{ ...tbStyle(showThemeMenu), display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <PaletteIcon width="14" height="14" /> Theme
             </button>
             {showThemeMenu && (
               <div style={{ position: 'absolute', top: '34px', left: '0', background: '#141416', border: '1px solid #2a2a2e', borderRadius: '6px', padding: '4px', zIndex: 100, minWidth: '120px' }}>
-                {['dark', 'sepia', 'light'].map(t => (
-                  <div
-                    key={t}
-                    onMouseDown={(e) => { e.preventDefault(); setTheme(t); setShowThemeMenu(false) }}
-                    style={{ padding: '8px 12px', color: theme === t ? '#7ec8e3' : '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif', textTransform: 'capitalize' }}
-                    onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                    {t === 'dark' ? '🌙' : t === 'sepia' ? '📜' : '☀️'} {t}
-                  </div>
-                ))}
+                {['dark', 'sepia', 'light'].map(t => {
+                  const ThemeIcon = t === 'dark' ? MoonIcon : t === 'sepia' ? ScrollIcon : SunIcon
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => { setTheme(t); setShowThemeMenu(false) }}
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', border: 'none', padding: '8px 12px', background: 'transparent', color: theme === t ? '#7ec8e3' : '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif', textTransform: 'capitalize' }}
+                      onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                      <ThemeIcon width="14" height="14" /> {t}
+                    </button>
+                  )
+                })}
               </div>
             )}
           </div>
@@ -535,14 +542,16 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
                   { label: 'Courier (Screenplay)', value: '"Courier New", monospace' },
                   { label: 'Helvetica', value: 'Helvetica, Arial, sans-serif' },
                 ].map(f => (
-                  <div
+                  <button
                     key={f.value}
-                    onMouseDown={(e) => { e.preventDefault(); setFontFamily(f.value); setShowFontMenu(false) }}
-                    style={{ padding: '8px 12px', color: fontFamily === f.value ? '#7ec8e3' : '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: f.value }}
+                    type="button"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => { setFontFamily(f.value); setShowFontMenu(false) }}
+                    style={{ display: 'block', width: '100%', textAlign: 'left', border: 'none', padding: '8px 12px', background: 'transparent', color: fontFamily === f.value ? '#7ec8e3' : '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: f.value }}
                     onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                     {f.label}
-                  </div>
+                  </button>
                 ))}
               </div>
             )}
@@ -558,27 +567,33 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
             </button>
             {showExport && (
               <div style={{ position: 'absolute', top: '34px', left: '0', background: '#141416', border: '1px solid #2a2a2e', borderRadius: '6px', padding: '4px', zIndex: 100, minWidth: '170px' }}>
-                <div
-                  onMouseDown={(e) => { e.preventDefault(); exportPDF() }}
-                  style={{ padding: '8px 12px', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
+                <button
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={exportPDF}
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', textAlign: 'left', border: 'none', padding: '8px 12px', background: 'transparent', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
                   onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                  📄 Export as PDF
-                </div>
-                <div
-                  onMouseDown={(e) => { e.preventDefault(); exportDOCX() }}
-                  style={{ padding: '8px 12px', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
+                  <FileIcon width="14" height="14" /> Export as PDF
+                </button>
+                <button
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={exportDOCX}
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', textAlign: 'left', border: 'none', padding: '8px 12px', background: 'transparent', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
                   onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                  📝 Export as DOCX
-                </div>
-                <div
-                  onMouseDown={(e) => { e.preventDefault(); exportEPUB() }}
-                  style={{ padding: '8px 12px', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
+                  <FileTextIcon width="14" height="14" /> Export as DOCX
+                </button>
+                <button
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={exportEPUB}
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', textAlign: 'left', border: 'none', padding: '8px 12px', background: 'transparent', color: '#ccc', fontSize: '13px', cursor: 'pointer', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
                   onMouseEnter={e => e.currentTarget.style.background = '#1e1e22'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                  📚 Export as EPUB
-                </div>
+                  <BookIcon width="14" height="14" /> Export as EPUB
+                </button>
               </div>
             )}
           </div>
