@@ -29,9 +29,13 @@ Pick a project type or reopen a recent project from the home screen:
 
 ![Storytelling home screen with project types and recent projects](docs/screenshots/app-home.jpg)
 
-Then write in the editor, with the binder on the left and synopsis, notes and history on the right:
+Then write in the editor. Here is a sample novel, *The Lighthouse Keeper*, with the binder on the left and synopsis, word count and notes on the right:
 
-![Storytelling editor with binder, toolbar and synopsis panel](docs/screenshots/app-editor.jpg)
+![The Lighthouse Keeper open in the Storytelling editor](docs/screenshots/lighthouse-editor.jpg)
+
+Switch to the corkboard to see every chapter as an index card with its synopsis and word count:
+
+![The Lighthouse Keeper chapters on the corkboard](docs/screenshots/lighthouse-corkboard.jpg)
 
 ## Responsive landing page
 
