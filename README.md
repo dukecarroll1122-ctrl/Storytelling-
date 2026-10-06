@@ -2,6 +2,8 @@
 
 A creative writing platform for novelists, screenwriters, comic writers and game designers. One app, every kind of story.
 
+**Live app: https://storytelling-production.up.railway.app**
+
 ![Storytelling landing page](docs/screenshots/landing-desktop.png)
 
 ## Features
@@ -37,6 +39,14 @@ The landing page is fully responsive, with accessible focus states and reduced-m
 
 <img src="docs/screenshots/landing-mobile.png" alt="Storytelling landing page on a phone-width screen" width="300" />
 
+## Recent improvements
+
+- **Landing page refactor** — moved inline styles into `Landing.css`, replaced emoji icons with SVG icons, and fixed a bug where the global `overflow: hidden` stopped the page from scrolling.
+- **Responsive layout** — breakpoints at 768px and 420px; the features grid collapses to one column and the hero buttons stack on small phones.
+- **Accessibility** — visible hover and `:focus-visible` states, improved text contrast, and `prefers-reduced-motion` support.
+- **Rest of the app** — the home screen uses CSS classes with keyboard-navigable controls, SVG icons across the remaining screens, and the editor shell is responsive on tablet and mobile.
+- **Dev-only demo mode** — `?demo` bypasses sign-in locally (see above), used to capture the screenshots in this README.
+
 ## Tech stack
 
 - [React 19](https://react.dev) + [Vite](https://vite.dev)
@@ -64,6 +74,12 @@ Then start the dev server at http://localhost:5173:
 ```bash
 npm run dev
 ```
+
+### Demo mode (development only)
+
+To explore the app without signing in, open `http://localhost:5173/?demo` while running `npm run dev`. It skips Clerk with a fake `demo-user` and **never writes to the backend**, so nothing you do reaches the real database. It is gated on `import.meta.env.DEV`, so production builds strip it out. The bypass lives in `src/useAppUser.js`.
+
+Demo mode reads projects from `localStorage`, so seed a few sample projects there if the home screen is empty.
 
 ### Scripts
 
