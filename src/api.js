@@ -1,6 +1,10 @@
 const API_URL = 'https://storytelling-server-production.up.railway.app'
 
+// Dev-only demo mode (?demo): never write to the real backend.
+const DEMO = import.meta.env.DEV && new URLSearchParams(window.location.search).has('demo')
+
 export const saveProject = async (project) => {
+  if (DEMO) return null
   try {
     const response = await fetch(`${API_URL}/api/projects`, {
       method: 'POST',
@@ -24,6 +28,7 @@ export const saveProject = async (project) => {
 }
 
 export const updateProject = async (projectId, project) => {
+  if (DEMO) return null
   try {
     const response = await fetch(`${API_URL}/api/projects/${projectId}`, {
       method: 'PUT',
@@ -57,6 +62,7 @@ export const getProjects = async () => {
 }
 
 export const deleteProject = async (projectId) => {
+  if (DEMO) return true
   try {
     await fetch(`${API_URL}/api/projects/${projectId}`, {
       method: 'DELETE',
@@ -69,6 +75,7 @@ export const deleteProject = async (projectId) => {
 }
 
 export const saveDocument = async (projectDbId, docId, content) => {
+  if (DEMO) return null
   try {
     const response = await fetch(`${API_URL}/api/projects/${projectDbId}/documents`, {
       method: 'POST',

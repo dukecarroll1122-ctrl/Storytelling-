@@ -21,6 +21,16 @@ A creative writing platform for novelists, screenwriters, comic writers and game
 | Pro | $10 / month | Unlimited projects, cloud sync, AI assistant |
 | Outright | $20 one time | Unlimited projects, cloud sync, no subscription |
 
+## Inside the app
+
+Pick a project type or reopen a recent project from the home screen:
+
+![Storytelling home screen with project types and recent projects](docs/screenshots/app-home.jpg)
+
+Then write in the editor, with the binder on the left and synopsis, notes and history on the right:
+
+![Storytelling editor with binder, toolbar and synopsis panel](docs/screenshots/app-editor.jpg)
+
 ## Responsive landing page
 
 The landing page is fully responsive, with accessible focus states and reduced-motion support.
