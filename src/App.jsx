@@ -10,7 +10,7 @@ import CharacterSheet from './CharacterSheet'
 import Compile from './Compile'
 import Pricing from './Pricing'
 import { saveProject, updateProject, getUserPlan } from './api'
-import { useUser } from '@clerk/clerk-react'
+import { useAppUser } from './useAppUser'
 import { PROJECT_TYPE_ICONS, FileIcon, FileTextIcon, BookIcon, FlameIcon, MenuIcon, PanelIcon } from './icons'
 
 const DEFAULT_STRUCTURES = {
@@ -57,7 +57,7 @@ function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark')
   const [fontFamily, setFontFamily] = useState(() => localStorage.getItem('fontFamily') || 'Georgia, serif')
   const [labels, setLabels] = useState({})
-  const { user, isLoaded } = useUser()
+  const { user, isLoaded } = useAppUser()
   const userId = user?.id || 'temp-user'
   const [userPlan, setUserPlan] = useState('free')
   const [wordGoal, setWordGoal] = useState(() => {

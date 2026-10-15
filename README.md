@@ -2,6 +2,10 @@
 
 A creative writing platform for novelists, screenwriters, comic writers and game designers. One app, every kind of story.
 
+**Live app: https://storytelling-production.up.railway.app**
+
+**Try it without signing in: https://storytelling-production.up.railway.app/?demo**
+
 ![Storytelling landing page](docs/screenshots/landing-desktop.png)
 
 ## Features
@@ -21,11 +25,33 @@ A creative writing platform for novelists, screenwriters, comic writers and game
 | Pro | $10 / month | Unlimited projects, cloud sync, AI assistant |
 | Outright | $20 one time | Unlimited projects, cloud sync, no subscription |
 
+## Inside the app
+
+Pick a project type or reopen a recent project from the home screen:
+
+![Storytelling home screen with project types and recent projects](docs/screenshots/app-home.jpg)
+
+Then write in the editor. Here is a sample novel, *The Lighthouse Keeper*, with the binder on the left and synopsis, word count and notes on the right:
+
+![The Lighthouse Keeper open in the Storytelling editor](docs/screenshots/lighthouse-editor.jpg)
+
+Switch to the corkboard to see every chapter as an index card with its synopsis and word count:
+
+![The Lighthouse Keeper chapters on the corkboard](docs/screenshots/lighthouse-corkboard.jpg)
+
 ## Responsive landing page
 
 The landing page is fully responsive, with accessible focus states and reduced-motion support.
 
 <img src="docs/screenshots/landing-mobile.png" alt="Storytelling landing page on a phone-width screen" width="300" />
+
+## Recent improvements
+
+- **Landing page refactor** — moved inline styles into `Landing.css`, replaced emoji icons with SVG icons, and fixed a bug where the global `overflow: hidden` stopped the page from scrolling.
+- **Responsive layout** — breakpoints at 768px and 420px; the features grid collapses to one column and the hero buttons stack on small phones.
+- **Accessibility** — visible hover and `:focus-visible` states, improved text contrast, and `prefers-reduced-motion` support.
+- **Rest of the app** — the home screen uses CSS classes with keyboard-navigable controls, SVG icons across the remaining screens, and the editor shell is responsive on tablet and mobile.
+- **Demo mode** — `?demo` bypasses sign-in, live or local (see above), used to capture the screenshots in this README.
 
 ## Tech stack
 
@@ -54,6 +80,10 @@ Then start the dev server at http://localhost:5173:
 ```bash
 npm run dev
 ```
+
+### Demo mode
+
+To explore the app without signing in, open `/?demo` on the live site or `http://localhost:5173/?demo` locally. It skips Clerk with a fake `demo-user` and **never calls the backend**, so nothing you do reaches the real database. Projects live only in the visitor's browser `localStorage`. The bypass lives in `src/useAppUser.js` and `src/api.js`.
 
 ### Scripts
 

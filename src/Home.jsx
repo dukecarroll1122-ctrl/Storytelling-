@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from '@clerk/clerk-react'
+import { useAppUser } from './useAppUser'
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react'
 import './Home.css'
 import { PROJECT_TYPE_ICONS, UploadIcon, XIcon, FileIcon } from './icons'
 
@@ -152,7 +153,7 @@ function Home({ onSelectProject }) {
   const [selectedTemplate, setSelectedTemplate] = useState(null)
   const [projectName, setProjectName] = useState('')
   const [recentProjects, setRecentProjects] = useState([])
-  const { user, isLoaded } = useUser()
+  const { user, isLoaded } = useAppUser()
   const userId = user?.id || 'temp-user'
   const [userPlan, setUserPlan] = useState('free')
 
@@ -305,11 +306,13 @@ function Home({ onSelectProject }) {
     <div className="home-page">
 
       <div className="home-topbar">
-        <SignedOut>
-          <SignInButton mode="modal">
-            <button className="home-signin-btn">Sign In</button>
-          </SignInButton>
-        </SignedOut>
+        {user?.id !== 'demo-user' && (
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button className="home-signin-btn">Sign In</button>
+            </SignInButton>
+          </SignedOut>
+        )}
         <SignedIn>
           <UserButton />
         </SignedIn>
