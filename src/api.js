@@ -1,7 +1,7 @@
 const API_URL = 'https://storytelling-server-production.up.railway.app'
 
-// Dev-only demo mode (?demo): never write to the real backend.
-const DEMO = import.meta.env.DEV && new URLSearchParams(window.location.search).has('demo')
+// Demo mode (?demo): never write to the real backend.
+const DEMO = new URLSearchParams(window.location.search).has('demo')
 
 export const saveProject = async (project) => {
   if (DEMO) return null

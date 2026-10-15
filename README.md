@@ -4,6 +4,8 @@ A creative writing platform for novelists, screenwriters, comic writers and game
 
 **Live app: https://storytelling-production.up.railway.app**
 
+**Try it without signing in: https://storytelling-production.up.railway.app/?demo**
+
 ![Storytelling landing page](docs/screenshots/landing-desktop.png)
 
 ## Features
@@ -49,7 +51,7 @@ The landing page is fully responsive, with accessible focus states and reduced-m
 - **Responsive layout** — breakpoints at 768px and 420px; the features grid collapses to one column and the hero buttons stack on small phones.
 - **Accessibility** — visible hover and `:focus-visible` states, improved text contrast, and `prefers-reduced-motion` support.
 - **Rest of the app** — the home screen uses CSS classes with keyboard-navigable controls, SVG icons across the remaining screens, and the editor shell is responsive on tablet and mobile.
-- **Dev-only demo mode** — `?demo` bypasses sign-in locally (see above), used to capture the screenshots in this README.
+- **Demo mode** — `?demo` bypasses sign-in, live or local (see above), used to capture the screenshots in this README.
 
 ## Tech stack
 
@@ -79,11 +81,9 @@ Then start the dev server at http://localhost:5173:
 npm run dev
 ```
 
-### Demo mode (development only)
+### Demo mode
 
-To explore the app without signing in, open `http://localhost:5173/?demo` while running `npm run dev`. It skips Clerk with a fake `demo-user` and **never writes to the backend**, so nothing you do reaches the real database. It is gated on `import.meta.env.DEV`, so production builds strip it out. The bypass lives in `src/useAppUser.js`.
-
-Demo mode reads projects from `localStorage`, so seed a few sample projects there if the home screen is empty.
+To explore the app without signing in, open `/?demo` on the live site or `http://localhost:5173/?demo` locally. It skips Clerk with a fake `demo-user` and **never calls the backend**, so nothing you do reaches the real database. Projects live only in the visitor's browser `localStorage`. The bypass lives in `src/useAppUser.js` and `src/api.js`.
 
 ### Scripts
 
