@@ -1,4 +1,5 @@
 import { SignInButton, SignUpButton } from '@clerk/clerk-react'
+import { startGuest } from './guest'
 import './Landing.css'
 import { BookIcon, BurstIcon, TvIcon, FilmIcon, GamepadIcon, PenIcon, CloudIcon, SparkleIcon, PackageIcon, CheckIcon } from './icons'
 
@@ -47,7 +48,10 @@ function Landing() {
             <button className="landing-btn landing-btn-secondary">Sign In</button>
           </SignInButton>
         </div>
-        <p className="landing-hero-note">Free forever · No credit card required</p>
+        <div className="landing-hero-actions">
+          <button className="landing-btn landing-btn-secondary" onClick={startGuest}>Continue as guest</button>
+        </div>
+        <p className="landing-hero-note">Free forever · No credit card required · Account optional</p>
       </section>
 
       <section className="landing-types">

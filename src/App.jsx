@@ -11,6 +11,7 @@ import Compile from './Compile'
 import Pricing from './Pricing'
 import { saveProject, updateProject, getUserPlan } from './api'
 import { useAppUser } from './useAppUser'
+import { GUEST_ID } from './guest'
 import { PROJECT_TYPE_ICONS, FileIcon, FileTextIcon, BookIcon, FlameIcon, MenuIcon, PanelIcon } from './icons'
 
 const DEFAULT_STRUCTURES = {
@@ -102,7 +103,7 @@ function App() {
   }, [fontFamily])
 
   useEffect(() => {
-    if (user) {
+    if (user && userId !== GUEST_ID) {
       getUserPlan(userId).then(plan => setUserPlan(plan))
     }
   }, [userId, user])

@@ -4,7 +4,7 @@ A creative writing platform for novelists, screenwriters, comic writers and game
 
 **Live app: https://storytelling-production.up.railway.app**
 
-**Try it without signing in: https://storytelling-production.up.railway.app/?demo**
+**No account needed:** click "Continue as guest" on the landing page, or open https://storytelling-production.up.railway.app/?demo
 
 ![Storytelling landing page](docs/screenshots/landing-desktop.png)
 
@@ -51,7 +51,7 @@ The landing page is fully responsive, with accessible focus states and reduced-m
 - **Responsive layout** — breakpoints at 768px and 420px; the features grid collapses to one column and the hero buttons stack on small phones.
 - **Accessibility** — visible hover and `:focus-visible` states, improved text contrast, and `prefers-reduced-motion` support.
 - **Rest of the app** — the home screen uses CSS classes with keyboard-navigable controls, SVG icons across the remaining screens, and the editor shell is responsive on tablet and mobile.
-- **Demo mode** — `?demo` bypasses sign-in, live or local (see above), used to capture the screenshots in this README.
+- **Optional sign-up** — guest mode lets anyone write without an account (see above), used to capture the screenshots in this README.
 
 ## Tech stack
 
@@ -81,9 +81,9 @@ Then start the dev server at http://localhost:5173:
 npm run dev
 ```
 
-### Demo mode
+### Guest mode (sign-up is optional)
 
-To explore the app without signing in, open `/?demo` on the live site or `http://localhost:5173/?demo` locally. It skips Clerk with a fake `demo-user` and **never calls the backend**, so nothing you do reaches the real database. Projects live only in the visitor's browser `localStorage`. The bypass lives in `src/useAppUser.js` and `src/api.js`.
+Visitors can click **Continue as guest** on the landing page (or open `/?demo`) to use the app without an account. Guest mode uses a local `guest-user`, **never calls the backend**, and keeps projects in the browser's `localStorage`. Signing in later turns on cloud sync and Pro upgrades. The logic lives in `src/guest.js`, `src/useAppUser.js` and `src/api.js`.
 
 ### Scripts
 

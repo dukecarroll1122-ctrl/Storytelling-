@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAppUser } from './useAppUser'
+import { GUEST_ID } from './guest'
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react'
 import './Home.css'
 import { PROJECT_TYPE_ICONS, UploadIcon, XIcon, FileIcon } from './icons'
@@ -158,7 +159,7 @@ function Home({ onSelectProject }) {
   const [userPlan, setUserPlan] = useState('free')
 
   useEffect(() => {
-    if (isLoaded && user) {
+    if (isLoaded && user && userId !== GUEST_ID) {
       import('./api').then(({ getUserPlan }) => {
         getUserPlan(userId).then(plan => setUserPlan(plan))
       })
@@ -178,13 +179,15 @@ function Home({ onSelectProject }) {
       if (!isLoaded) return
 
       const lastUserId = localStorage.getItem('lastUserId')
-      if (lastUserId && lastUserId !== userId) {
+      if (lastUserId && lastUserId !== userId && lastUserId !== GUEST_ID) {
         localStorage.clear()
       }
       localStorage.setItem('lastUserId', userId)
 
       const local = JSON.parse(localStorage.getItem('projects') || '[]')
       setRecentProjects(local)
+
+      if (userId === GUEST_ID || userId === 'demo-user') return
 
       try {
         const response = await fetch(`https://storytelling-server-production.up.railway.app/api/projects/${userId}`)

@@ -13,6 +13,10 @@ function Pricing({ onClose }) {
   }, [onClose])
 
   const handleCheckout = async (plan) => {
+    if (!user) {
+      alert('Please sign in or create an account to upgrade.')
+      return
+    }
     try {
       const response = await fetch('https://storytelling-server-production.up.railway.app/api/payments/create-checkout-session', {
         method: 'POST',
