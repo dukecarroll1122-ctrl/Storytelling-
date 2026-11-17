@@ -4,7 +4,7 @@ A creative writing platform for novelists, screenwriters, comic writers and game
 
 **Live app: https://storytelling-production.up.railway.app**
 
-**Try it without signing in: https://storytelling-production.up.railway.app/?demo**
+**No account needed:** click "Continue as guest" on the landing page, or open https://storytelling-production.up.railway.app/?demo
 
 ![Storytelling landing page](docs/screenshots/landing-desktop.png)
 
@@ -13,7 +13,6 @@ A creative writing platform for novelists, screenwriters, comic writers and game
 - **Every kind of story** — Novel (chapters, acts, scenes), Comic (issues, pages, panels), TV Show (seasons, episodes), Movie (acts, sequences) and Game (quests, dialogue) project types.
 - **Rich text editor** — Tiptap-based writing environment with full formatting, focus mode and typewriter scrolling.
 - **Cloud sync** — projects and documents are saved to a backend and available on every device.
-- **AI writing assistant** — brainstorm, improve scenes and find plot holes.
 - **Export anywhere** — compile your manuscript to PDF, DOCX or EPUB.
 - **Desktop app** — packaged with Tauri alongside the web build.
 
@@ -22,7 +21,7 @@ A creative writing platform for novelists, screenwriters, comic writers and game
 | Plan | Price | Includes |
 | --- | --- | --- |
 | Free | $0 | 3 projects, all project types, PDF/DOCX/EPUB export |
-| Pro | $10 / month | Unlimited projects, cloud sync, AI assistant |
+| Pro | $10 / month | Unlimited projects, cloud sync |
 | Outright | $20 one time | Unlimited projects, cloud sync, no subscription |
 
 ## Inside the app
@@ -51,7 +50,7 @@ The landing page is fully responsive, with accessible focus states and reduced-m
 - **Responsive layout** — breakpoints at 768px and 420px; the features grid collapses to one column and the hero buttons stack on small phones.
 - **Accessibility** — visible hover and `:focus-visible` states, improved text contrast, and `prefers-reduced-motion` support.
 - **Rest of the app** — the home screen uses CSS classes with keyboard-navigable controls, SVG icons across the remaining screens, and the editor shell is responsive on tablet and mobile.
-- **Demo mode** — `?demo` bypasses sign-in, live or local (see above), used to capture the screenshots in this README.
+- **Optional sign-up** — guest mode lets anyone write without an account (see above), used to capture the screenshots in this README.
 
 ## Tech stack
 
@@ -81,9 +80,9 @@ Then start the dev server at http://localhost:5173:
 npm run dev
 ```
 
-### Demo mode
+### Guest mode (sign-up is optional)
 
-To explore the app without signing in, open `/?demo` on the live site or `http://localhost:5173/?demo` locally. It skips Clerk with a fake `demo-user` and **never calls the backend**, so nothing you do reaches the real database. Projects live only in the visitor's browser `localStorage`. The bypass lives in `src/useAppUser.js` and `src/api.js`.
+Visitors can click **Continue as guest** on the landing page (or open `/?demo`) to use the app without an account. Guest mode uses a local `guest-user`, **never calls the backend**, and keeps projects in the browser's `localStorage`. Signing in later turns on cloud sync and Pro upgrades. The logic lives in `src/guest.js`, `src/useAppUser.js` and `src/api.js`.
 
 ### Scripts
 
@@ -105,7 +104,6 @@ src/
   Outline.jsx      Outline view
   Corkboard.jsx    Corkboard view
   CharacterSheet.jsx
-  AIAssistant.jsx  AI writing assistant
   Compile.jsx      PDF / DOCX / EPUB export
   Pricing.jsx      Plans and checkout
   api.js           Backend API client
