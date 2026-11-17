@@ -104,7 +104,7 @@ function Pricing({ onClose }) {
             <div style={{ color: '#fff', fontSize: '36px', fontFamily: 'Georgia, serif', marginBottom: '8px' }}>$10</div>
             <div style={{ color: '#9d9da7', fontSize: '13px', marginBottom: '24px' }}>per month</div>
             <div style={{ textAlign: 'left', marginBottom: '24px' }}>
-              {['Unlimited projects', 'Cloud sync across devices', 'AI writing assistant', 'Priority support'].map(f => (
+              {['Unlimited projects', 'Cloud sync across devices', 'Priority support'].map(f => (
                 <div key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#c2c2cc', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid #1a1a1d' }}><CheckIcon width="12" height="12" /> {f}</div>
               ))}
             </div>

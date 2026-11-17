@@ -6,8 +6,7 @@ import jsPDF from 'jspdf'
 import { Document, Paragraph, TextRun, HeadingLevel, Packer } from 'docx'
 import { saveAs } from 'file-saver'
 import { saveDocument } from './api'
-import AIAssistant from './AIAssistant'
-import { QuoteIcon, SearchIcon, SparkleIcon, PaletteIcon, MoonIcon, ScrollIcon, SunIcon, FileIcon, FileTextIcon, BookIcon } from './icons'
+import { QuoteIcon, SearchIcon, PaletteIcon, MoonIcon, ScrollIcon, SunIcon, FileIcon, FileTextIcon, BookIcon } from './icons'
 
 const TextAlign = Extension.create({
   name: 'textAlign',
@@ -56,7 +55,6 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
   const [wordCount, setWordCount] = useState(0)
   const [showExport, setShowExport] = useState(false)
   const [showFindReplace, setShowFindReplace] = useState(false)
-  const [showAI, setShowAI] = useState(false)
   const [saveStatus, setSaveStatus] = useState('saved')
   const [findText, setFindText] = useState('')
   const [replaceText, setReplaceText] = useState('')
@@ -495,19 +493,6 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
             <SearchIcon width="14" height="14" />
           </button>
 
-          <button
-            onMouseDown={(e) => {
-              e.preventDefault()
-              if (userPlan === 'free') {
-                alert('AI Assistant is a Pro feature. Upgrade to unlock AI writing assistance.')
-                return
-              }
-              setShowAI(!showAI)
-            }}
-            style={{ ...tbStyle(showAI), display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <SparkleIcon width="14" height="14" /> AI
-          </button>
-
           <div style={{ width: '1px', height: '14px', background: '#2a2a2e', margin: '0 4px' }} />
 
           <div style={{ position: 'relative' }}>
@@ -663,7 +648,6 @@ function Editor({ selectedDoc, setSelectedDoc, docName, folders, setFolders, doc
           </div>
         )}
 
-        {showAI && <AIAssistant editor={editor} onClose={() => setShowAI(false)} />}
 
         <div className="editor-scroll-area" style={{ flex: 1, padding: distractionFree ? `40vh ${contentPadX}` : `32px ${contentPadX}`, overflow: 'auto' }}>
           <EditorContent editor={editor} />

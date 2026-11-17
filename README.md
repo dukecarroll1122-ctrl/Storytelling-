@@ -13,7 +13,6 @@ A creative writing platform for novelists, screenwriters, comic writers and game
 - **Every kind of story** — Novel (chapters, acts, scenes), Comic (issues, pages, panels), TV Show (seasons, episodes), Movie (acts, sequences) and Game (quests, dialogue) project types.
 - **Rich text editor** — Tiptap-based writing environment with full formatting, focus mode and typewriter scrolling.
 - **Cloud sync** — projects and documents are saved to a backend and available on every device.
-- **AI writing assistant** — brainstorm, improve scenes and find plot holes.
 - **Export anywhere** — compile your manuscript to PDF, DOCX or EPUB.
 - **Desktop app** — packaged with Tauri alongside the web build.
 
@@ -22,7 +21,7 @@ A creative writing platform for novelists, screenwriters, comic writers and game
 | Plan | Price | Includes |
 | --- | --- | --- |
 | Free | $0 | 3 projects, all project types, PDF/DOCX/EPUB export |
-| Pro | $10 / month | Unlimited projects, cloud sync, AI assistant |
+| Pro | $10 / month | Unlimited projects, cloud sync |
 | Outright | $20 one time | Unlimited projects, cloud sync, no subscription |
 
 ## Inside the app
@@ -105,7 +104,6 @@ src/
   Outline.jsx      Outline view
   Corkboard.jsx    Corkboard view
   CharacterSheet.jsx
-  AIAssistant.jsx  AI writing assistant
   Compile.jsx      PDF / DOCX / EPUB export
   Pricing.jsx      Plans and checkout
   api.js           Backend API client

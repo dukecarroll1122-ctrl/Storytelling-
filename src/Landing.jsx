@@ -1,7 +1,7 @@
 import { SignInButton, SignUpButton } from '@clerk/clerk-react'
 import { startGuest } from './guest'
 import './Landing.css'
-import { BookIcon, BurstIcon, TvIcon, FilmIcon, GamepadIcon, PenIcon, CloudIcon, SparkleIcon, PackageIcon, CheckIcon } from './icons'
+import { BookIcon, BurstIcon, TvIcon, FilmIcon, GamepadIcon, PenIcon, CloudIcon, PackageIcon, CheckIcon } from './icons'
 
 function Landing() {
   const projectTypes = [
@@ -15,7 +15,6 @@ function Landing() {
   const features = [
     { Icon: PenIcon, title: 'Rich Text Editor', description: 'Beautiful writing environment with full formatting, focus mode, and typewriter scrolling.' },
     { Icon: CloudIcon, title: 'Cloud Sync', description: 'Your writing syncs across every device automatically. Never lose a word.' },
-    { Icon: SparkleIcon, title: 'AI Writing Assistant', description: 'Stuck? Your AI assistant helps you brainstorm, improve scenes, and find plot holes.' },
     { Icon: PackageIcon, title: 'Export Anywhere', description: 'Compile your manuscript to PDF, DOCX, or EPUB with a single click.' },
   ]
 
@@ -104,7 +103,7 @@ function Landing() {
             <div className="landing-price-amount">$10</div>
             <div className="landing-price-period">per month</div>
             <ul className="landing-price-features">
-              {['Unlimited projects', 'Cloud sync', 'AI writing assistant'].map(f => (
+              {['Unlimited projects', 'Cloud sync'].map(f => (
                 <li key={f}><CheckIcon width="14" height="14" strokeWidth="2" />{f}</li>
               ))}
             </ul>
